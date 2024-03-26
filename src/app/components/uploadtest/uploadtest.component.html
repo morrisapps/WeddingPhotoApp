@@ -1,0 +1,36 @@
+
+<!-- app.component.html -->
+<div class="container">
+  <div class="row">
+      <h1>GeeksForGeeks</h1>
+      <h3>
+            A simple file upload form using Angular!
+        </h3>
+      <h3>
+          {{ isMultiple ? "Multiple Files Upload" : "Single File Upload" }}
+      </h3>
+  </div>
+  <div class="row">
+      <form (ngSubmit)="uploadFiles(this.filesElement)">
+          <input class="form-element"
+                 name="file"
+                 type="file"
+                 (change)="changeFiles($event)"
+                 [multiple]="isMultiple" #filesElement />
+          <div class="row">
+              <input type="checkbox"
+                     id="checkBox"
+                     name="checkBox"
+                     [(ngModel)]="isMultiple"
+                     (change)="this.filesElement.value = ''" />
+              <label for="checkBox">
+                    Multiple Files Upload
+                </label>
+          </div>
+          <button class="btn"
+                  type="submit">
+                Upload
+            </button>
+      </form>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+/* .btn-group button {   */
+  .btn-group-vertical button {
+ /* Some padding top right bottom left */
+    cursor: pointer; /* Pointer/hand icon */
+    width: 95%; /* Set a width if needed */
+    display: block; /* Make the buttons appear below each other */
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin: auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+
+  .btn-home-style {
+    height: 50px;
+    margin: auto;
+  }
+
+  .card-home-style {
+    height:300px;
+    justify-content: center;
+  }
+
+  .center {
+    width: 95%;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
