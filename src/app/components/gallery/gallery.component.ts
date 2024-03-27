@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HousingLocationComponent } from '../housing-location/housing-location.component';
-import { HousingLocation } from '../../housinglocation';
-import { HousingService } from '../../services/housing.service';
+import { PhotoCardComponent } from '../photo/photo-card.component';
+import { PhotoInformation } from '../../interfaces/photo-information';
+import { PhotoService } from '../../services/photo.service';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -14,7 +14,7 @@ import {MatButtonModule} from '@angular/material/button';
   standalone: true,
   imports: [
     CommonModule,
-    HousingLocationComponent,
+    PhotoCardComponent,
     MatInputModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
@@ -30,33 +30,33 @@ import {MatButtonModule} from '@angular/material/button';
     </section>
     <mat-spinner style="margin:0 auto;margin-top:33dvh;"  *ngIf="show"></mat-spinner>
     <section class="results">
-    <app-housing-location *ngFor="let housingLocation of filteredLocationList" [housingLocation]="housingLocation"></app-housing-location>
+    <app-photo-card *ngFor="let photo of filteredPhotoList" [photoInformation]="photo"></app-photo-card>
     </section>
   `,
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent {
-  filteredLocationList: HousingLocation[] = [];
-  housingLocationList: HousingLocation[] = [];
-  housingService: HousingService = inject(HousingService);
+  filteredPhotoList: PhotoInformation[] = [];
+  photoList: PhotoInformation[] = [];
+  PhotoService: PhotoService = inject(PhotoService);
   show: boolean = true;
 
   constructor() {
-    this.housingService.getAllHousingLocations().then((housingLocationList: HousingLocation[]) => {
-      this.housingLocationList = housingLocationList;
-      this.filteredLocationList = housingLocationList;
+    this.PhotoService.getAllPhotos().then((photoList: PhotoInformation[]) => {
+      this.photoList = photoList;
+      this.filteredPhotoList = photoList;
       this.show = false
     });
   }
 
   filterResults(text: string) {
     if (!text) {
-      this.filteredLocationList = this.housingLocationList;
+      this.filteredPhotoList = this.photoList;
       return;
     }
 
-    this.filteredLocationList = this.housingLocationList.filter(
-      housingLocation => housingLocation?.city.toLowerCase().includes(text.toLowerCase())
+    this.filteredPhotoList = this.photoList.filter(
+      PhotoInformation => PhotoInformation?.city.toLowerCase().includes(text.toLowerCase())
     );
   }
 }

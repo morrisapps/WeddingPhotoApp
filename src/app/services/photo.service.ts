@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HousingLocation } from '../housinglocation';
+import { PhotoInformation } from '../interfaces/photo-information';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HousingService {
+export class PhotoService {
 
   url = 'http://morrisapps.ddns.net:3000/photos';
 
-
-
-
-  async getAllHousingLocations(): Promise<HousingLocation[]> {
+  async getAllPhotos(): Promise<PhotoInformation[]> {
     const data = await fetch(this.url);
     return await data.json() ?? [];
   }
 
-  async getHousingLocationById(id: number): Promise<HousingLocation | undefined> {
+  async getPhotoById(id: number): Promise<PhotoInformation | undefined> {
     const data = await fetch(`${this.url}/${id}`);
     return await data.json() ?? {};
   }

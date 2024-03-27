@@ -1,11 +1,10 @@
 import { Component, inject } from "@angular/core";
-import { CommonModule, formatDate } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {MatCardModule} from '@angular/material/card';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import { HousingService } from '../../services/housing.service';
-import { HousingLocation } from '../../housinglocation';
+import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 
 @Component({
@@ -40,7 +39,7 @@ import { FileuploadService } from '../../services/fileupload/fileupload.service'
 
 
 export class ShootComponent {
-  housingService: HousingService = inject(HousingService);
+  PhotoService: PhotoService = inject(PhotoService);
 
   photoBase64: string = "";
 
@@ -98,7 +97,7 @@ export class ShootComponent {
             reader.onloadend = () => {
               if (this.file) {
                 console.log(this.file.name)
-                this.housingService.post(reader.result as string, this.file.name)
+                this.PhotoService.post(reader.result as string, this.file.name)
               }
 
                 // Logs data:image/jpeg;base64,wL2dvYWwgbW9yZ...

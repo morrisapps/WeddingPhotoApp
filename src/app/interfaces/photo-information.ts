@@ -1,4 +1,4 @@
-export interface HousingLocation {
+export interface PhotoInformation {
   id: number;
   name: string;
   fileName: string;
