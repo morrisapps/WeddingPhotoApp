@@ -4,12 +4,18 @@ import { DetailsComponent } from './components/details/details.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { ShootComponent } from './components/shoot/shoot.component';
 import { UploadTestComponent } from './components/uploadtest/uploadtest.component';
+import { UserComponent } from './components/user/user.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
     title: 'Home page'
+  },
+  {
+    path: 'user',
+    component: UserComponent,
+    title: 'Name'
   },
   {
     path: 'gallery',

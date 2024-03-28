@@ -1,7 +1,32 @@
 .center {
-  margin: 0;
   position: absolute;
-  top: 50%;
+  top: calc(50% - 60px);
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+}
+
+.namecard {
+  width: 85dvw;
+  margin-top: 30%;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  margin-left: 0px;
+  transform: translate(-10px, 0);
+}
+
+.button {
+  height: 60px;
+  width: 45%;
+  max-width: 200px;
 }

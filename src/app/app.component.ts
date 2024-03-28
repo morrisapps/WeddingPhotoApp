@@ -33,7 +33,7 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     // Set drawer height to full screen
-    this.renderer.setStyle(this.drawerContainer.nativeElement, "height", `calc(100svh - ${this.toolbar.nativeElement.scrollHeight}px)`)
+    this.renderer.setStyle(this.drawerContainer.nativeElement, "height", `calc(100dvh - ${this.toolbar.nativeElement.scrollHeight}px)`)
   }
 
 }

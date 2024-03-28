@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
@@ -31,7 +31,7 @@ import {MatIconModule} from '@angular/material/icon';
 
       <mat-card-actions>
         <mat-card-subtitle style="margin-left:10px;">Photographed by</mat-card-subtitle>
-        <mat-card-subtitle style="margin-left:4px;">Test</mat-card-subtitle>
+        <mat-card-subtitle #author style="margin-left:4px;" [innerText]="[photoInformation.author]"></mat-card-subtitle>
       </mat-card-actions>
     </mat-card>
   </section>

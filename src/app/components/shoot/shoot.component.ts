@@ -1,9 +1,13 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ElementRef, ViewChild, Renderer2 } from "@angular/core";
 import { CommonModule } from '@angular/common';
 import {MatCardModule} from '@angular/material/card';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CookieService } from 'ngx-cookie-service';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 
@@ -14,42 +18,66 @@ import { FileuploadService } from '../../services/fileupload/fileupload.service'
     CommonModule,
     MatCardModule,
     MatDividerModule,
-    MatButtonModule
+    MatButtonModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule
   ],
   template: `
   <div>
+    <mat-card *ngIf="!show" class="center">
+      <mat-card-title class="center-content">What's your name?</mat-card-title>
+      <mat-card-content>
+        <p>
+            <input #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
+        </p>
+          <div class="center-content">
+            <button #takePictureButton disabled="{{disabled}}" type="button" mat-raised-button (click)="fileInput.click()" style="margin-bottom: 20px" id="takePictureButton">Take a Picture!</button>
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="cameraFileInput" accept="image/*" capture="environment">
+          </div>
+      </mat-card-content>
+    </mat-card>
 
-    <button type="button" mat-raised-button (click)="fileInput.click()" style="margin-bottom: 20px" class="center">Take a Picture!</button>
-    <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="cameraFileInput" accept="image/*" capture="environment" name="{{date | date:'yyyy-MM-dd'}}-my.csv">
-
-    <div id="pictureDiv">
-      <mat-card >
+    <div id="pictureDiv" class="center">
+      <mat-card style="width: 95dvw;">
         <img id="pictureFromCamera" style="height:100%;max-height:100%;max-width:100%"/>
-        <mat-card-actions *ngIf="show">
-          <button mat-raised-button style="margin-right:10px;margin-left:5px" id="save" (click)="post()">SAVE TO GALLERY</button>
-          <button mat-raised-button>DOWNLOAD TO PHONE</button>
-        </mat-card-actions>
       </mat-card>
     </div>
   </div>
 
+  <div class="footer" *ngIf="show">
+    <mat-card style="width: 100dvw;">
+      <mat-card-actions class="center-content">
+        <button mat-raised-button style="margin-right:10px;margin-left:5px" id="save" (click)="post()" class="button">SAVE TO GALLERY</button>
+        <button mat-raised-button class="button">DOWNLOAD TO PHONE</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <mat-spinner class="center" *ngIf="showSpinner"></mat-spinner>
   `,
   styleUrl: './shoot.component.css'
 })
 
 
 export class ShootComponent {
+
+  @ViewChild('nameInput', { read: ElementRef }) nameInput!:ElementRef;
+
   PhotoService: PhotoService = inject(PhotoService);
 
   photoBase64: string = "";
 
   show: boolean = false;
+  showSpinner: boolean = false;
+
+  disabled: boolean = true;
 
   file?: File;
 
   date = new Date();
 
-  constructor(private _snackBar: MatSnackBar, private uploadService: FileuploadService) {}
+  constructor(private _snackBar: MatSnackBar, private uploadService: FileuploadService, private cookieService: CookieService, private renderer: Renderer2) {}
 
   // Storing files in a File array
   isMultiple = false;
@@ -87,6 +115,7 @@ export class ShootComponent {
 
   // Save picture
   post() {
+    this.showSpinner = true
     let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
     // Get the remote image as a Blob with the fetch API
     fetch(pictureFromCamera.src)
@@ -97,7 +126,7 @@ export class ShootComponent {
             reader.onloadend = () => {
               if (this.file) {
                 console.log(this.file.name)
-                this.PhotoService.post(reader.result as string, this.file.name)
+                this.PhotoService.post(reader.result as string, this.file.name).then(() => this.showSpinner = false)
               }
 
                 // Logs data:image/jpeg;base64,wL2dvYWwgbW9yZ...
@@ -120,9 +149,32 @@ export class ShootComponent {
     }
   }
 
+  // User name form
+  NameInput(event: any): void {
+    let username = event.target.value
+    // Sets user as cookie
+    this.cookieService.set('User', username);
+    if (username) {
+      // Makes take picture button not disabled
+      this.disabled = false
+    } else {
+      this.disabled = true
+    }
+  }
+
   ngOnInit() {
+    if (this.cookieService.get('User')) {
+      // Makes take picture button not disabled
+      this.disabled = false
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this.cookieService.get('User')) {
+      // Set input text to User name cookie
+      this.renderer.setProperty(this.nameInput.nativeElement, 'value', this.cookieService.get('User'));
+    }
     // let snack = this._snackBar
-    // let cameraFileInput = document.getElementById("cameraFileInput") as HTMLInputElement
     // let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
     // let pictureDiv = document.getElementById("pictureDiv") as HTMLInputElement
 
@@ -134,5 +186,4 @@ export class ShootComponent {
     //   snack.open("fdf")
     // });
   }
-
 }

@@ -22,11 +22,7 @@ import {MatButtonModule} from '@angular/material/button';
   ],
   template: `
     <section>
-      <form>
-        <input type="text" placeholder="Filter by Author" #filter>
-
-        <button mat-raised-button (click)="filterResults(filter.value)">Search</button>
-      </form>
+      <input (input)="filterResults(filter.value)" type="text" placeholder="Search by photographer" #filter style="margin-top:10px">
     </section>
     <mat-spinner style="margin:0 auto;margin-top:33dvh;"  *ngIf="show"></mat-spinner>
     <section class="results">
@@ -56,7 +52,7 @@ export class GalleryComponent {
     }
 
     this.filteredPhotoList = this.photoList.filter(
-      PhotoInformation => PhotoInformation?.city.toLowerCase().includes(text.toLowerCase())
+      PhotoInformation => PhotoInformation?.author.toLowerCase().includes(text.toLowerCase())
     );
   }
 }

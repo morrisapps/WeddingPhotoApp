@@ -1,15 +1,15 @@
 <div>
   <main>
     <mat-toolbar #toolbar color="primary">
-      <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="drawer.toggle()">
+      <button mat-icon-button class="example-icon" (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
       <span><button mat-button [routerLink]="['/']">Granted Photography</button></span>
       <span class="example-spacer"></span>
-      <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+      <button mat-icon-button class="example-icon favorite-icon">
         <mat-icon>favorite</mat-icon>
       </button>
-      <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+      <button mat-icon-button class="example-icon">
         <mat-icon>share</mat-icon>
       </button>
     </mat-toolbar>
@@ -26,8 +26,8 @@
             <mat-icon>filter_3</mat-icon>Gallery</button>
           <button mat-button [routerLink]="['/upload']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
             <mat-icon>filter_4</mat-icon>Upload test</button>
-          <button mat-button routerLink="/page5" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon>filter_5</mat-icon>More stuff</button>
+          <button mat-button routerLink="/user" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
+            <mat-icon>filter_5</mat-icon>User name</button>
         </div>
       </mat-drawer>
 

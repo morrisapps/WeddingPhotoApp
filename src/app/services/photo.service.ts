@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PhotoInformation } from '../interfaces/photo-information';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,7 @@ export class PhotoService {
         "id": 22,
         "name": fileName,
         "fileName": fileName,
+        "author": this.cookieService.get('User'),
         "city": "Juneau3",
         "state": "AK2",
         "photo": "https://angular.io/assets/images/tutorials/faa/i-do-nothing-but-love-lAyXdl1-Wmc-unsplash.jpg",
@@ -44,6 +46,6 @@ export class PhotoService {
     console.log(`Homes application received: firstName: ${firstName}, lastName: ${lastName}, email: ${email}.`);
   }
 
-  constructor() { }
+  constructor(private cookieService: CookieService) { }
 }
 
