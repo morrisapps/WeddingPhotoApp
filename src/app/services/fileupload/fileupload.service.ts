@@ -21,6 +21,6 @@ export class FileuploadService {
       formData.append('file', file);
       // Post method is returned for subscribing in the component
       return this.http.post(
-      'http://localhost:8080/upload', formData);
+      'http://morrisapps.ddns.net:8080/upload', formData);
     }
 }

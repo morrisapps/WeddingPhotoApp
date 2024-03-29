@@ -31,9 +31,22 @@
   max-width: 200px;
 }
 
-.my-custom-snackbar {
-  margin: 0 !important;
+.photo-container {
+  position: relative;
+}
+.photo-container img {
+  display: block;
+}
+.download-button {
   position: absolute;
-  right: 100px;
-  top: 60px;
+  bottom: 10px;
+  left: calc(100% - 65px);
+}
+
+img {
+  display: block;
+  max-width:100%;
+  max-height:90dvh;
+  width: auto;
+  height: auto;
 }

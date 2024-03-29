@@ -7,6 +7,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import {MatToolbarModule} from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ShootDialogComponent } from "../shoot-dialog/shoot-dialog.component";
 import { CookieService } from 'ngx-cookie-service';
@@ -23,6 +25,8 @@ import { FileuploadService } from '../../services/fileupload/fileupload.service'
     MatButtonModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatIconModule,
+    MatToolbarModule,
     ReactiveFormsModule
   ],
   template: `
@@ -43,9 +47,14 @@ import { FileuploadService } from '../../services/fileupload/fileupload.service'
       </mat-card>
     </div>
 
-    <div id="pictureDiv" class="center">
+    <div id="pictureDiv" class="center" [hidden]="!hidden">
       <mat-card style="width: 95dvw;">
-        <img id="pictureFromCamera" style="height:100%;max-height:100%;max-width:100%"/>
+
+        <img id="pictureFromCamera"/>
+        <button mat-fab id="save" (click)="download()" class="download-button">
+          <mat-icon>get_app</mat-icon>
+        </button>
+
       </mat-card>
     </div>
   </div>
@@ -162,7 +171,6 @@ export class ShootComponent {
     if (this.file) {
         this._uploadService.uploadFile(this.file)
         .subscribe((res: any) => {
-            alert(res.msg);
 
         });
     }
@@ -196,6 +204,16 @@ export class ShootComponent {
         }
       });
     }
+  }
+
+  download() {
+    let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
+    const a = document.createElement('a')
+    a.href = pictureFromCamera.src
+    a.download = pictureFromCamera.name
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
   }
 
   ngOnInit() {
