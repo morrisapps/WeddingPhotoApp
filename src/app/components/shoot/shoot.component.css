@@ -30,3 +30,10 @@
   width: 45%;
   max-width: 200px;
 }
+
+.my-custom-snackbar {
+  margin: 0 !important;
+  position: absolute;
+  right: 100px;
+  top: 60px;
+}
