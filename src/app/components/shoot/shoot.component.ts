@@ -1,19 +1,20 @@
 import { Component, inject, ElementRef, ViewChild, Renderer2 } from "@angular/core";
 import { CommonModule } from '@angular/common';
-import {MatCardModule} from '@angular/material/card';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatButtonModule} from '@angular/material/button';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import  {MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import {MatToolbarModule} from '@angular/material/toolbar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ShootDialogComponent } from "../shoot-dialog/shoot-dialog.component";
 import { CookieService } from 'ngx-cookie-service';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 @Component({
   selector: 'app-shoot',
@@ -48,7 +49,7 @@ import { FileuploadService } from '../../services/fileupload/fileupload.service'
     </div>
 
     <div id="pictureDiv" class="center" [hidden]="!hidden">
-      <mat-card style="width: 95dvw;">
+      <mat-card style="width: 95dvw;margin-bottom:90px;margin-top:90px;">
 
         <img id="pictureFromCamera"/>
         <button mat-fab id="save" (click)="download()" class="download-button">
@@ -95,7 +96,8 @@ export class ShootComponent {
     private _uploadService: FileuploadService,
     private _cookieService: CookieService,
     private _renderer: Renderer2,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private imageCompress: NgxImageCompressService
   ) {}
 
   // Storing files in a File array
@@ -144,9 +146,20 @@ export class ShootComponent {
         .then((blob) => {
             // Read the Blob as DataURL using the FileReader API
             const reader = new FileReader();
-            reader.onloadend = () => {
+            reader.onloadend = async () => {
               if (this.file) {
-                this.PhotoService.post(reader.result as string, this.file.name).then(() => {
+                // Get full res photo as base 64
+                const PHOTO_BASE_64 = reader.result as string
+
+                // Get thumbnail as base64
+                const THUMB_BASE_64 = this.imageCompress
+                                            .compressFile(PHOTO_BASE_64, 0, 50, 80)
+                                              .then(compressedImage => {
+                                                return compressedImage
+                                              });
+
+
+                this.PhotoService.post(PHOTO_BASE_64, await THUMB_BASE_64, this.file.name).then(() => {
                   // Posted picture to DB, stop spinner and show snackbar
                   this.showSpinner = false,
                   this._snackBar.open("Photo uploaded to gallery!", "close", {
@@ -156,13 +169,6 @@ export class ShootComponent {
                   this.savedInGallery = true
                 })
               }
-
-                // Logs data:image/jpeg;base64,wL2dvYWwgbW9yZ...
-
-                // Convert to Base64 string
-                // const base64 = getBase64StringFromDataURL(reader.result);
-                // console.log(base64);
-                // Logs wL2dvYWwgbW9yZ...
             };
             reader.readAsDataURL(blob);
         });

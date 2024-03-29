@@ -1,8 +1,9 @@
 .center {
   position: absolute;
-  top: calc(50% - 60px);
+  top: calc(50% - 10dvh);
   left: 50%;
   transform: translate(-50%, -50%);
+  max-height: 80dvh;
 }
 
 .center-content {
@@ -45,8 +46,8 @@
 
 img {
   display: block;
+  max-height:100%;
+  min-height:100%;
   max-width:100%;
-  max-height:90dvh;
   width: auto;
-  height: auto;
 }

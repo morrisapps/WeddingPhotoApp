@@ -23,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
   <section>
     <mat-card>
       <div class="photo-container">
-        <img #photo class="listing-photo" id="photo" [src]="[photoInformation.photoBase64]" [name]="[photoInformation.fileName]">
+        <img #photo class="listing-photo" id="photo" [src]="[photoInformation.thumbBase64]" [name]="[photoInformation.fileName]">
         <button mat-fab id="save" (click)="download()" class="download-button">
           <mat-icon>get_app</mat-icon>
         </button>

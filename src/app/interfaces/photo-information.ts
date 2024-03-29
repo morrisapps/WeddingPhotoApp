@@ -7,6 +7,7 @@ export interface PhotoInformation {
   state: string;
   photo: string;
   photoBase64: string;
+  thumbBase64: string;
   availableUnits: number;
   wifi: boolean;
   laundry: boolean;
