@@ -116,7 +116,7 @@ export class ShootComponent {
     // Save file into variable
     // File has to be converted to blob and then into a new File in order to change the name
     var blob = cameraFileInput.files![0].slice(0, cameraFileInput.files![0].size, 'image/jpg');
-    this.file = new File([blob], Date.now() + ".jpg", {type: 'image/jpg'})
+    this.file = new File([blob], Date.now().toString(), {type: 'image/jpg'})
     pictureDiv.hidden = false
     this.hidden = true
 
@@ -137,7 +137,7 @@ export class ShootComponent {
   }
 
   // Save picture
-  post() {
+  async post() {
     this.showSpinner = true
     let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
     // Get the remote image as a Blob with the fetch API
@@ -157,29 +157,26 @@ export class ShootComponent {
                                               .then(compressedImage => {
                                                 return compressedImage
                                               });
-
-
-                this.PhotoService.post(PHOTO_BASE_64, await THUMB_BASE_64, this.file.name).then(() => {
+                // Post to json server
+                this.PhotoService.post(PHOTO_BASE_64, await THUMB_BASE_64, this.file.name).then(async () => {
                   // Posted picture to DB, stop spinner and show snackbar
                   this.showSpinner = false,
                   this._snackBar.open("Photo uploaded to gallery!", "close", {
                     duration: 4000,
                     panelClass: 'saved-snackbar'
                   });
-                  this.savedInGallery = true
+
+                  // Save picture using express multer (fileupload service)
+                  if (this.file) {
+                    (await this._uploadService.uploadFiles(PHOTO_BASE_64, await THUMB_BASE_64, this.file.name as string))
+                    .subscribe((res: any) => {});
+                      this.savedInGallery = true
+                  }
                 })
               }
             };
             reader.readAsDataURL(blob);
         });
-
-        // Save picture using express multer (fileupload service)
-    if (this.file) {
-        this._uploadService.uploadFile(this.file)
-        .subscribe((res: any) => {
-
-        });
-    }
   }
 
   // User name form

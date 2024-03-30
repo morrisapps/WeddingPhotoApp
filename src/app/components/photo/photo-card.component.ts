@@ -23,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
   <section>
     <mat-card>
       <div class="photo-container">
-        <img #photo class="listing-photo" id="photo" [src]="[photoInformation.thumbBase64]" [name]="[photoInformation.fileName]">
+        <img #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/{{photoInformation.fileName}}-thumb.jpg" [name]="[photoInformation.fileName]">
         <button mat-fab id="save" (click)="download()" class="download-button">
           <mat-icon>get_app</mat-icon>
         </button>
@@ -45,8 +45,8 @@ export class PhotoCardComponent {
   download() {
     let photo = this.photoRef.nativeElement
     const a = document.createElement('a')
-    a.href = photo.src
-    a.download = photo.name
+    a.href = "http://morrisapps.ddns.net/photos/"+this.photoInformation.fileName+"-full.jpg"
+    a.download = this.photoInformation.fileName+"-full.jpg"
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
