@@ -20,10 +20,11 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule
   ],
   template: `
-  <section>
+  <section [hidden]="!imgLoaded">
     <mat-card>
       <div class="photo-container">
-        <img #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.fileName}}.jpg" [name]="[photoInformation.fileName]">
+        <img #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.fileName}}.jpg"\
+          [name]="[photoInformation.fileName]" (load)="onLoad()">
         <button mat-fab id="save" (click)="download()" class="download-button">
           <mat-icon>get_app</mat-icon>
         </button>
@@ -40,6 +41,15 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class PhotoCardComponent {
   @Input() photoInformation!: PhotoInformation;
+  imgLoaded: boolean;
+
+  constructor() {
+    this.imgLoaded = false
+  }
+
+  onLoad() {
+    this.imgLoaded = true
+  }
 
   download() {
     const a = document.createElement('a')
