@@ -20,7 +20,7 @@ export class PhotoService {
   }
 
 
-  async post(photoBase64: string, thumbBase64: string, fileName: string) {
+  async post(fileName: string) {
     await fetch(this.url, {
       method: 'POST',
       headers: {
@@ -34,8 +34,6 @@ export class PhotoService {
         "city": "Juneau3",
         "state": "AK2",
         "photo": "https://angular.io/assets/images/tutorials/faa/i-do-nothing-but-love-lAyXdl1-Wmc-unsplash.jpg",
-        "photoBase64" : photoBase64,
-        "thumbBase64" : thumbBase64,
         "availableUnits": 1,
         "wifi": false,
         "laundry": false

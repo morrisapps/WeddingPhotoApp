@@ -40,6 +40,7 @@ export class GalleryComponent {
   constructor() {
     this.PhotoService.getAllPhotos().then((photoList: PhotoInformation[]) => {
       this.photoList = photoList;
+      this.photoList.reverse()
       this.filteredPhotoList = photoList;
       this.show = false
     });

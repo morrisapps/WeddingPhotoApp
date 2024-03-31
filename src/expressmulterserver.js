@@ -10,7 +10,9 @@ const PORT = 8080;
 // Configuring multer storage like filename
 // destination path for files
 const storageConfig = multer.diskStorage({
-    destination: path.join(__dirname, "../photos"),
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, "../photos/"+req.body.subfolder))
+    },
     filename: (req, file, res) => {
     res(null, file.originalname);
   },

@@ -153,12 +153,12 @@ export class ShootComponent {
 
                 // Get thumbnail as base64
                 const THUMB_BASE_64 = this.imageCompress
-                                            .compressFile(PHOTO_BASE_64, 0, 50, 80)
+                                            .compressFile(PHOTO_BASE_64, 0, 30, 80)
                                               .then(compressedImage => {
                                                 return compressedImage
                                               });
                 // Post to json server
-                this.PhotoService.post(PHOTO_BASE_64, await THUMB_BASE_64, this.file.name).then(async () => {
+                this.PhotoService.post(this.file.name).then(async () => {
                   // Posted picture to DB, stop spinner and show snackbar
                   this.showSpinner = false,
                   this._snackBar.open("Photo uploaded to gallery!", "close", {
@@ -168,7 +168,9 @@ export class ShootComponent {
 
                   // Save picture using express multer (fileupload service)
                   if (this.file) {
-                    (await this._uploadService.uploadFiles(PHOTO_BASE_64, await THUMB_BASE_64, this.file.name as string))
+                    (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , this.file.name as string))
+                    .subscribe((res: any) => {});
+                    (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', this.file.name as string))
                     .subscribe((res: any) => {});
                       this.savedInGallery = true
                   }
