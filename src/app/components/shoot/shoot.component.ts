@@ -41,7 +41,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
               <input #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
           </p>
             <div class="center-content">
-              <button #takePictureButton disabled="{{disabled}}" type="button" mat-raised-button (click)="fileInput.click()" style="margin-bottom: 20px" id="takePictureButton">Take a Picture!</button>
+              <button #takePictureButton disabled="{{takeButtonDisabled}}" type="button" mat-raised-button (click)="fileInput.click()" style="margin-bottom: 20px" id="takePictureButton">Take a Picture!</button>
               <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="cameraFileInput" accept="image/*" capture="environment">
             </div>
         </mat-card-content>
@@ -63,8 +63,8 @@ import { NgxImageCompressService } from 'ngx-image-compress';
   <div class="footer" [hidden]="!hidden">
     <mat-card style="width: 100dvw;">
       <mat-card-actions class="center-content">
-        <button mat-raised-button style="margin-right:10px;" id="save" (click)="post()" class="button">SAVE TO GALLERY</button>
-        <button mat-raised-button (click)="onRetakePhoto()" class="button">RETAKE PHOTO</button>
+        <button mat-raised-button style="margin-right:10px;" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
+        <button mat-raised-button (click)="onRetakePhoto()" class="button">{{retakeButtonText}}</button>
       </mat-card-actions>
     </mat-card>
   </div>
@@ -84,12 +84,14 @@ export class ShootComponent {
   hidden: boolean = false;
   showSpinner: boolean = false;
 
-  disabled: boolean = true;
+  takeButtonDisabled: boolean = true;
   file?: File;
   date = new Date();
 
   // Flag to signal if current photo has been saved, and to warn the user if they try to leave or retake without saving.
   savedInGallery: boolean = false;
+
+  retakeButtonText: string = "RETAKE PHOTO"
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -121,6 +123,7 @@ export class ShootComponent {
     this.hidden = true
 
     this.savedInGallery = false
+    this.retakeButtonText = "RETAKE PHOTO"
 
     // Encode the file using the FileReader API
     // const reader = new FileReader();
@@ -172,7 +175,8 @@ export class ShootComponent {
                     .subscribe((res: any) => {});
                     (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', this.file.name as string))
                     .subscribe((res: any) => {});
-                      this.savedInGallery = true
+                    this.savedInGallery = true
+                    this.retakeButtonText = "NEW PHOTO!"
                   }
                 })
               }
@@ -188,9 +192,9 @@ export class ShootComponent {
     this._cookieService.set('User', username);
     if (username) {
       // Makes take picture button not disabled
-      this.disabled = false
+      this.takeButtonDisabled = false
     } else {
-      this.disabled = true
+      this.takeButtonDisabled = true
     }
   }
 
@@ -224,7 +228,7 @@ export class ShootComponent {
   ngOnInit() {
     if (this._cookieService.get('User')) {
       // Makes take picture button not disabled
-      this.disabled = false
+      this.takeButtonDisabled = false
     }
   }
 
@@ -244,5 +248,9 @@ export class ShootComponent {
     //   pictureDiv.hidden = false
     //   snack.open("fdf")
     // });
+  }
+
+  ngOnChanges() {
+    console.log("changed")
   }
 }
