@@ -156,7 +156,7 @@ export class ShootComponent {
 
                 // Get thumbnail as base64
                 const THUMB_BASE_64 = this.imageCompress
-                                            .compressFile(PHOTO_BASE_64, 0, 30, 80)
+                                            .compressFile(PHOTO_BASE_64, 0, 50, 80, 700)
                                               .then(compressedImage => {
                                                 return compressedImage
                                               });
