@@ -25,7 +25,7 @@ import {MatDividerModule} from '@angular/material/divider';
 
 export class AppComponent implements AfterViewInit {
   title = 'home';
-
+  background = "/assets/graphics/4965010.jpg"
   @ViewChild('toolbar', { read: ElementRef }) toolbar!:ElementRef;
   @ViewChild('drawerContainer', { read: ElementRef }) drawerContainer!:ElementRef;
 
@@ -33,6 +33,7 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     // Set drawer height to full screen
+    this.background = "/assets/graphics/4965010.jpg"
     this.renderer.setStyle(this.drawerContainer.nativeElement, "height", `calc(100dvh - ${this.toolbar.nativeElement.scrollHeight}px)`)
   }
 

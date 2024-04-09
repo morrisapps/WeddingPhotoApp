@@ -125,14 +125,6 @@ export class ShootComponent {
     this.savedInGallery = false
     this.retakeButtonText = "RETAKE PHOTO"
 
-    // Encode the file using the FileReader API
-    // const reader = new FileReader();
-    // reader.onloadend = () => {
-    //   //this.photoBase64 = reader.result
-    //     console.log(reader.result);
-    //     // Logs data:<type>;base64,wL2dvYWwgbW9yZ...
-    // };
-    // reader.readAsDataURL(cameraFileInput.files![0]);
   }
 
   openSnackBar(message: string, action: string) {
@@ -153,7 +145,7 @@ export class ShootComponent {
               if (this.file) {
                 // Get full res photo as base 64
                 const PHOTO_BASE_64 = reader.result as string
-
+                console.log(PHOTO_BASE_64)
                 // Get thumbnail as base64
                 const THUMB_BASE_64 = this.imageCompress
                                             .compressFile(PHOTO_BASE_64, 0, 50, 80, 700)
@@ -162,13 +154,6 @@ export class ShootComponent {
                                               });
                 // Post to json server
                 this.PhotoService.post(this.file.name).then(async () => {
-                  // Posted picture to DB, stop spinner and show snackbar
-                  this.showSpinner = false,
-                  this._snackBar.open("Photo uploaded to gallery!", "close", {
-                    duration: 4000,
-                    panelClass: 'saved-snackbar'
-                  });
-
                   // Save picture using express multer (fileupload service)
                   if (this.file) {
                     (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , this.file.name as string))
@@ -178,6 +163,12 @@ export class ShootComponent {
                     this.savedInGallery = true
                     this.retakeButtonText = "NEW PHOTO!"
                   }
+                  // Posted picture to DB, stop spinner and show snackbar
+                  this.showSpinner = false,
+                  this._snackBar.open("Photo uploaded to gallery!", "close", {
+                    duration: 4000,
+                    panelClass: 'saved-snackbar'
+                  });
                 })
               }
             };
@@ -205,7 +196,7 @@ export class ShootComponent {
       cameraFileInput.click()
     } else {
       const dialogRef = this._dialog.open(ShootDialogComponent, {
-        data: {message: "Are you sure you want to retake the photo without saving to the gallery?"}
+        data: {title: "Woah there!", message: "Are you sure you want to retake the photo without saving to the gallery?"}
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
@@ -237,17 +228,6 @@ export class ShootComponent {
       // Set input text to User name cookie
       this._renderer.setProperty(this.nameInput.nativeElement, 'value', this._cookieService.get('User'));
     }
-    // let snack = this._snackBar
-    // let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
-    // let pictureDiv = document.getElementById("pictureDiv") as HTMLInputElement
-
-    // cameraFileInput.addEventListener("change", function () {
-    //   pictureFromCamera.setAttribute("src", window.URL.createObjectURL(
-    //     (this.files![0])
-    //   ));
-    //   pictureDiv.hidden = false
-    //   snack.open("fdf")
-    // });
   }
 
   ngOnChanges() {

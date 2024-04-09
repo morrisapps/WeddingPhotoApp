@@ -2,32 +2,88 @@
   .btn-group-vertical button {
  /* Some padding top right bottom left */
     cursor: pointer; /* Pointer/hand icon */
-    width: 95%; /* Set a width if needed */
-    display: block; /* Make the buttons appear below each other */
+    width: auto; /* Set a width if needed */
+    /* Make the buttons appear below each other */
     font-weight: bold;
-    font-size: 14px;
     text-transform: uppercase;
-    margin: auto;
+    margin-top:0;
+    display: flex;
+    align-items: center;
     margin-bottom: 20px;
     margin-top: 20px;
   }
 
   .btn-home-style {
-    height: 50px;
+    font-size: 35px;
+    font-family: ShakyHandSomeComic;
+    height:auto;
     margin: auto;
-  }
-
-  .card-home-style {
-    height:300px;
-    justify-content: center;
+    min-width: 400px!important;;
+    width: calc(100% - 40px);
+    max-width: calc(100% - 40px)!important;;
+    justify-content: flex-start;
   }
 
   .center {
-    width: 95%;
+    width: 90%;
+    max-width: 800px;
     margin: 0;
     position: absolute;
-    top: 50%;
+    top: calc(50% - 30px);
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+  }
+
+  .bottom-center {
+    width: 90%;
+    max-width: 800px;
+    margin: 0;
+    position: relative;
+    top: calc(80% - 30px);
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+  .botton-img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .horizontal-center {
+    margin: 0;
+    position: relative;
+    left: 50%;
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+  }
+
+  .vertitcal {
+    cursor: pointer; /* Pointer/hand icon */
+    width: auto; /* Set a width if needed */
+    display: block; /* Make the buttons appear below each other */
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin: 20px;
+    justify-content: center;
+  }
+
+  .mat-icon {
+    font-size: 70px;
+    height: 70px;
+    width: 70px;
+    min-height: 70px;
+    min-width: 70px;
+    line-height: 70px;
+  }
+
+  .button-content {
+    display: flex;
+    align-items: center;
+  }
+
+  .button-text {
+    position: relative;
   }

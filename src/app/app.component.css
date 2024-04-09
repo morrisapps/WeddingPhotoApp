@@ -1,5 +1,6 @@
 :host {
   --content-padding: 10px;
+  --background-image: url("/assets/graphics/4965010.jpg")
 }
 header {
   display: block;
@@ -9,6 +10,10 @@ header {
 }
 .content {
   padding: var(--content-padding);
+  background-image: var(--background-image);
+  background-size: cover;
+  background-repeat: repeat-y;
+  /*height: calc(100% - 20px);*/
 }
 
 /* Toolbar */
@@ -25,7 +30,8 @@ header {
 }
 
 .example-sidenav {
-  width: 180px;
+  width: 100dvw;
+  max-width: 550px;
   padding: 5px;
   height:100%;
 }

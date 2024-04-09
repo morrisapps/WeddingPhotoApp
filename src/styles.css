@@ -1,8 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
 .saved-snackbar {
   margin-bottom: 90px !important;
+}
+
+* {
+
+}
+
+
+@font-face {
+  font-family: 'Shagadelic';
+  src: url("/assets/fonts/shagade.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'KeepOnTruckin';
+  src: url('/assets/fonts/KEEPT___.TTF');
+}
+
+@font-face {
+  font-family: 'ActionIs';
+  src: url('/assets/fonts/actionis.ttf');
+}
+
+@font-face {
+  font-family: 'Rachert';
+  src: url('/assets/fonts/Rachert.otf');
+}
+
+@font-face {
+  font-family: 'ShakyHandSomeComic';
+  src: url('/assets/fonts/Shaky Hand Some Comic.otf');
+}
+
+@font-face {
+  font-family: 'HipChick';
+  src: url('/assets/fonts/hipch___.ttf');
 }

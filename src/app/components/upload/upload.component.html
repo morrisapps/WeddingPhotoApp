@@ -1,0 +1,27 @@
+<div>
+
+  <div>
+    <mat-card  class="center">
+      <mat-card-title class="center-content">What's your name?</mat-card-title>
+      <mat-card-content>
+        <p>
+            <input #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
+        </p>
+          <div class="center-content">
+            <input [attr.disabled]="takeButtonDisabled? true : null" (change)="onFileSelected($event)" #fileInput type="file" id="fileInput" accept="image/*" multiple="multiple">
+          </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div class="footer" [hidden]="!hidden">
+  <mat-card style="width: 100dvw;">
+    <mat-card-actions class="center-content">
+      <button mat-raised-button style="margin-right:10px;" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
+      <button mat-raised-button [routerLink]="['/gallery']" class="button">VIEW GALLERY</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<mat-spinner class="center" *ngIf="showSpinner"></mat-spinner>
