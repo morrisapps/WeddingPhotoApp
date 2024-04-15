@@ -26,12 +26,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     <section>
       <mat-card>
         <div style="min-height: {{photoInformation.ratio}}px;" class="photo-container">
-
-          <img #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.fileName}}.jpg"
-            [name]="[photoInformation.fileName]" (load)="onLoad()">
-          <button mat-fab id="save" (click)="download()" class="download-button">
-            <mat-icon>get_app</mat-icon>
-          </button>
+          <div [hidden]="!imgLoaded">
+            <img [hidden]="!imgLoaded" #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.fileName}}.jpg"
+              [name]="[photoInformation.fileName]" (load)="onLoad()">
+            <button mat-fab id="save" (click)="download()" class="download-button">
+              <mat-icon>get_app</mat-icon>
+            </button>
+          </div>
         </div>
 
         <mat-card-actions>
