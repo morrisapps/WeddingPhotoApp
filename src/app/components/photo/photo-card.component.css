@@ -41,3 +41,19 @@ section.listing a::after {
   bottom: 5px;
   left: calc(100% - 60px);
 }
+
+.center-content {
+  display: flex;
+  justify-content: center;
+}
+
+.photo-div {
+  position: relative;
+}
+
+.photo-div .center-spinner {
+  position: absolute;
+  display: block;
+  top: calc(50% - 80px);
+  left: calc(50% - 50px);
+}

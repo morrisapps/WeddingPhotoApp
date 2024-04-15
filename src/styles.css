@@ -7,10 +7,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
   margin-bottom: 90px !important;
 }
 
-* {
-
+.upload-snackbar {
+  margin-bottom: 20px !important;
 }
-
 
 @font-face {
   font-family: 'Shagadelic';

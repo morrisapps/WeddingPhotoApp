@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @Component({
@@ -17,25 +18,32 @@ import { MatIconModule } from '@angular/material/icon';
     MatCardModule,
     MatButtonModule,
     MatDividerModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   template: `
-  <section [hidden]="!imgLoaded">
-    <mat-card>
-      <div class="photo-container">
-        <img #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.fileName}}.jpg"\
-          [name]="[photoInformation.fileName]" (load)="onLoad()">
-        <button mat-fab id="save" (click)="download()" class="download-button">
-          <mat-icon>get_app</mat-icon>
-        </button>
-      </div>
+  <div class="photo-div">
+    <section>
+      <mat-card>
+        <div style="min-height: {{photoInformation.ratio}}px;" class="photo-container">
 
-      <mat-card-actions>
-        <mat-card-subtitle style="margin-left:10px;">Photographed by</mat-card-subtitle>
-        <mat-card-subtitle #author style="margin-left:4px;" [innerText]="[photoInformation.author]"></mat-card-subtitle>
-      </mat-card-actions>
-    </mat-card>
-  </section>
+          <img #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.fileName}}.jpg"
+            [name]="[photoInformation.fileName]" (load)="onLoad()">
+          <button mat-fab id="save" (click)="download()" class="download-button">
+            <mat-icon>get_app</mat-icon>
+          </button>
+        </div>
+
+        <mat-card-actions>
+          <mat-card-subtitle style="margin-left:10px;">Photographed by</mat-card-subtitle>
+          <mat-card-subtitle #author style="margin-left:4px;" [innerText]="[photoInformation.author]"></mat-card-subtitle>
+        </mat-card-actions>
+      </mat-card>
+    </section>
+    <mat-spinner *ngIf="!imgLoaded" class="center-spinner"></mat-spinner>
+  </div>
+
+
 `,
   styleUrl: './photo-card.component.css'
 })

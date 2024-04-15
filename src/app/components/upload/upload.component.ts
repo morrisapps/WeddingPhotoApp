@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialog } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -28,6 +28,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     MatInputModule,
     MatProgressSpinnerModule,
     MatIconModule,
+    MatProgressBarModule,
     MatToolbarModule,
     ReactiveFormsModule
   ],
@@ -43,9 +44,18 @@ export class UploadComponent {
   hidden: boolean = false;
   showSpinner: boolean = false;
 
-  takeButtonDisabled: boolean = true;
+  uploadDisabled: boolean = true;
+  uploadButtonDisabled: boolean = true;
+
+
   files?: File[];
   date = new Date();
+
+  uploaded = 0
+  progress = 0
+  lastProgressUpdateTime = 0
+
+  Promises = []
 
   // Flag to signal if current photo has been saved, and to warn the user if they try to leave or retake without saving.
   savedInGallery: boolean = false;
@@ -65,7 +75,7 @@ export class UploadComponent {
   // Storing files in a File array
   isMultiple = false;
 
-  // Take Photo button
+  // Upload photos input
   selectedFile: any = null;
   onFileSelected(event: any): void {
 
@@ -76,12 +86,18 @@ export class UploadComponent {
     Array.from(event.target.files as File[]).forEach(file => {
       // File has to be converted to blob and then into a new File in order to change the name
       var blob = file.slice(0, file.size, 'image/jpg');
-      this.files!.push(new File([blob], Date.now().toString()+file.name, {type: 'image/jpg'}))
+      this.files!.push(new File([blob], Date.now().toString()+file.name.split("\.")[0], {type: 'image/jpg'}))
     });
     this.hidden = true
-
     this.savedInGallery = false
     this.retakeButtonText = "RETAKE PHOTO"
+
+    // Set upload button disabled
+    if (this.files.length >= 1) {
+      this.uploadButtonDisabled = false
+    } else {
+      this.uploadButtonDisabled = true
+    }
 
   }
 
@@ -91,43 +107,94 @@ export class UploadComponent {
 
   // Save picture
   async post() {
+    this.uploaded = 0
     this.showSpinner = true
 
-    Array.from(this.files!).forEach(file => {
-            console.log(file)
-            // Read the Blob as DataURL using the FileReader API
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-              // Get full res photo as base 64
-              const PHOTO_BASE_64 = reader.result as string
+    new Promise((resolve,reject)=>{
+      Array.from(this.files!).map(async file => {
+        // Read the Blob as DataURL using the FileReader API
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          // Get full res photo as base 64
+          const PHOTO_BASE_64 = reader.result as string
 
-              // Get thumbnail as base64
-              const THUMB_BASE_64 = this.imageCompress
-                                          .compressFile(PHOTO_BASE_64, 0, 50, 80, 700)
-                                            .then(compressedImage => {
-                                              return compressedImage
-                                            });
-              // Post to json server
-              this.PhotoService.post(file.name).then(async () => {
-                // Save picture using express multer (fileupload service)
-                if (file) {
-                  (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , file.name as string))
-                  .subscribe((res: any) => {});
-                  (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', file.name as string))
-                  .subscribe((res: any) => {});
-                  this.savedInGallery = true
-                  this.retakeButtonText = "NEW PHOTO!"
-                }
-              })
-            };
-            reader.readAsDataURL(file)
-    });
-    // Posted picture to DB, stop spinner and show snackbar
-    this.showSpinner = false,
-    this._snackBar.open("Photo uploaded to gallery!", "close", {
-      duration: 4000,
-      panelClass: 'saved-snackbar'
-    });
+          // Get thumbnail as base64
+          const THUMB_BASE_64 = this.imageCompress
+                                      .compressFile(PHOTO_BASE_64, 0, 50, 80, 700)
+                                        .then(compressedImage => {
+                                          return compressedImage
+                                        });
+          // Save picture using express multer (fileupload service)
+          if (file) {
+            this.UpdateProgress(3);
+            // Upload full image
+            (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', file.name as string))
+            .subscribe(async (res: any) => {
+              this.UpdateProgress(3);
+              // Upload thumbnail
+              (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , file.name as string))
+              .subscribe(async (res: any) => {
+                this.UpdateProgress(1);
+                // Create image object to get width and height
+                var img = new Image();
+                img.onload = () => {
+                  // Post to json server
+                  this.PhotoService.post(file.name, img.width, img.height).then(async () => {
+                    this.UpdateProgress(1);
+                    if (this.uploaded == (this.files!.length * 8)){
+                      resolve(true)
+                    }
+                  })
+                };
+                img.src = await THUMB_BASE_64;
+              });
+            });
+          }
+        };
+        await reader.readAsDataURL(file)
+      })
+    }).then(() => {
+      new Promise((resolve, reject) => {
+        // Final progress update
+        this.progress = 100
+
+        // a resolved promise after .6 second to show the progress longer
+        setTimeout(() => {
+            resolve(true)
+        }, 600)
+      }).then(() => {
+              // Upload fully finished
+              this.savedInGallery = true
+              this.retakeButtonText = "NEW PHOTO!"
+              // Posted picture to DB, stop spinner and show snackbar
+              this.showSpinner = false,
+              this._snackBar.open("Photo(s) uploaded to gallery!", "close", {
+                duration: 4000,
+                panelClass: 'upload-snackbar'
+              });
+              this.uploadButtonDisabled = true
+              this.progress = 0
+      })
+  })}
+
+  UpdateProgress(weight: number) {
+    // Total weight is all the weight totaled that is passed in and should be divided by.
+    let totalWeight = 8
+
+    this.uploaded += weight
+
+    // Update progress, only if new progress is higher and has been 500 ms since last update
+    // Must wait 500 ms, or the CSS transition of the progress bar will flicker back and forth
+    if (this.files) {
+      let newProgress = (this.uploaded / totalWeight) / this.files?.length * 100
+      if (newProgress > this.progress){
+        let currentTime = new Date().getTime()
+        if (currentTime - 500 > this.lastProgressUpdateTime) {
+          this.lastProgressUpdateTime = currentTime
+          this.progress = newProgress
+        }
+      }
+    }
   }
 
   // User name form
@@ -136,17 +203,17 @@ export class UploadComponent {
     // Sets user as cookie
     this._cookieService.set('User', username);
     if (username) {
-      // Makes take picture button not disabled
-      this.takeButtonDisabled = false
+      // Makes upload card not disabled
+      this.uploadDisabled = false
     } else {
-      this.takeButtonDisabled = true
+      this.uploadDisabled = true
     }
   }
 
   ngOnInit() {
     if (this._cookieService.get('User')) {
-      // Makes take picture button not disabled
-      this.takeButtonDisabled = false
+      // Makes upload card not disabled
+      this.uploadDisabled = false
     }
   }
 
@@ -157,7 +224,4 @@ export class UploadComponent {
     }
   }
 
-  ngOnChanges() {
-    console.log("changed")
-  }
 }

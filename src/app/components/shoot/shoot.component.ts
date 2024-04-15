@@ -15,6 +15,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { HttpEvent, HttpEventType } from "@angular/common/http";
 
 @Component({
   selector: 'app-shoot',
@@ -34,14 +35,14 @@ import { NgxImageCompressService } from 'ngx-image-compress';
   <div>
 
     <div [hidden]="hidden">
-      <mat-card  class="center">
+      <mat-card style="width: 95dvw; max-width: 400px;" class="center">
         <mat-card-title class="center-content">What's your name?</mat-card-title>
         <mat-card-content>
-          <p>
-              <input #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
+          <p class="center-content">
+              <input style="width: 70%; height: 20px;" #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
           </p>
             <div class="center-content">
-              <button #takePictureButton disabled="{{takeButtonDisabled}}" type="button" mat-raised-button (click)="fileInput.click()" style="margin-bottom: 20px" id="takePictureButton">Take a Picture!</button>
+              <button #takePictureButton disabled="{{takeButtonDisabled}}" type="button" mat-raised-button (click)="fileInput.click()" id="takePictureButton">Take a Picture!</button>
               <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="cameraFileInput" accept="image/*" capture="environment">
             </div>
         </mat-card-content>
@@ -88,6 +89,9 @@ export class ShootComponent {
   file?: File;
   date = new Date();
 
+  req = new XMLHttpRequest();
+  progress = document.createElement('progress');
+
   // Flag to signal if current photo has been saved, and to warn the user if they try to leave or retake without saving.
   savedInGallery: boolean = false;
 
@@ -118,7 +122,7 @@ export class ShootComponent {
     // Save file into variable
     // File has to be converted to blob and then into a new File in order to change the name
     var blob = cameraFileInput.files![0].slice(0, cameraFileInput.files![0].size, 'image/jpg');
-    this.file = new File([blob], Date.now().toString(), {type: 'image/jpg'})
+    this.file = new File([blob], Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0], {type: 'image/jpg'})
     pictureDiv.hidden = false
     this.hidden = true
 
@@ -131,10 +135,12 @@ export class ShootComponent {
     this._snackBar.open(message, action);
   }
 
+
   // Save picture
   async post() {
     this.showSpinner = true
     let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
+
     // Get the remote image as a Blob with the fetch API
     fetch(pictureFromCamera.src)
         .then((res) => res.blob())
@@ -145,31 +151,35 @@ export class ShootComponent {
               if (this.file) {
                 // Get full res photo as base 64
                 const PHOTO_BASE_64 = reader.result as string
-                console.log(PHOTO_BASE_64)
                 // Get thumbnail as base64
                 const THUMB_BASE_64 = this.imageCompress
                                             .compressFile(PHOTO_BASE_64, 0, 50, 80, 700)
                                               .then(compressedImage => {
                                                 return compressedImage
                                               });
-                // Post to json server
-                this.PhotoService.post(this.file.name).then(async () => {
-                  // Save picture using express multer (fileupload service)
-                  if (this.file) {
-                    (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , this.file.name as string))
-                    .subscribe((res: any) => {});
-                    (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', this.file.name as string))
-                    .subscribe((res: any) => {});
-                    this.savedInGallery = true
-                    this.retakeButtonText = "NEW PHOTO!"
-                  }
-                  // Posted picture to DB, stop spinner and show snackbar
-                  this.showSpinner = false,
-                  this._snackBar.open("Photo uploaded to gallery!", "close", {
-                    duration: 4000,
-                    panelClass: 'saved-snackbar'
+
+                // Save picture using express multer (fileupload service)
+                if (this.file) {
+                  // Upload full res picture
+                  (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', this.file.name as string))
+                  .subscribe( async (res: any) => {
+                    // Upload thumbnail
+                    (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , this.file?.name as string))
+                    .subscribe((res: any) => {
+                      // Post to json server
+                      this.PhotoService.post(this.file?.name as string, 0 ,0).then(async () => {
+                        // Posted picture to DB, stop spinner and show snackbar
+                        this.showSpinner = false,
+                        this._snackBar.open("Photo uploaded to gallery!", "close", {
+                          duration: 4000,
+                          panelClass: 'saved-snackbar'
+                        });
+                        this.savedInGallery = true
+                        this.retakeButtonText = "NEW PHOTO!"
+                      })
+                    });
                   });
-                })
+                }
               }
             };
             reader.readAsDataURL(blob);

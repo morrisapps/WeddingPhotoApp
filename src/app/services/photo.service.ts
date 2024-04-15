@@ -20,23 +20,20 @@ export class PhotoService {
   }
 
 
-  async post(fileName: string) {
+  async post(fileName: string, width: number, height: number) {
+    let ratio = height * (400 / width)
     await fetch(this.url, {
       method: 'POST',
       headers: {
          'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        "id": 22,
         "name": fileName,
         "fileName": fileName,
         "author": this.cookieService.get('User'),
-        "city": "Juneau3",
-        "state": "AK2",
-        "photo": "https://angular.io/assets/images/tutorials/faa/i-do-nothing-but-love-lAyXdl1-Wmc-unsplash.jpg",
-        "availableUnits": 1,
-        "wifi": false,
-        "laundry": false
+        "width": width,
+        "height": height,
+        "ratio": ratio
       })
     })
   }

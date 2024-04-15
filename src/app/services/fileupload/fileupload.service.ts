@@ -21,12 +21,9 @@ export class FileuploadService {
     formData.append('subfolder',subFolder)
     formData.append('file', this.Base64ToFile(base64, fileName+".jpg"));
     return this.http.post(
-      'http://morrisapps.ddns.net:8080/upload', formData);
-
-      // var blob = file.slice(0, file.size, 'image/jpg');
-      // this.file = new File([blob], Date.now() + ".jpg", {type: 'image/jpg'})
-
-
+      'http://morrisapps.ddns.net:8080/upload',
+      formData
+    );
   }
 
   Base64ToFile(base64: string, fileName: string){

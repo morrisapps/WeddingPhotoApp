@@ -1,27 +1,34 @@
-<div>
+<div [hidden]="showSpinner">
 
-  <div>
-    <mat-card  class="center">
+  <div class="center">
+    <mat-card style="width: 95dvw; max-width: 400px;">
       <mat-card-title class="center-content">What's your name?</mat-card-title>
       <mat-card-content>
-        <p>
-            <input #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
+        <p class="center-content" >
+            <input style="width: 70%; height: 20px" #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
         </p>
-          <div class="center-content">
-            <input [attr.disabled]="takeButtonDisabled? true : null" (change)="onFileSelected($event)" #fileInput type="file" id="fileInput" accept="image/*" multiple="multiple">
-          </div>
       </mat-card-content>
     </mat-card>
+
+    <div >
+      <mat-card [style.opacity]="(uploadDisabled==true) ? '0.7' : '1.0'"
+        id="dimmer" style="width: 95dvw; max-width: 400px;margin-top:20px">
+        <mat-card-title [style.opacity]="(uploadDisabled==true) ? '0.7' : '1.0'" class="center-content">Select your photos</mat-card-title>
+        <mat-card-content>
+          <div class="center-content" style="margin:20px">
+            <input [attr.disabled]="uploadDisabled? true : null" (change)="onFileSelected($event)" #fileInput type="file" id="fileInput" accept="image/*" multiple="multiple">
+          </div>
+          <div class="center-content">
+            <button mat-raised-button style="border-width: 3px; border-color: black;" id="save" (click)="post()" class="button" disabled="{{uploadButtonDisabled}}">UPLOAD TO GALLERY</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>
 
-<div class="footer" [hidden]="!hidden">
-  <mat-card style="width: 100dvw;">
-    <mat-card-actions class="center-content">
-      <button mat-raised-button style="margin-right:10px;" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
-      <button mat-raised-button [routerLink]="['/gallery']" class="button">VIEW GALLERY</button>
-    </mat-card-actions>
-  </mat-card>
+<div class="center" *ngIf="showSpinner">
+  <mat-spinner style="margin-top: 40px;" class="horizontal-center"></mat-spinner>
+  <mat-progress-bar _mat-animation-noopable style="margin-top: 60px; width: 300px; transition-duration: 0 !important;" color="warn" mode="determinate" value="{{progress}}" ></mat-progress-bar>
 </div>
 
-<mat-spinner class="center" *ngIf="showSpinner"></mat-spinner>
