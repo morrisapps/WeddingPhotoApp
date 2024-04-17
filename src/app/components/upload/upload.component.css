@@ -1,3 +1,14 @@
+.root-div {
+  background-image: url("/assets/graphics/disco.png");
+  background-size: 200%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: 50% 30%;
+  background-color: #F07D60FF;
+  padding: 10px;
+  height: 100%;
+}
+
 .center {
   position: absolute;
   top: calc(50% - 10dvh);
@@ -49,18 +60,6 @@ img {
   min-height:100%;
   max-width:100%;
   width: auto;
-}
-
-#dimmer {
-
-
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-
-  z-index:100500;
-  filter: alpha(opacity=50);
 }
 
 .horizontal-center {

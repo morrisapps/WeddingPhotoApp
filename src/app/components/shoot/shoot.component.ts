@@ -32,8 +32,7 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
     ReactiveFormsModule
   ],
   template: `
-  <div>
-
+  <div class="root-div">
     <div [hidden]="hidden">
       <mat-card style="width: 95dvw; max-width: 400px;" class="center">
         <mat-card-title class="center-content">What's your name?</mat-card-title>
@@ -59,18 +58,17 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
 
       </mat-card>
     </div>
-  </div>
+    <div class="footer" [hidden]="!hidden">
+      <mat-card style="width: 100dvw;">
+        <mat-card-actions class="center-content">
+          <button mat-raised-button style="margin-right:10px;" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
+          <button mat-raised-button (click)="onRetakePhoto()" class="button">{{retakeButtonText}}</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
 
-  <div class="footer" [hidden]="!hidden">
-    <mat-card style="width: 100dvw;">
-      <mat-card-actions class="center-content">
-        <button mat-raised-button style="margin-right:10px;" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
-        <button mat-raised-button (click)="onRetakePhoto()" class="button">{{retakeButtonText}}</button>
-      </mat-card-actions>
-    </mat-card>
+    <mat-spinner class="center" *ngIf="showSpinner"></mat-spinner>
   </div>
-
-  <mat-spinner class="center" *ngIf="showSpinner"></mat-spinner>
   `,
   styleUrl: './shoot.component.css'
 })

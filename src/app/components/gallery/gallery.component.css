@@ -32,3 +32,10 @@ button {
       width: 70%;
   }
 }
+
+.root-div {
+  background-image: url("/assets/graphics/hippie-flower-background.png");
+  background-size: contain;
+  padding: 10px;
+  min-height: 100%;
+}

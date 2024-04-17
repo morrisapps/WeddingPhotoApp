@@ -21,6 +21,7 @@ import {MatButtonModule} from '@angular/material/button';
     MatButtonModule
   ],
   template: `
+  <div class="root-div">
     <section>
       <input (input)="filterResults(filter.value)" type="text" placeholder="Search by photographer" #filter style="margin-top:10px">
     </section>
@@ -28,6 +29,8 @@ import {MatButtonModule} from '@angular/material/button';
     <section class="results">
     <app-photo-card *ngFor="let photo of filteredPhotoList" [photoInformation]="photo"></app-photo-card>
     </section>
+  </div>
+
   `,
   styleUrl: './gallery.component.css'
 })

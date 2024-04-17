@@ -6,6 +6,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatDividerModule} from '@angular/material/divider';
+import { MatIconRegistry } from "@angular/material/icon";
+import { DomSanitizer } from "@angular/platform-browser";
+
 
 @Component({
   selector: 'app-root',
@@ -29,7 +32,36 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('toolbar', { read: ElementRef }) toolbar!:ElementRef;
   @ViewChild('drawerContainer', { read: ElementRef }) drawerContainer!:ElementRef;
 
-  constructor (private renderer: Renderer2) {}
+  constructor(private renderer: Renderer2, public matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer){
+    this.matIconRegistry.addSvgIcon(
+      'home',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/home.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'camera',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/camera.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'upload',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/upload.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'gallery',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/gallery.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'website',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/website.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'prizes',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/prizes.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'wedding',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/wedding.svg")
+    );
+  }
 
   ngAfterViewInit() {
     // Set drawer height to full screen

@@ -19,8 +19,9 @@ import { DomSanitizer } from "@angular/platform-browser";
     MatCardModule
   ],
   template: `
-  <img class="horizontal-center" src="../assets/weddingmotelgraphic.webp"><img>
 
+  <div class="root-div">
+    <img class="horizontal-center" src="../assets/weddingmotelgraphic.webp"><img>
     <div class="btn-group-vertical">
       <button mat-raised-button [routerLink]="['/shoot']" class="btn-home-style">
         <mat-icon svgIcon="camera" inline="true" class="mat-icon"></mat-icon>
@@ -35,6 +36,10 @@ import { DomSanitizer } from "@angular/platform-browser";
         <span class="button-text">Gallery</span>
       </button>
     </div>
+  </div>
+
+
+
   `,
   styleUrl: './home.component.css'
 })

@@ -93,7 +93,7 @@ export class UploadComponent {
     this.retakeButtonText = "RETAKE PHOTO"
 
     // Set upload button disabled
-    if (this.files.length >= 1) {
+    if (this.files.length >= 1 && (this._cookieService.get('User'))) {
       this.uploadButtonDisabled = false
     } else {
       this.uploadButtonDisabled = true
@@ -205,8 +205,12 @@ export class UploadComponent {
     if (username) {
       // Makes upload card not disabled
       this.uploadDisabled = false
+      if (this.files!.length >= 1) {
+        this.uploadButtonDisabled = false
+      }
     } else {
       this.uploadDisabled = true
+      this.uploadButtonDisabled = true
     }
   }
 

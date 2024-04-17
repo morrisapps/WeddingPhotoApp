@@ -1,3 +1,12 @@
+.root-div {
+  background-image: url("/assets/graphics/4965010.jpg");
+  background-size: cover;
+  background-repeat: repeat-y;
+  background-attachment: fixed;
+  height: 100%;
+  padding: 10px;
+}
+
 /* .btn-group button {   */
   .btn-group-vertical button {
  /* Some padding top right bottom left */
