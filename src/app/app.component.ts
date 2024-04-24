@@ -30,7 +30,8 @@ export class AppComponent implements AfterViewInit {
   title = 'home';
   background = "/assets/graphics/4965010.jpg"
   @ViewChild('toolbar', { read: ElementRef }) toolbar!:ElementRef;
-  @ViewChild('drawerContainer', { read: ElementRef }) drawerContainer!:ElementRef;
+  @ViewChild('drawer', { read: ElementRef }) drawer!:ElementRef;
+  @ViewChild('content', { read: ElementRef }) content!:ElementRef;
 
   constructor(private renderer: Renderer2, public matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer){
     this.matIconRegistry.addSvgIcon(
@@ -65,8 +66,9 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     // Set drawer height to full screen
-    this.background = "/assets/graphics/4965010.jpg"
-    this.renderer.setStyle(this.drawerContainer.nativeElement, "height", `calc(100dvh - ${this.toolbar.nativeElement.scrollHeight}px)`)
+    this.renderer.setStyle(this.drawer.nativeElement, "margin-top", `calc(${this.toolbar.nativeElement.scrollHeight}px)`)
+    this.renderer.setStyle(this.content.nativeElement, "margin-top", `calc(${this.toolbar.nativeElement.scrollHeight}px)`)
+    this.renderer.setStyle(this.content.nativeElement, "height", `calc(${window.innerHeight}px - ${this.toolbar.nativeElement.scrollHeight}px)`)
   }
 
 }

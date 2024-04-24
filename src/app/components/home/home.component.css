@@ -3,7 +3,6 @@
   background-size: cover;
   background-repeat: repeat-y;
   background-attachment: fixed;
-  height: 100%;
   padding: 10px;
 }
 
@@ -23,22 +22,19 @@
   }
 
   .btn-home-style {
-    font-size: 35px;
+    font-size: 30px;
     font-family: ShakyHandSomeComic;
     height:auto;
     margin: auto;
-    min-width: 400px!important;;
-    width: calc(100% - 40px);
-    max-width: calc(100% - 40px)!important;;
+    width: 450px!important;
+    max-width: 95vw!important;
     justify-content: flex-start;
   }
 
   .center {
-    width: 90%;
-    max-width: 800px;
     margin: 0;
-    position: absolute;
-    top: calc(50% - 30px);
+    position: fixed;
+    top: calc(35%);
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
@@ -62,10 +58,11 @@
 
   .horizontal-center {
     margin: 0;
-    position: relative;
+    position: fixed;
     left: 50%;
     -ms-transform: translate(-50%, 0);
     transform: translate(-50%, 0);
+    max-width: 95%
   }
 
   .vertitcal {
@@ -95,4 +92,11 @@
 
   .button-text {
     position: relative;
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    transform: translate(-50%, 0);
   }

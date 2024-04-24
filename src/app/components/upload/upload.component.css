@@ -1,20 +1,18 @@
 .root-div {
-  background-image: url("/assets/graphics/disco.png");
-  background-size: 200%;
+  background-image: url("/assets/graphics/womendancing3.png");
+  background-size: contain;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: 50% 30%;
   background-color: #F07D60FF;
   padding: 10px;
-  height: 100%;
 }
 
 .center {
   position: absolute;
-  top: calc(50% - 10dvh);
+  top: calc(50%);
   left: 50%;
   transform: translate(-50%, -50%);
-  max-height: 80dvh;
 }
 
 .center-content {

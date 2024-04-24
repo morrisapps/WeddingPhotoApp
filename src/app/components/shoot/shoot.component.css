@@ -6,15 +6,13 @@
   background-position: center;
   background-color: #EA5754FF;
   padding: 10px;
-  height: 100%;
 }
 
 .center {
   position: absolute;
-  top: calc(50% - 10dvh);
+  top: calc(50%);
   left: 50%;
   transform: translate(-50%, -50%);
-  max-height: 80dvh;
 }
 
 .center-content {
@@ -57,8 +55,7 @@
 
 img {
   display: block;
-  max-height:100%;
-  min-height:100%;
-  max-width:100%;
-  width: auto;
+  max-width: 100vw;
+  max-height: calc(100vh - 200px);
+  object-fit: contain;
 }

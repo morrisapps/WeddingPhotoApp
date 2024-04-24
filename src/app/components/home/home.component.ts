@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,21 +20,23 @@ import { DomSanitizer } from "@angular/platform-browser";
   ],
   template: `
 
-  <div class="root-div">
-    <img class="horizontal-center" src="../assets/weddingmotelgraphic.webp"><img>
-    <div class="btn-group-vertical">
-      <button mat-raised-button [routerLink]="['/shoot']" class="btn-home-style">
-        <mat-icon svgIcon="camera" inline="true" class="mat-icon"></mat-icon>
-        <span class="button-text">Take a photo!</span>
-      </button>
-      <button mat-raised-button [routerLink]="['/upload']" class="btn-home-style">
-        <mat-icon svgIcon="upload" inline="true" class="mat-icon"></mat-icon>
-        <span class="button-text">Upload to Gallery</span>
-      </button>
-      <button mat-raised-button [routerLink]="['/gallery']" class="btn-home-style">
-        <mat-icon svgIcon="gallery" inline="true" class="mat-icon"></mat-icon>
-        <span class="button-text">Gallery</span>
-      </button>
+  <div #rootDiv class="root-div" >
+    <img style="max-width: 95%;" class="center" src="../assets/weddingmotelgraphic.png"><img>
+    <div class="footer">
+      <div class="btn-group-vertical">
+        <button mat-raised-button [routerLink]="['/shoot']" class="btn-home-style">
+          <mat-icon svgIcon="camera" inline="true" class="mat-icon"></mat-icon>
+          <span class="button-text">Take a photo!</span>
+        </button>
+        <button mat-raised-button [routerLink]="['/upload']" class="btn-home-style">
+          <mat-icon svgIcon="upload" inline="true" class="mat-icon"></mat-icon>
+          <span class="button-text">Upload Photos</span>
+        </button>
+        <button mat-raised-button [routerLink]="['/gallery']" class="btn-home-style">
+          <mat-icon svgIcon="gallery" inline="true" class="mat-icon"></mat-icon>
+          <span class="button-text">Gallery</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -45,7 +47,11 @@ import { DomSanitizer } from "@angular/platform-browser";
 })
 
 export class HomeComponent {
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer){
+  @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
+
+  toolbarHeight = localStorage.getItem("toolbarHeight")
+
+  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer, private renderer: Renderer2){
     this.matIconRegistry.addSvgIcon(
       'camera',
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/camera.svg")
@@ -58,5 +64,10 @@ export class HomeComponent {
       'gallery',
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/gallery.svg")
     );
+  }
+
+  ngAfterViewInit() {
+    // set root div height minus 20 px margin
+    this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
   }
 }

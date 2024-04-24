@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PhotoCardComponent } from '../photo/photo-card.component';
 import { PhotoInformation } from '../../interfaces/photo-information';
@@ -21,11 +21,11 @@ import {MatButtonModule} from '@angular/material/button';
     MatButtonModule
   ],
   template: `
-  <div class="root-div">
+  <div #rootDiv class="root-div">
     <section>
-      <input (input)="filterResults(filter.value)" type="text" placeholder="Search by photographer" #filter style="margin-top:10px">
+      <input (input)="filterResults(filter.value)" type="text" placeholder="Search by photographer" #filter>
     </section>
-    <mat-spinner style="margin:0 auto;margin-top:33dvh;"  *ngIf="show"></mat-spinner>
+    <mat-spinner style="margin:0 auto;margin-top:33vh;"  *ngIf="show"></mat-spinner>
     <section class="results">
     <app-photo-card *ngFor="let photo of filteredPhotoList" [photoInformation]="photo"></app-photo-card>
     </section>
@@ -40,7 +40,9 @@ export class GalleryComponent {
   PhotoService: PhotoService = inject(PhotoService);
   show: boolean = true;
 
-  constructor() {
+  @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
+
+  constructor(private renderer: Renderer2) {
     this.PhotoService.getAllPhotos().then((photoList: PhotoInformation[]) => {
       this.photoList = photoList;
       this.photoList.reverse()
@@ -58,5 +60,10 @@ export class GalleryComponent {
     this.filteredPhotoList = this.photoList.filter(
       PhotoInformation => PhotoInformation?.author.toLowerCase().includes(text.toLowerCase())
     );
+  }
+
+  ngAfterViewInit() {
+    // set root div height minus 20 px margin
+    this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
   }
 }

@@ -2,7 +2,7 @@
   display: grid;
   column-gap: 14px;
   row-gap: 14px;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 400px));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   margin-top: 30px;
   justify-content: space-around;
 }
@@ -24,18 +24,8 @@ button {
   border-radius: 8px;
 }
 
-@media (min-width: 500px) and (max-width: 500px) {
-  .results {
-      grid-template-columns: repeat(2, 1fr);
-  }
-  input[type="text"] {
-      width: 70%;
-  }
-}
-
 .root-div {
   background-image: url("/assets/graphics/hippie-flower-background.png");
   background-size: contain;
   padding: 10px;
-  min-height: 100%;
 }

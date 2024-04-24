@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, ElementRef, ViewChild, Input, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PhotoInformation } from '../../interfaces/photo-information';
 import { RouterModule } from '@angular/router';
@@ -22,10 +22,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressSpinnerModule
   ],
   template: `
-  <div class="photo-div">
+  <div #photoDiv class="photo-div">
     <section>
-      <mat-card>
-        <div style="min-height: {{photoInformation.ratio}}px;" class="photo-container">
+      <mat-card #matCard >
+        <div id="photoContainer" #photoContainer class="photo-container">
           <div [hidden]="!imgLoaded">
             <img [hidden]="!imgLoaded" #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.fileName}}.jpg"
               [name]="[photoInformation.fileName]" (load)="onLoad()">
@@ -41,7 +41,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         </mat-card-actions>
       </mat-card>
     </section>
-    <mat-spinner *ngIf="!imgLoaded" class="center-spinner"></mat-spinner>
+    <mat-spinner *ngIf="!imgLoaded" class="center"></mat-spinner>
   </div>
 
 
@@ -52,11 +52,16 @@ export class PhotoCardComponent {
   @Input() photoInformation!: PhotoInformation;
   imgLoaded: boolean;
 
-  constructor() {
+  @ViewChild('matCard', { read: ElementRef }) matCard!:ElementRef;
+  @ViewChild('photoContainer', { read: ElementRef }) photoContainer!:ElementRef;
+  @ViewChild('photoDiv', { read: ElementRef }) photoDiv!:ElementRef;
+
+  constructor(private renderer: Renderer2) {
     this.imgLoaded = false
   }
 
   onLoad() {
+    this.photoContainer.nativeElement?.style.setProperty('min-height',  '0px')
     this.imgLoaded = true
   }
 
@@ -67,5 +72,10 @@ export class PhotoCardComponent {
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
+  }
+
+
+  ngAfterViewInit(){
+    this.photoContainer.nativeElement?.style.setProperty('min-height',  this.photoInformation.height * (this.matCard.nativeElement.clientWidth / this.photoInformation.width)+'px')
   }
 }

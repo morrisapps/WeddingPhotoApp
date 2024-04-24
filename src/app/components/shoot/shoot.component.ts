@@ -32,9 +32,9 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
     ReactiveFormsModule
   ],
   template: `
-  <div class="root-div">
+  <div #rootDiv class="root-div">
     <div [hidden]="hidden">
-      <mat-card style="width: 95dvw; max-width: 400px;" class="center">
+      <mat-card style="width: 95vw; max-width: 400px; margin-top: -80px;" class="center">
         <mat-card-title class="center-content">What's your name?</mat-card-title>
         <mat-card-content>
           <p class="center-content">
@@ -48,9 +48,8 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
       </mat-card>
     </div>
 
-    <div id="pictureDiv" class="center" [hidden]="!hidden">
-      <mat-card style="width: 95dvw;margin-bottom:90px;margin-top:90px;">
-
+    <div id="pictureDiv" class="center" style="top: calc(50% - 40px); max-width: 95%" [hidden]="!hidden">
+      <mat-card>
         <img id="pictureFromCamera"/>
         <button mat-fab id="save" (click)="download()" class="download-button">
           <mat-icon>get_app</mat-icon>
@@ -59,9 +58,9 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
       </mat-card>
     </div>
     <div class="footer" [hidden]="!hidden">
-      <mat-card style="width: 100dvw;">
+      <mat-card style="width: 100vw;">
         <mat-card-actions class="center-content">
-          <button mat-raised-button style="margin-right:10px;" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
+          <button mat-raised-button style="margin-right:10px; background-color: #59E761FF" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
           <button mat-raised-button (click)="onRetakePhoto()" class="button">{{retakeButtonText}}</button>
         </mat-card-actions>
       </mat-card>
@@ -95,13 +94,18 @@ export class ShootComponent {
 
   retakeButtonText: string = "RETAKE PHOTO"
 
+  @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
+
+  toolbarHeight = localStorage.getItem("toolbarHeight")
+
   constructor(
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
     private _cookieService: CookieService,
     private _renderer: Renderer2,
     private _dialog: MatDialog,
-    private imageCompress: NgxImageCompressService
+    private imageCompress: NgxImageCompressService,
+    private renderer: Renderer2
   ) {}
 
   // Storing files in a File array
@@ -236,9 +240,8 @@ export class ShootComponent {
       // Set input text to User name cookie
       this._renderer.setProperty(this.nameInput.nativeElement, 'value', this._cookieService.get('User'));
     }
+    // set root div height minus 20 px margin
+    this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
   }
 
-  ngOnChanges() {
-    console.log("changed")
-  }
 }

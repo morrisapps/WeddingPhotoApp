@@ -62,12 +62,17 @@ export class UploadComponent {
 
   retakeButtonText: string = "RETAKE PHOTO"
 
+  @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
+
+  toolbarHeight = localStorage.getItem("toolbarHeight")
+
   constructor(
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
     private _cookieService: CookieService,
     private _renderer: Renderer2,
-    private imageCompress: NgxImageCompressService
+    private imageCompress: NgxImageCompressService,
+    private renderer: Renderer2
   ) {
     this.files = new Array()
   }
@@ -226,6 +231,7 @@ export class UploadComponent {
       // Set input text to User name cookie
       this._renderer.setProperty(this.nameInput.nativeElement, 'value', this._cookieService.get('User'));
     }
+    // set root div height minus 20 px margin
+    this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
   }
-
 }
