@@ -2,7 +2,6 @@
   background-image: url("/assets/graphics/60-dance.png");
   background-size: contain;
   background-repeat: repeat-y;
-  background-attachment: fixed;
   background-position: center;
   background-color: #EA5754FF;
   padding: 10px;
@@ -39,6 +38,7 @@
   height: 60px;
   width: 45%;
   max-width: 200px;
+
 }
 
 .photo-container {
@@ -58,4 +58,19 @@ img {
   max-width: 100vw;
   max-height: calc(100vh - 200px);
   object-fit: contain;
+}
+
+@keyframes glowing {
+  0% {
+    background-color: #2ba805;
+    box-shadow: 0 0 5px #2ba805;
+  }
+  50% {
+    background-color: #49e819;
+    box-shadow: 0 0 20px #49e819;
+  }
+  100% {
+    background-color: #2ba805;
+    box-shadow: 0 0 5px #2ba805;
+  }
 }

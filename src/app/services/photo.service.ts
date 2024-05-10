@@ -30,7 +30,7 @@ export class PhotoService {
       body: JSON.stringify({
         "name": fileName,
         "fileName": fileName,
-        "author": this.cookieService.get('User'),
+        "author": localStorage.getItem('User'),
         "width": width,
         "height": height,
         "ratio": ratio

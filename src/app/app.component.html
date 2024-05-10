@@ -1,10 +1,10 @@
 <div>
   <main class="main">
-    <mat-toolbar #toolbar color="primary" style="background-color:#F85F28; position: fixed; z-index: 2;">
+    <mat-toolbar #toolbar color="primary" style="background-color:#F85F28; position: fixed; z-index: 2; container-type: size;">
       <button mat-icon-button style="margin-left:-15px" (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <span><button mat-button [routerLink]="['/']" style="font-size:22px; font-family: Shagadelic">Granted Photography</button></span>
+      <span><button mat-button [routerLink]="['/']" style="font-size:22px; font-size:35cqh; font-family: Shagadelic">Granted Photography</button></span>
       <span class="example-spacer"></span>
     </mat-toolbar>
 
@@ -20,10 +20,10 @@
           <button mat-button [routerLink]="['/gallery']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
             <mat-icon svgIcon="gallery" inline="true" class="mat-button-icon"></mat-icon>Gallery</button>
           <button mat-button [routerLink]="['/gallery']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="prizes" inline="true" class="mat-button-icon"></mat-icon>Prizes</button>
+            <mat-icon svgIcon="prizes" inline="true" class="mat-button-icon"></mat-icon>Not Implemented</button>
           <button mat-button [routerLink]="['/gallery']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="website" inline="true" class="mat-button-icon"></mat-icon>Kahoot!</button>
-          <button mat-button onclick="window.location.href='https://crgrant2024.wixsite.com/wedding';" class="button-sidenav">
+            <mat-icon svgIcon="website" inline="true" class="mat-button-icon"></mat-icon>Not Implemented</button>
+          <button mat-button onclick="window.location.href='https://crgrant2024.wixsite.com';" class="button-sidenav">
             <mat-icon svgIcon="wedding" inline="true" class="mat-button-icon"></mat-icon>Our Website!</button>
         </div>
       </mat-drawer>

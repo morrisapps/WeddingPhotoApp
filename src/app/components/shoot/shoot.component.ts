@@ -11,11 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ShootDialogComponent } from "../shoot-dialog/shoot-dialog.component";
-import { CookieService } from 'ngx-cookie-service';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { HttpEvent, HttpEventType } from "@angular/common/http";
+import { animate, keyframes, style, transition, trigger } from "@angular/animations";
 
 @Component({
   selector: 'app-shoot',
@@ -31,6 +31,19 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
     MatToolbarModule,
     ReactiveFormsModule
   ],
+  animations: [
+    trigger('keyframes',[
+      transition(':enter', [
+        animate('3s', keyframes([
+          style({transform: 'translateX(0%)'}),
+          style({transform: 'translateX(500%)'}),
+          style({transform: 'translate(500%, 100%)'}),
+          style({transform: 'translateY(100%)'}),
+          style({transform: 'translateX(0%)'})
+        ])),
+      ])
+    ])
+  ],
   template: `
   <div #rootDiv class="root-div">
     <div [hidden]="hidden">
@@ -38,10 +51,10 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
         <mat-card-title class="center-content">What's your name?</mat-card-title>
         <mat-card-content>
           <p class="center-content">
-              <input style="width: 70%; height: 20px;" #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
+              <input style="width: 70%; height: 20px;" maxlength="20" #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
           </p>
             <div class="center-content">
-              <button #takePictureButton disabled="{{takeButtonDisabled}}" type="button" mat-raised-button (click)="fileInput.click()" id="takePictureButton">Take a Picture!</button>
+              <button #takePictureButton [ngStyle]="takeButtonDisabled?{'background-color': ''} : {'background-color': '#73EB50'}" disabled="{{takeButtonDisabled}}" type="button" mat-raised-button (click)="fileInput.click()" id="takePictureButton">Take a Picture!</button>
               <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="cameraFileInput" accept="image/*" capture="environment">
             </div>
         </mat-card-content>
@@ -60,8 +73,8 @@ import { HttpEvent, HttpEventType } from "@angular/common/http";
     <div class="footer" [hidden]="!hidden">
       <mat-card style="width: 100vw;">
         <mat-card-actions class="center-content">
-          <button mat-raised-button style="margin-right:10px; background-color: #59E761FF" id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
-          <button mat-raised-button (click)="onRetakePhoto()" class="button">{{retakeButtonText}}</button>
+          <button mat-raised-button style="margin-right:10px; background-color: #73EB50"  id="save" (click)="post()" class="button" disabled="{{savedInGallery}}">SAVE TO GALLERY</button>
+          <button mat-raised-button style="background-color: #FE7972" (click)="onRetakePhoto()" class="button">{{retakeButtonText}}</button>
         </mat-card-actions>
       </mat-card>
     </div>
@@ -101,35 +114,53 @@ export class ShootComponent {
   constructor(
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
-    private _cookieService: CookieService,
     private _renderer: Renderer2,
     private _dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
     private renderer: Renderer2
   ) {}
 
-  // Storing files in a File array
-  isMultiple = false;
-
   // Take Photo button
-  selectedFile: any = null;
   onFileSelected(event: any): void {
     let cameraFileInput = document.getElementById("cameraFileInput") as HTMLInputElement
 
-    let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
-    let pictureDiv = document.getElementById("pictureDiv") as HTMLInputElement
-    pictureFromCamera.setAttribute("src", window.URL.createObjectURL(
-      (cameraFileInput.files![0])
-    ));
-    // Save file into variable
-    // File has to be converted to blob and then into a new File in order to change the name
-    var blob = cameraFileInput.files![0].slice(0, cameraFileInput.files![0].size, 'image/jpg');
-    this.file = new File([blob], Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0], {type: 'image/jpg'})
-    pictureDiv.hidden = false
-    this.hidden = true
+    // Save base64 image into cookie
+    // Read the Blob as DataURL using the FileReader API
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      // Get full res photo as base 64
+      const PHOTO_BASE_64 = reader.result as string
+      localStorage.setItem('base64Photo',PHOTO_BASE_64)
+      localStorage.setItem('fileName',Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
+      // Sets taken photo into picture div
+      this.setCookieToPicture()
+    }
 
-    this.savedInGallery = false
-    this.retakeButtonText = "RETAKE PHOTO"
+    var blob = cameraFileInput.files![0].slice(0, cameraFileInput.files![0].size, 'image/jpg');
+    reader.readAsDataURL(blob);
+  }
+
+
+  setCookieToPicture() {
+    let base64 = localStorage.getItem('base64Photo')
+    let fileName = localStorage.getItem('fileName')
+
+    if (base64 && fileName) {
+      // Retreive base64 photo from cookies and utilize Base64ToFile to convert back to file
+      this.file = this._uploadService.Base64ToFile(base64, fileName)
+
+      let pictureFromCamera = document.getElementById("pictureFromCamera") as HTMLInputElement
+      let pictureDiv = document.getElementById("pictureDiv") as HTMLInputElement
+
+      pictureFromCamera.setAttribute("src", window.URL.createObjectURL(
+        (this.file)
+      ));
+      pictureDiv.hidden = false
+      this.hidden = true
+
+      this.savedInGallery = false
+      this.retakeButtonText = "RETAKE PHOTO"
+    }
 
   }
 
@@ -169,8 +200,13 @@ export class ShootComponent {
                     (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , this.file?.name as string))
                     .subscribe((res: any) => {
                       // Post to json server
-                      this.PhotoService.post(this.file?.name as string, 0 ,0).then(async () => {
-                        // Posted picture to DB, stop spinner and show snackbar
+                      this.PhotoService.post(this.file?.name as string, pictureFromCamera.width, pictureFromCamera.height).then(async () => {
+                        // Posted picture to DB, stop spinner and show snackbar, remove from localStorage
+
+                        // Remove photo from localStorage
+                        localStorage.removeItem('base64Photo')
+                        localStorage.removeItem('fileName')
+
                         this.showSpinner = false,
                         this._snackBar.open("Photo uploaded to gallery!", "close", {
                           duration: 4000,
@@ -191,8 +227,8 @@ export class ShootComponent {
   // User name form
   NameInput(event: any): void {
     let username = event.target.value
-    // Sets user as cookie
-    this._cookieService.set('User', username);
+    // Sets user in storage
+    localStorage.setItem('User', username)
     if (username) {
       // Makes take picture button not disabled
       this.takeButtonDisabled = false
@@ -229,16 +265,20 @@ export class ShootComponent {
   }
 
   ngOnInit() {
-    if (this._cookieService.get('User')) {
+    if (localStorage.getItem('User')) {
       // Makes take picture button not disabled
       this.takeButtonDisabled = false
+    }
+
+    if (localStorage.getItem('base64Photo')){
+      this.setCookieToPicture()
     }
   }
 
   ngAfterViewInit() {
-    if (this._cookieService.get('User')) {
+    if (localStorage.getItem('User')) {
       // Set input text to User name cookie
-      this._renderer.setProperty(this.nameInput.nativeElement, 'value', this._cookieService.get('User'));
+      this._renderer.setProperty(this.nameInput.nativeElement, 'value', localStorage.getItem('User'));
     }
     // set root div height minus 20 px margin
     this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');

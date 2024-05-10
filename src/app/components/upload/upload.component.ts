@@ -11,7 +11,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CookieService } from 'ngx-cookie-service';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
@@ -69,7 +68,6 @@ export class UploadComponent {
   constructor(
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
-    private _cookieService: CookieService,
     private _renderer: Renderer2,
     private imageCompress: NgxImageCompressService,
     private renderer: Renderer2
@@ -98,7 +96,7 @@ export class UploadComponent {
     this.retakeButtonText = "RETAKE PHOTO"
 
     // Set upload button disabled
-    if (this.files.length >= 1 && (this._cookieService.get('User'))) {
+    if (this.files.length >= 1 && (localStorage.getItem('User'))) {
       this.uploadButtonDisabled = false
     } else {
       this.uploadButtonDisabled = true
@@ -206,7 +204,7 @@ export class UploadComponent {
   NameInput(event: any): void {
     let username = event.target.value
     // Sets user as cookie
-    this._cookieService.set('User', username);
+    localStorage.setItem('User', username)
     if (username) {
       // Makes upload card not disabled
       this.uploadDisabled = false
@@ -220,16 +218,16 @@ export class UploadComponent {
   }
 
   ngOnInit() {
-    if (this._cookieService.get('User')) {
+    if (localStorage.getItem('User')) {
       // Makes upload card not disabled
       this.uploadDisabled = false
     }
   }
 
   ngAfterViewInit() {
-    if (this._cookieService.get('User')) {
+    if (localStorage.getItem('User')) {
       // Set input text to User name cookie
-      this._renderer.setProperty(this.nameInput.nativeElement, 'value', this._cookieService.get('User'));
+      this._renderer.setProperty(this.nameInput.nativeElement, 'value', localStorage.getItem('User'));
     }
     // set root div height minus 20 px margin
     this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');

@@ -41,7 +41,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         </mat-card-actions>
       </mat-card>
     </section>
-    <mat-spinner *ngIf="!imgLoaded" class="center"></mat-spinner>
+    <mat-spinner *ngIf="!imgLoaded" class="center-spinner"></mat-spinner>
   </div>
 
 
@@ -76,6 +76,13 @@ export class PhotoCardComponent {
 
 
   ngAfterViewInit(){
-    this.photoContainer.nativeElement?.style.setProperty('min-height',  this.photoInformation.height * (this.matCard.nativeElement.clientWidth / this.photoInformation.width)+'px')
+    // set Material Card size while loading photo
+    if (this.photoInformation.height != 0 && this.photoInformation.height != null && this.photoInformation.width != 0 && this.photoInformation.width != null) {
+      // Set height using photoInformation
+      this.photoContainer.nativeElement?.style.setProperty('min-height',  this.photoInformation.height * (this.matCard.nativeElement.clientWidth / this.photoInformation.width)+'px')
+    } else {
+      // Default size if no photoInformation
+      this.photoContainer.nativeElement?.style.setProperty('height', '400px')
+    }
   }
 }
