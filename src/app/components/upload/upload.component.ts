@@ -69,8 +69,7 @@ export class UploadComponent {
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
     private _renderer: Renderer2,
-    private imageCompress: NgxImageCompressService,
-    private renderer: Renderer2
+    private imageCompress: NgxImageCompressService
   ) {
     this.files = new Array()
   }
@@ -225,11 +224,15 @@ export class UploadComponent {
   }
 
   ngAfterViewInit() {
+    // When selecting name input, make all text highlighted
+    let nameInput = document.getElementById("nameInput") as HTMLInputElement
+    nameInput.addEventListener(`focus`, () => nameInput.select());
+
     if (localStorage.getItem('User')) {
       // Set input text to User name cookie
       this._renderer.setProperty(this.nameInput.nativeElement, 'value', localStorage.getItem('User'));
     }
     // set root div height minus 20 px margin
-    this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
+    this._renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
   }
 }

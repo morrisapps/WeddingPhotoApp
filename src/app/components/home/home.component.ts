@@ -26,15 +26,15 @@ import { DomSanitizer } from "@angular/platform-browser";
       <div class="btn-group-vertical">
         <button mat-raised-button [routerLink]="['/shoot']" class="btn-home-style">
           <mat-icon svgIcon="camera" inline="true" class="mat-icon"></mat-icon>
-          <span class="button-text">Take a photo!</span>
+          <span style="line-height: 0px;" class="button-text">Take a photo!</span>
         </button>
         <button mat-raised-button [routerLink]="['/upload']" class="btn-home-style">
           <mat-icon svgIcon="upload" inline="true" class="mat-icon"></mat-icon>
-          <span class="button-text">Upload Photos</span>
+          <span style="line-height: 0px;" class="button-text">Upload Photos</span>
         </button>
         <button mat-raised-button [routerLink]="['/gallery']" class="btn-home-style">
           <mat-icon svgIcon="gallery" inline="true" class="mat-icon"></mat-icon>
-          <span class="button-text">Gallery</span>
+          <span style="line-height: 0px;" class="button-text">Gallery</span>
         </button>
       </div>
     </div>

@@ -9,7 +9,7 @@
     </mat-toolbar>
 
     <mat-drawer-container #drawerContainer class="example-container">
-      <mat-drawer #drawer class="example-sidenav" mode="push" [autoFocus]="false">
+      <mat-drawer #drawer class="example-sidenav" mode="over" [autoFocus]="false">
         <div fxLayout="column">
           <button mat-button [routerLink]="['/']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
             <mat-icon svgIcon="home" inline="true" class="mat-button-icon"></mat-icon>Home</button>

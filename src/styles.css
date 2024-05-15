@@ -1,10 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
+html {
+  /* snackbar color */
+  --mdc-snackbar-container-color: #FFFFFF;
+  --mdc-snackbar-supporting-text-color: #333333;
+
+  /* snackbar typography */
+  --mdc-snackbar-supporting-text-font: ShakyHandSomeComic, sans-serif;
+  --mdc-snackbar-supporting-text-line-height: 30px;
+  --mdc-snackbar-supporting-text-size: 3.8cqh;
+  --mdc-snackbar-supporting-text-weight: 600
+}
 body { margin: 0; font-size: 2.5cqh; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
 .saved-snackbar {
-  margin-bottom: 90px !important;
+  margin-top: 7px !important;
+  text-align: center !important;
+  white-space: pre-wrap;
 }
 
 .upload-snackbar {

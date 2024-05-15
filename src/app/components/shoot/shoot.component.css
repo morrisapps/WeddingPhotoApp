@@ -7,6 +7,17 @@
   padding: 10px;
 }
 
+.btn-group-vertical button {
+  /* Some padding top right bottom left */
+  cursor: pointer; /* Pointer/hand icon */
+  /* Make the buttons appear below each other */
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top:0;
+  display: flex;
+  align-items: center;
+}
+
 .center {
   position: absolute;
   top: calc(50%);
@@ -17,6 +28,13 @@
 .center-content {
   display: flex;
   justify-content: center;
+}
+
+.horizontal-center {
+  position: fixed;
+  left: 50%;
+  -ms-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
 }
 
 .namecard {
@@ -36,9 +54,12 @@
 
 .button {
   height: 60px;
-  width: 45%;
-  max-width: 200px;
-
+  width: calc(100vw - 20px);
+  margin-left: 10px;
+  margin-right: 10px;
+  max-width: 450px;
+  font-size: 2.4cqh;
+  justify-content: flex-start;
 }
 
 .photo-container {
@@ -51,6 +72,30 @@
   position: absolute;
   bottom: 10px;
   left: calc(100% - 65px);
+}
+
+.icon {
+  font-size: 70px;
+  height: 60px;
+  width: 60px;
+  min-height: 60px;
+  min-width: 60px;
+  line-height: 60px;
+  margin-left: 20px;
+}
+
+.icon-small {
+  font-size: 50px;
+  height: 50px;
+  width: 50px;
+  min-height: 50px;
+  min-width: 50px;
+  line-height: 50px;
+  margin-left: 10px;
+}
+
+.button-text {
+  margin-left: 20px;
 }
 
 img {

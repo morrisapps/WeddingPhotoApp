@@ -1,15 +1,35 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-@Injectable() export class DataService {
+@Injectable({
+  providedIn: 'root'
+})
+export class DataService {
 
-private data$: BehaviorSubject<any> = new BehaviorSubject<any>({});
+  private _base64Photo = new BehaviorSubject("");
+  private _fileNamePhoto = new BehaviorSubject("");
+  private _userName = new BehaviorSubject("");
 
-public getData(): Observable<any> {
-  return this.data$.asObservable();
- }
 
-  public setData(data: any): void {
-  this.data$.next(data);
-     }
+  public getBase64Photo(): Observable<string> {
+    return this._base64Photo.asObservable();
+  }
+  public setBase64Photo(base64: string): void {
+    this._base64Photo.next(base64);
+  }
+
+  public getFileNamePhoto(): Observable<any> {
+    return this._fileNamePhoto.asObservable();
+  }
+  public setFileNamePhoto(FileName: any): void {
+    this._fileNamePhoto.next(FileName);
+  }
+
+  public getUserName(): Observable<any> {
+    return this._userName.asObservable();
+  }
+  public setUserName(User: any): void {
+    this._userName.next(User);
+  }
+
 }
