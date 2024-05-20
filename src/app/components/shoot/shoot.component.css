@@ -1,8 +1,8 @@
 .root-div {
   background-image: url("/assets/graphics/60-dance.png");
-  background-size: contain;
-  background-repeat: repeat-y;
-  background-position: center;
+  background-size: 600px;
+  background-repeat: no-repeat;
+  background-position: 50% 10%;
   background-color: #EA5754FF;
   padding: 10px;
 }
@@ -16,6 +16,13 @@
   margin-top:0;
   display: flex;
   align-items: center;
+}
+
+.success {
+  text-align: center;
+  font-size: 1.25em;
+  margin: 10px;
+  color: #73AF55;
 }
 
 .center {
@@ -53,12 +60,13 @@
 }
 
 .button {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  width: 90%;
+  font-size: 2.6cqh;
   height: 60px;
-  width: calc(100vw - 20px);
-  margin-left: 10px;
-  margin-right: 10px;
-  max-width: 450px;
-  font-size: 2.4cqh;
+  max-width: 400px;
   justify-content: flex-start;
 }
 
@@ -105,17 +113,65 @@ img {
   object-fit: contain;
 }
 
-@keyframes glowing {
-  0% {
-    background-color: #2ba805;
-    box-shadow: 0 0 5px #2ba805;
+/* For Checkmark animation. Source: https://codepen.io/elevaunt/pen/JYRBzJ */
+
+svg {
+  width: 100px;
+  display: block;
+}
+
+.path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+  &.circle {
+    -webkit-animation: dash .9s ease-in-out;
+    animation: dash .9s ease-in-out;
   }
-  50% {
-    background-color: #49e819;
-    box-shadow: 0 0 20px #49e819;
+  &.line {
+    stroke-dashoffset: 1000;
+    -webkit-animation: dash .9s .35s ease-in-out forwards;
+    animation: dash .9s .35s ease-in-out forwards;
+  }
+  &.check {
+    stroke-dashoffset: -100;
+    -webkit-animation: dash-check .9s .35s ease-in-out forwards;
+    animation: dash-check .9s .35s ease-in-out forwards;
+  }
+}
+
+
+@-webkit-keyframes dash {
+  0% {
+    stroke-dashoffset: 1000;
   }
   100% {
-    background-color: #2ba805;
-    box-shadow: 0 0 5px #2ba805;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@-webkit-keyframes dash-check {
+  0% {
+    stroke-dashoffset: -100;
+  }
+  100% {
+    stroke-dashoffset: 900;
+  }
+}
+
+@keyframes dash-check {
+  0% {
+    stroke-dashoffset: -100;
+  }
+  100% {
+    stroke-dashoffset: 900;
   }
 }

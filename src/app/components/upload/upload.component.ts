@@ -63,7 +63,7 @@ export class UploadComponent {
 
   @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
 
-  toolbarHeight = localStorage.getItem("toolbarHeight")
+  toolbarHeight = "0"
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -217,6 +217,8 @@ export class UploadComponent {
   }
 
   ngOnInit() {
+    this.toolbarHeight = localStorage.getItem("toolbarHeight") as string
+
     if (localStorage.getItem('User')) {
       // Makes upload card not disabled
       this.uploadDisabled = false

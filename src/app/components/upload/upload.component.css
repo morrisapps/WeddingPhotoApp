@@ -1,8 +1,8 @@
 .root-div {
-  background-image: url("/assets/graphics/womendancing3.png");
-  background-size: contain;
+  background-image: url("/assets/graphics/womendancing.png");
+  background-size: 650px;
+  background-position: 50% 10%;
   background-repeat: no-repeat;
-  background-position: 50% 30%;
   background-color: #F07D60FF;
   padding: 10px;
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { PhotoInformation } from '../interfaces/photo-information';
-import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -37,11 +36,5 @@ export class PhotoService {
       })
     })
   }
-
-  submitApplication(firstName: string, lastName: string, email: string) {
-    console.log(`Homes application received: firstName: ${firstName}, lastName: ${lastName}, email: ${email}.`);
-  }
-
-  constructor(private cookieService: CookieService) { }
 }
 

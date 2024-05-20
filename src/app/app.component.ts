@@ -69,6 +69,8 @@ export class AppComponent implements AfterViewInit {
     this.renderer.setStyle(this.drawer.nativeElement, "margin-top", `calc(${this.toolbar.nativeElement.scrollHeight}px)`)
     this.renderer.setStyle(this.content.nativeElement, "margin-top", `calc(${this.toolbar.nativeElement.scrollHeight}px)`)
     this.renderer.setStyle(this.content.nativeElement, "height", `calc(${window.innerHeight}px - ${this.toolbar.nativeElement.scrollHeight}px)`)
+
+    localStorage.setItem("toolbarHeight", this.toolbar.nativeElement.scrollHeight)
   }
 
 }

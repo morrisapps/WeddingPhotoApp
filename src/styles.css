@@ -24,6 +24,12 @@ body { margin: 0; font-size: 2.5cqh; font-family: Roboto, "Helvetica Neue", sans
   margin-bottom: 20px !important;
 }
 
+.snackbar {
+  margin-top: 7px !important;
+  text-align: center !important;
+  white-space: pre-wrap;
+}
+
 @font-face {
   font-family: 'Shagadelic';
   src: url("/assets/fonts/shagade.ttf") format('truetype');

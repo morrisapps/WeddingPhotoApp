@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { DetailsComponent } from './components/details/details.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { ShootComponent } from './components/shoot/shoot.component';
 import { UploadComponent } from './components/upload/upload.component';
@@ -30,10 +29,5 @@ export const routes: Routes = [
     path: 'photos',
     redirectTo: '../../photos',
     title: 'photos'
-  },
-  {
-    path: 'details/:id',
-    component: DetailsComponent,
-    title: 'Home details'
   }
 ];
