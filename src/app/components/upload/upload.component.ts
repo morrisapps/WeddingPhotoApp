@@ -13,7 +13,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
-import { NgxImageCompressService } from 'ngx-image-compress';
+import imageCompression from "browser-image-compression";
 
 @Component({
   selector: 'app-upload',
@@ -68,8 +68,7 @@ export class UploadComponent {
   constructor(
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
-    private _renderer: Renderer2,
-    private imageCompress: NgxImageCompressService
+    private _renderer: Renderer2
   ) {
     this.files = new Array()
   }
@@ -120,40 +119,44 @@ export class UploadComponent {
           // Get full res photo as base 64
           const PHOTO_BASE_64 = reader.result as string
 
-          // Get thumbnail as base64
-          const THUMB_BASE_64 = this.imageCompress
-                                      .compressFile(PHOTO_BASE_64, 0, 50, 80, 700)
-                                        .then(compressedImage => {
-                                          return compressedImage
-                                        });
           // Save picture using express multer (fileupload service)
           if (file) {
             this.UpdateProgress(3);
             // Upload full image
-            (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', file.name as string))
+            (await this._uploadService.uploadFiles(PHOTO_BASE_64, file.name as string))
             .subscribe(async (res: any) => {
               this.UpdateProgress(3);
-              // Upload thumbnail
-              (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , file.name as string))
-              .subscribe(async (res: any) => {
-                this.UpdateProgress(1);
-                // Create image object to get width and height
-                var img = new Image();
-                img.onload = () => {
-                  // Post to json server
-                  this.PhotoService.post(file.name, img.width, img.height).then(async () => {
-                    this.UpdateProgress(1);
-                    if (this.uploaded == (this.files!.length * 8)){
-                      resolve(true)
-                    }
-                  })
-                };
-                img.src = await THUMB_BASE_64;
-              });
+              // Create image object to get width and height
+              var img = new Image();
+              img.onload = () => {
+                // Post to json server
+                this.PhotoService.post(file.name, img.width, img.height).then(async () => {
+                  this.UpdateProgress(2);
+                  if (this.uploaded == (this.files!.length * 8)){
+                    resolve(true)
+                  }
+                })
+              };
+              img.src = PHOTO_BASE_64;
             });
           }
         };
-        await reader.readAsDataURL(file)
+
+
+        // Compress file
+        imageCompression(file, {
+          maxSizeMB: 1,
+          preserveExif: true
+        })
+        .then(function (compressedFile) {
+          // Gather photo file as blob for reader
+          var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
+          reader.readAsDataURL(blob);
+        })
+        .catch(function (error) {
+          console.log(error.message); // output: I just want to stop
+        });
+
       })
     }).then(() => {
       new Promise((resolve, reject) => {

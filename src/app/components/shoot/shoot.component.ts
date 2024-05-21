@@ -14,9 +14,10 @@ import { ShootDialogComponent } from "../shoot-dialog/shoot-dialog.component";
 import { PhotoService } from '../../services/photo.service';
 import { DataService } from '../../services/data.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
-import { NgxImageCompressService } from 'ngx-image-compress';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer } from "@angular/platform-browser";
+import Exif from "exifr"
+import imageCompression from 'browser-image-compression';
 
 @Component({
   selector: 'app-shoot',
@@ -117,6 +118,8 @@ export class ShootComponent {
   showCheck = false;
   showSpinner: boolean = false;
 
+  uploadType: string = "";
+
   takeButtonDisabled: boolean = true;
   file?: File;
   date = new Date();
@@ -127,12 +130,10 @@ export class ShootComponent {
 
   toolbarHeight = "0"
 
-
   constructor(
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
     private _renderer: Renderer2,
-    private _imagecompress: NgxImageCompressService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ) {
@@ -165,74 +166,76 @@ export class ShootComponent {
 
   // Save picture
   async post() {
+
     this.showCheck = false
     this.hidden = true
     this.showSpinner = true
     let cameraFileInput = document.getElementById("cameraFileInput") as HTMLInputElement
-    let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
 
-    // Save base64 image into cookie
+    let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
+    let file = cameraFileInput.files![0]
+
+
     // Read the Blob as DataURL using the FileReader API
     const reader = new FileReader();
+
     reader.onloadend = async () => {
-      // Get full res photo as base 64
-      const PHOTO_BASE_64 = reader.result as string
-      // Get thumbnail as base64
-      const THUMB_BASE_64 = this._imagecompress
-                                  .compressFile(PHOTO_BASE_64, 0, 100, 100, 550)
-                                    .then(compressedImage => {
-                                      return compressedImage
-                                    });
+      // Create image object to get width and height
+      var img = new Image();
+      img.onload = async () => {
+        // Save picture using express multer (fileupload service)
+        // Upload picture
+        (await this._uploadService.uploadFiles(reader.result as string, fileName as string))
+        .subscribe( async (res: any) => {
+                // Post to json server
+                this.PhotoService.post(fileName, img.width, img.height).then(async () => {
+                  // Posted picture to DB, stop spinner and show snackbar, remove from data service
 
-      // Save picture using express multer (fileupload service)
-      // Upload full res picture
-      (await this._uploadService.uploadFiles(PHOTO_BASE_64, 'full', fileName as string))
-      .subscribe( async (res: any) => {
-        // Upload thumbnail
-        (await this._uploadService.uploadFiles(await THUMB_BASE_64, 'thumbs' , fileName as string))
-        .subscribe(async (res: any) => {
-            // Create image object to get width and height
-            var img = new Image();
-            img.onload = () => {
-              // Post to json server
-              this.PhotoService.post(fileName, img.width, img.height).then(async () => {
-                // Posted picture to DB, stop spinner and show snackbar, remove from data service
+                  this.showSpinner = false
+                  // Open snackbar with random success message
+                  const successMessages = [
+                    "Groovy Shot! 📸",
+                    "Hey man, nice shot! 🤛😎",
+                    "Psychedelic! ☮️✌️",
+                    "Vibing photo! 🎨",
+                    "🔭 Far out shot!! 👀",
+                    "🌻 Flower power photo! 💐",
+                    "Peace and Love 🫶☮️",
+                    "☮️🌈 Hippy shot! 🌈☮️",
+                    "Rad shooting! ✌️👍",
+                    "Right on, man! 👍😎",
+                    "🪩🕺💃",
+                    "Oh, behave!",
+                    "Fab",
+                    "Gnarly",
+                    "Groovy Baby!"
+                  ]
+                  this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
 
-                this.showSpinner = false
-                // Open snackbar with random success message
-                const successMessages = [
-                  "Groovy Shot! 📸",
-                  "Hey man, nice shot! 🤛😎",
-                  "Psychedelic! ☮️✌️",
-                  "Vibing photo! 🎨",
-                  "🔭 Far out shot!! 👀",
-                  "🌻 Flower power photo! 💐",
-                  "Peace and Love 🫶☮️",
-                  "☮️🌈 Hippy shot! 🌈☮️",
-                  "Rad shooting! ✌️👍",
-                  "Right on, man! 👍😎",
-                  "🪩🕺💃",
-                  "Oh, behave!",
-                  "Fab",
-                  "Gnarly",
-                  "Groovy Baby!"
-                ]
-                this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
+                  this.hidden = true
+                  this.showCheck = true
 
-                this.hidden = true
-                this.showCheck = true
-
-                localStorage.setItem("","")
-              })
-            };
-            img.src = await THUMB_BASE_64;
-        });
-      });
+                  //localStorage.setItem("","")
+                })
+          });
+        }
+      img.src = reader.result as string;
     }
 
-    // Gather photo file as blob for reader
-    var blob = cameraFileInput.files![0].slice(0, cameraFileInput.files![0].size, 'image/jpg');
-    reader.readAsDataURL(blob);
+    // Compress file
+    imageCompression(file, {
+      maxSizeMB: 1,
+      preserveExif: true
+    })
+    .then(function (compressedFile) {
+      // Gather photo file as blob for reader
+      var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
+      reader.readAsDataURL(blob);
+    })
+    .catch(function (error) {
+      console.log(error.message); // output: I just want to stop
+    });
+
 
     // Reset cameraFileInput to free memory
     cameraFileInput.value = ''

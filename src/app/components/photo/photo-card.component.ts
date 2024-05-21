@@ -80,26 +80,23 @@ export class PhotoCardComponent {
   imgLoaded: boolean;
   likePressed: boolean;
 
+  photoHeight: string;
+
   @ViewChild('matCard', { read: ElementRef }) matCard!:ElementRef;
   @ViewChild('photoContainer', { read: ElementRef }) photoContainer!:ElementRef;
   @ViewChild('photoDiv', { read: ElementRef }) photoDiv!:ElementRef;
+  @ViewChild('photo', { read: ElementRef }) photo!:ElementRef;
   @ViewChild('likeIcon', { read: ElementRef }) likeIcon!:ElementRef;
 
   constructor(private renderer: Renderer2) {
     this.imgLoaded = false
     this.likePressed = false
+    this.photoHeight = ""
   }
 
   onLoad() {
-    this.photoContainer.nativeElement?.style.setProperty('min-height',  '0px')
-
-    // Set initial liked icon
-    let isLiked = localStorage.getItem(this.photoInformation.id)
-    if (isLiked == "true") {
-      this.likeIcon.nativeElement.textContent = "favorite"
-    } else {
-      this.likeIcon.nativeElement.textContent = "favorite_border"
-    }
+    // Set photo container's height to auto so that it sizes to image
+    this.photoContainer.nativeElement?.style.setProperty('height', "auto")
 
     this.imgLoaded = true
   }
@@ -153,10 +150,19 @@ export class PhotoCardComponent {
     // set Material Card size while loading photo
     if (this.photoInformation.height != 0 && this.photoInformation.height != null && this.photoInformation.width != 0 && this.photoInformation.width != null) {
       // Set height using photoInformation
-      this.photoContainer.nativeElement?.style.setProperty('min-height',  this.photoInformation.height * (this.matCard.nativeElement.clientWidth / this.photoInformation.width)+'px')
+      let height = (this.matCard.nativeElement.clientWidth * this.photoInformation.height / this.photoInformation.width)
+      this.photoContainer.nativeElement?.style.setProperty('height',  height+"px")
     } else {
       // Default size if no photoInformation
       this.photoContainer.nativeElement?.style.setProperty('height', '400px')
+    }
+
+    // Set initial liked icon
+    let isLiked = localStorage.getItem(this.photoInformation.id)
+    if (isLiked == "true") {
+      this.likeIcon.nativeElement.textContent = "favorite"
+    } else {
+      this.likeIcon.nativeElement.textContent = "favorite_border"
     }
   }
 }

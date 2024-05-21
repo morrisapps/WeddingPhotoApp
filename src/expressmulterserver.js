@@ -5,6 +5,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("node:path");
 const app = express();
+const sharp = require('sharp')
 const PORT = 8080;
 
 
@@ -20,7 +21,7 @@ const multerFilter = (req, file, cb) => {
 // destination path for files
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, "../photos/"+req.body.subfolder))
+      cb(null, path.join(__dirname, "../photos/full"))
     },
     filename: (req, file, res) => {
     res(null, file.originalname);
@@ -41,30 +42,23 @@ app.use((req, res, next) => {
     next();
 });
 
-// Upload functinality using POST method
-// to support multiple file uploads using the upload.array()
-// from multer object
-app.post("/upload", upload.single('file'), (req, res) => {
+const router = new express.Router
+app.use(router)
 
-  try {
-    if (req.file == undefined) {
-      return res.status(400).send({ message: "Please upload a file!" });
-    }
-    if (!req.file) {
-      res
-          .status(413)
-          .send("File not uploaded!, Please attach jpeg file under 5 MB");
-      return;
-  }
-    res.status(200).send({
-      message: "Uploaded the file successfully: " + req.file.originalname,
-    });
-  } catch (err) {
-    res.status(500).send({
-      message: `Could not upload the file: ${req.file.originalname}. ${err}`,
-    });
-  }
-});
+router.get('/', (req, res) => {
+    res.send('ok')
+})
+router.post('/upload',upload.single('file') ,async (req, res) => {
+   const { filename: image } = req.file
+
+   await sharp(req.file.path)
+    .resize(500)
+    .jpeg({quality: 50})
+    .toFile(
+        path.resolve(__dirname, "../photos/",'thumbs',image)
+    )
+    res.status(200).json("Uploaded Successfully");
+})
 
 app.listen(8080, function () {
     console.log(`server is started and listening at port: ${PORT}`);
