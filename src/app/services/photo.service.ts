@@ -13,28 +13,54 @@ export class PhotoService {
     return await data.json() ?? [];
   }
 
-  async getPhotoById(id: number): Promise<PhotoInformation | undefined> {
+  async getPhotoById(id: string): Promise<PhotoInformation | undefined> {
     const data = await fetch(`${this.url}/${id}`);
     return await data.json() ?? {};
   }
 
 
   async post(fileName: string, width: number, height: number) {
-    let ratio = height * (400 / width)
     await fetch(this.url, {
       method: 'POST',
       headers: {
          'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        "name": fileName,
-        "fileName": fileName,
+        "id": fileName,
         "author": localStorage.getItem('User'),
         "width": width,
         "height": height,
-        "ratio": ratio
+        "likes": 0
       })
     })
   }
+
+  async patchLikes(fileName: string, liked: boolean) {
+    // Get current likes from JSON server
+    let currentLikes = (await this.getPhotoById(fileName))?.likes
+
+    if (typeof(currentLikes) !== "number") {
+      currentLikes = 0
+    }
+
+    // If liked then add a like. If not, remove a like.
+    if (liked) {
+      currentLikes += 1
+    } else {
+      currentLikes -= 1
+    }
+
+    await fetch(this.url + "/" + fileName, {
+      method: 'PATCH',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "id": fileName,
+        "likes": currentLikes
+      })
+    })
+  }
+
 }
 

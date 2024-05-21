@@ -36,11 +36,6 @@ section.listing a::after {
   max-height:100%;
   height: auto;
 }
-.photo-container .download-button {
-  position: absolute;
-  bottom: 5px;
-  left: calc(100% - 60px);
-}
 
 .center-content {
   display: flex;
@@ -56,4 +51,8 @@ section.listing a::after {
   display: block;
   top: calc(50% - 80px);
   left: calc(50% - 50px);
+}
+
+mat-icon {
+  width: 100px;
 }

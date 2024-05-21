@@ -18,6 +18,11 @@
   align-items: center;
 }
 
+mat-card-title {
+  font-size: 25px;
+  margin-top: 10px;
+}
+
 .success {
   text-align: center;
   font-size: 1.25em;
@@ -64,7 +69,8 @@
   margin-right: 20px;
   margin-bottom: 20px;
   width: 90%;
-  font-size: 2.6cqh;
+
+  font-size: 22px;
   height: 60px;
   max-width: 400px;
   justify-content: flex-start;

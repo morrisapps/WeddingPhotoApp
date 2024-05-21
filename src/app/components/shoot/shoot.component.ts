@@ -82,7 +82,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 
     <div [hidden]="hidden" style="width: 95vw; max-width: 400px;" class="center">
       <mat-card >
-        <mat-card-title class="center-content" style="margin-top:10px;">What's your name?</mat-card-title>
+        <mat-card-title class="center-content">What's your name?</mat-card-title>
         <mat-card-content style="margin-bottom: 20px">
           <p class="center-content">
               <input style="width: 95%; height: 40px; font-size: 20px; text-align: center;" maxlength="20" #nameInput type="text" matInput placeholder="name" id="nameInput" (input)="NameInput($event)">
@@ -90,7 +90,7 @@ import { DomSanitizer } from "@angular/platform-browser";
         </mat-card-content>
         <mat-card-footer>
           <div class="center-content">
-            <button #takePictureButton [hidden]="takeButtonDisabled" type="button" mat-raised-button (click)="fileInput.click()" id="takePictureButton" class="button" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px; width: 95vw; font-size: 2.6cqh; background-color: #E4FFC4;">
+            <button #takePictureButton [hidden]="takeButtonDisabled" type="button" mat-raised-button (click)="fileInput.click()" id="takePictureButton" class="button" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px; width: 95vw; background-color: #E4FFC4;">
               <mat-icon svgIcon="camerapicture" inline="true" class="icon"></mat-icon>
               <span style="line-height: 0px;">Take a Picture!</span>
             </button>
@@ -179,7 +179,7 @@ export class ShootComponent {
       const PHOTO_BASE_64 = reader.result as string
       // Get thumbnail as base64
       const THUMB_BASE_64 = this._imagecompress
-                                  .compressFile(PHOTO_BASE_64, 0, 50, 80, 700)
+                                  .compressFile(PHOTO_BASE_64, 0, 100, 100, 550)
                                     .then(compressedImage => {
                                       return compressedImage
                                     });

@@ -9,10 +9,10 @@ html {
   /* snackbar typography */
   --mdc-snackbar-supporting-text-font: ShakyHandSomeComic, sans-serif;
   --mdc-snackbar-supporting-text-line-height: 30px;
-  --mdc-snackbar-supporting-text-size: 3.8cqh;
+  --mdc-snackbar-supporting-text-size: 35px;
   --mdc-snackbar-supporting-text-weight: 600
 }
-body { margin: 0; font-size: 2.5cqh; font-family: Roboto, "Helvetica Neue", sans-serif;}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
 .saved-snackbar {
   margin-top: 7px !important;

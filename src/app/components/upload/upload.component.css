@@ -66,3 +66,8 @@ img {
   -ms-transform: translate(-50%, 0);
   transform: translate(-50%, 0);
 }
+
+mat-card-title {
+  font-size: 25px;
+  margin-top: 10px;
+}

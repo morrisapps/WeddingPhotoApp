@@ -22,13 +22,13 @@
   }
 
   .btn-home-style {
-    font-size: 30px;
-    font-size: 4.5cqh;
+    /*font-size: clamp(24px, 10vh, 34px);*/
+    font-size:  min(4vmax, 40px);
     font-family: ShakyHandSomeComic;
     height:auto;
     margin: auto;
-    width: 450px!important;
-    max-width: 95vw!important;
+    width: 400px!important;
+    max-width: 90vw!important;
     justify-content: flex-start;
   }
 
@@ -93,6 +93,7 @@
 
   .button-text {
     position: relative;
+    overflow-x: hidden !important;
   }
 
   .footer {

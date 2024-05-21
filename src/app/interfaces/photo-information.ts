@@ -1,8 +1,7 @@
 export interface PhotoInformation {
-  name: string;
-  fileName: string;
+  id: string;
   author: string;
   width: number;
   height: number;
-  ratio: number;
+  likes: number;
 }
