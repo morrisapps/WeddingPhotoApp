@@ -8,12 +8,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDialog } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
+import { UploadDialogComponent } from "../upload-dialog/upload-dialog.component";
 import imageCompression from "browser-image-compression";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-upload',
@@ -36,6 +39,8 @@ import imageCompression from "browser-image-compression";
 })
 export class UploadComponent {
   @ViewChild('nameInput', { read: ElementRef }) nameInput!:ElementRef;
+  @ViewChild('fileForm', { read: ElementRef }) fileForm!:ElementRef;
+  @ViewChild('textEllipsis', { read: ElementRef }) textEllipsis!:ElementRef;
 
   PhotoService: PhotoService = inject(PhotoService);
   photoBase64: string = "";
@@ -56,11 +61,6 @@ export class UploadComponent {
 
   Promises = []
 
-  // Flag to signal if current photo has been saved, and to warn the user if they try to leave or retake without saving.
-  savedInGallery: boolean = false;
-
-  retakeButtonText: string = "RETAKE PHOTO"
-
   @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
 
   toolbarHeight = "0"
@@ -68,9 +68,17 @@ export class UploadComponent {
   constructor(
     private _snackBar: MatSnackBar,
     private _uploadService: FileuploadService,
-    private _renderer: Renderer2
+    private _renderer: Renderer2,
+    private _matIconRegistry: MatIconRegistry,
+    private _domSanitizer: DomSanitizer,
+    private _dialog: MatDialog
   ) {
     this.files = new Array()
+    // Import svg icons
+    this._matIconRegistry.addSvgIcon(
+      'upload',
+      this._domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/upload.svg")
+    );
   }
 
   // Storing files in a File array
@@ -90,8 +98,6 @@ export class UploadComponent {
       this.files!.push(new File([blob], Date.now().toString()+file.name.split("\.")[0], {type: 'image/jpg'}))
     });
     this.hidden = true
-    this.savedInGallery = false
-    this.retakeButtonText = "RETAKE PHOTO"
 
     // Set upload button disabled
     if (this.files.length >= 1 && (localStorage.getItem('User'))) {
@@ -142,7 +148,6 @@ export class UploadComponent {
           }
         };
 
-
         // Compress file
         imageCompression(file, {
           maxSizeMB: 1,
@@ -169,15 +174,15 @@ export class UploadComponent {
         }, 600)
       }).then(() => {
               // Upload fully finished
-              this.savedInGallery = true
-              this.retakeButtonText = "NEW PHOTO!"
+
               // Posted picture to DB, stop spinner and show snackbar
               this.showSpinner = false,
-              this._snackBar.open("Photo(s) uploaded to gallery!", "close", {
+              this._snackBar.open("Photo(s) uploaded to gallery!", "", {
                 duration: 4000,
                 panelClass: 'upload-snackbar'
               });
               this.uploadButtonDisabled = true
+              this.fileForm.nativeElement.reset()
               this.progress = 0
       })
   })}
@@ -239,5 +244,17 @@ export class UploadComponent {
     }
     // set root div height minus 20 px margin
     this._renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
+
+    // Display dialog message on first entering. Should only be once.
+    if (localStorage.getItem("uploadDialogFlag") != "true") {
+      this._dialog.open(UploadDialogComponent, {
+        data: {
+          title: "About uploading",
+          message: "You can upload all your photos here if you rather use your camera without this website.</br>Make sure you have already taken your pictures."
+        }
+      });
+      localStorage.setItem("uploadDialogFlag", "true")
+    }
+
   }
 }

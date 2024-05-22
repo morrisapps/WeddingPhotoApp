@@ -22,6 +22,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
 .upload-snackbar {
   margin-bottom: 20px !important;
+  text-align: center !important;
+  white-space: pre-wrap;
+  --mdc-snackbar-supporting-text-size: 28px;
 }
 
 .snackbar {

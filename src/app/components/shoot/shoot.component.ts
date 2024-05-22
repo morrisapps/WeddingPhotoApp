@@ -16,7 +16,6 @@ import { DataService } from '../../services/data.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer } from "@angular/platform-browser";
-import Exif from "exifr"
 import imageCompression from 'browser-image-compression';
 
 @Component({
