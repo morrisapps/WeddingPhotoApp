@@ -23,7 +23,7 @@ import {MatButtonModule} from '@angular/material/button';
   template: `
   <div #rootDiv class="root-div">
     <section>
-      <input (input)="filterResults(filter.value)" type="text" placeholder="Search by photographer" #filter style="height: 35px; font-size: 16px; margin-top:5px;">
+      <input (input)="filterResults(filter.value)" type="text" placeholder="Search by photographer" #filter>
     </section>
     <mat-spinner style="margin:0 auto;margin-top:33vh;"  *ngIf="show"></mat-spinner>
     <section class="results">
