@@ -7,6 +7,8 @@ const path = require("node:path");
 const app = express();
 const sharp = require('sharp')
 const PORT = 8080;
+const fs = require("fs");
+const CryptoJS = require("crypto-js")
 
 
 const multerFilter = (req, file, cb) => {
@@ -48,6 +50,12 @@ app.use(router)
 router.get('/', (req, res) => {
     res.send('ok')
 })
+
+// Returns a salted hard coded password for the purpose of being decrypted to match user given pass.
+router.get('/admin', (req, res) => {
+  res.status(200).json("LgtkQm2GpwFG2evJjc1IGw==");
+})
+
 router.post('/upload', file.single('file') ,async (req, res) => {
    const { filename: image } = req.file
 
@@ -60,8 +68,6 @@ router.post('/upload', file.single('file') ,async (req, res) => {
     res.status(200).json("Uploaded Successfully");
 })
 
-
-const fs = require("fs");
 
 const remove = (req, res) => {
   const fileName = req.params.name;

@@ -87,7 +87,7 @@ export class PhotoCardComponent {
   imgLoaded: boolean;
   likePressed: boolean;
 
-  isRemovable: string | null = null;
+  isRemovable: boolean = false;
 
   photoHeight: string;
 
@@ -220,6 +220,11 @@ export class PhotoCardComponent {
 
   ngOnInit(){
     // Set removable flag if user has taken this photo and is still within their localStorage.
-    this.isRemovable = localStorage.getItem(this.photoInformation.id);
+    if (localStorage.getItem(this.photoInformation.id) || localStorage.getItem("admin") == "true") {
+      this.isRemovable = true;
+    } else {
+      this.isRemovable = false;
+    }
+
   }
 }
