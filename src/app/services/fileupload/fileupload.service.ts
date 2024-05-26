@@ -18,14 +18,14 @@ export class FileuploadService {
 
     formData.append('file', this.Base64ToFile(base64, fileName+".jpg"));
     return this.http.post(
-      'http://morrisapps.ddns.net:8080/upload',
+      'https://morrisapps.ddns.net:8080/upload',
       formData
     );
   }
 
   async removeFile(fileName: string) {
     return this.http.delete(
-      'http://morrisapps.ddns.net:8080/'+fileName
+      'https://morrisapps.ddns.net:8080/'+fileName
     );
   }
 

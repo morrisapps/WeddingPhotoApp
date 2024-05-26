@@ -49,7 +49,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
         <div id="photoContainer" #photoContainer class="photo-container">
           <div [hidden]="!imgLoaded">
-            <img [hidden]="!imgLoaded" #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.id}}.jpg"
+            <img [hidden]="!imgLoaded" #photo class="listing-photo" id="photo" src="https://morrisapps.ddns.net/photos/thumbs/{{photoInformation.id}}.jpg"
               [name]="[photoInformation.id]" (load)="onLoad()">
           </div>
           <button mat-fab class="remove-button" *ngIf="isRemovable" (click)="remove()" style="width: 50px; height: 50px; background-color: red">

@@ -6,9 +6,9 @@ const multer = require("multer");
 const path = require("node:path");
 const app = express();
 const sharp = require('sharp')
-const PORT = 8080;
 const fs = require("fs");
-const CryptoJS = require("crypto-js")
+const cors = require('cors');
+const https = require('https')
 
 
 const multerFilter = (req, file, cb) => {
@@ -23,7 +23,7 @@ const multerFilter = (req, file, cb) => {
 // destination path for files
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, "../photos/full"))
+      cb(null, path.join(__dirname, "../../../photos/full"))
     },
     filename: (req, file, res) => {
     res(null, file.originalname);
@@ -37,12 +37,7 @@ const file = multer({
 });
 
 // A Simple Middleware to add CORS functionality
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', '*');
-    next();
-});
+app.use(cors());
 
 const router = new express.Router
 app.use(router)
@@ -63,7 +58,7 @@ router.post('/upload', file.single('file') ,async (req, res) => {
     .resize(500)
     .jpeg({quality: 50})
     .toFile(
-        path.resolve(__dirname, "../photos/",'thumbs',image)
+        path.resolve(__dirname, "../../../photos/",'thumbs',image)
     )
     res.status(200).json("Uploaded Successfully");
 })
@@ -71,10 +66,10 @@ router.post('/upload', file.single('file') ,async (req, res) => {
 
 const remove = (req, res) => {
   const fileName = req.params.name;
-  const directoryFullPath = path.join(__dirname, "../photos/full/" + fileName + ".jpg");
-  const directoryThumbsPath = path.join(__dirname, "../photos/thumbs/" + fileName + ".jpg");
-  const directoryRemovedFullPath = path.join(__dirname, "../photos/removed/full/" + fileName + ".jpg");
-  const directoryRemovedThumbsPath = path.join(__dirname, "../photos/removed/thumbs/" + fileName + ".jpg");
+  const directoryFullPath = path.join(__dirname, "../../../photos/full/" + fileName + ".jpg");
+  const directoryThumbsPath = path.join(__dirname, "../../../photos/thumbs/" + fileName + ".jpg");
+  const directoryRemovedFullPath = path.join(__dirname, "../../../photos/removed/full/" + fileName + ".jpg");
+  const directoryRemovedThumbsPath = path.join(__dirname, "../../../photos/removed/thumbs/" + fileName + ".jpg");
 
   // Remove full image
   fs.rename(directoryFullPath, directoryRemovedFullPath, (err) => {
@@ -97,10 +92,22 @@ const remove = (req, res) => {
     }
   });
 };
-
 router.delete("/:name", remove);
 
+// Start server using certificate
+const keyFile = path.join(__dirname, 'cert.key');
+const certFile = path.join(__dirname, 'cert.cer');
+https
+  .createServer(
+    {
+      key: fs.readFileSync(keyFile),
+      cert: fs.readFileSync(certFile),
+    },
+    app
+  )
+  .listen(8080, () => {
+    console.log(
+      'Started https://localhost:8080/'
+    );
+  });
 
-app.listen(8080, function () {
-    console.log(`server is started and listening at port: ${PORT}`);
-});

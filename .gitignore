@@ -20,9 +20,11 @@ yarn-error.log
 .settings/
 *.sublime-workspace
 /photos
-/src/app/jsonServer/db.json
-/src/app/jsonServer/db2.json
-/src/app/jsonServer/dbfam.json
+/src/app/servers/db.json
+/src/app/servers/db2.json
+/src/app/servers/dbfam.json
+/src/app/servers/cert.cer
+/src/app/servers/cert.key
 
 # Visual Studio Code
 .vscode/*

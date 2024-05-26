@@ -6,7 +6,7 @@ import { PhotoInformation } from '../interfaces/photo-information';
 })
 export class PhotoService {
 
-  url = 'http://morrisapps.ddns.net:3000/photos';
+  url = 'https://morrisapps.ddns.net:3000/photos';
 
   async getAllPhotos(): Promise<PhotoInformation[]> {
     const data = await fetch(this.url);
