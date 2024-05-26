@@ -11,8 +11,6 @@ export class FileuploadService {
   // Injecting http client via constructor
   constructor(private http: HttpClient) {}
 
-
-
   // Function to send a post request along
   // with files to server
   async uploadFiles(base64: string, fileName: string) {
@@ -22,6 +20,12 @@ export class FileuploadService {
     return this.http.post(
       'http://morrisapps.ddns.net:8080/upload',
       formData
+    );
+  }
+
+  async removeFile(fileName: string) {
+    return this.http.delete(
+      'http://morrisapps.ddns.net:8080/'+fileName
     );
   }
 

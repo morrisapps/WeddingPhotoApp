@@ -1,14 +1,18 @@
 import { Component, ElementRef, ViewChild, Input, Renderer2, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PhotoInformation } from '../../interfaces/photo-information';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PhotoService } from '../../services/photo.service';
+import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
+import { DialogComponent } from '../dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -21,7 +25,7 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   animations: [
     trigger('shake', [
@@ -48,6 +52,9 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
             <img [hidden]="!imgLoaded" #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.id}}.jpg"
               [name]="[photoInformation.id]" (load)="onLoad()">
           </div>
+          <button mat-fab class="remove-button" (click)="remove()" style="width: 50px; height: 50px; background-color: red">
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
         <mat-card-content>
           <mat-card-subtitle style="margin-top:10px; padding-top: 5px;">Photographer: {{photoInformation.author}}</mat-card-subtitle>
@@ -88,7 +95,12 @@ export class PhotoCardComponent {
   @ViewChild('photo', { read: ElementRef }) photo!:ElementRef;
   @ViewChild('likeIcon', { read: ElementRef }) likeIcon!:ElementRef;
 
-  constructor(private renderer: Renderer2) {
+  constructor(
+    private _dialog: MatDialog,
+    private _router: Router,
+    private _uploadService: FileuploadService,
+    private _snackBar: MatSnackBar,
+  ) {
     this.imgLoaded = false
     this.likePressed = false
     this.photoHeight = ""
@@ -99,6 +111,42 @@ export class PhotoCardComponent {
     this.photoContainer.nativeElement?.style.setProperty('height', "auto")
 
     this.imgLoaded = true
+  }
+
+
+  remove() {
+    // Prompt dialog to verify if user wants to remove this picture
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: "Delete this picture?",
+        message: "Do you want to delete this picture and stop it from displaying in the gallery and on the venue screens?",
+        closeButton: "Cancel",
+        closeButtonColor: "#EBEBEB",
+        closeButtonTextColor: "Black",
+        yesButton: "Delete!",
+        yesButtonColor: "red",
+        yesButtonTextColor: "white"
+      }
+    }).afterClosed().subscribe(async result => {
+
+      if (result) {
+        // Remove picture from JSON server
+        this.PhotoService.remove(this.photoInformation.id).then(async () => {
+          // Remove picture and thumbnail
+          (await this._uploadService.removeFile(this.photoInformation.id))
+          .subscribe(async (res: any) => {
+            // Refresh gallery
+            this._router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
+              this._router.navigate(['/gallery'])
+              this._snackBar.open("Photo delete from gallery!", "", {
+                duration: 4000,
+                panelClass: 'upload-snackbar'
+              });
+            })
+          })
+        })
+      }
+    });
   }
 
   updateLikes() {

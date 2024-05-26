@@ -11,7 +11,7 @@ input {
   padding: 10px;
   margin-left: -1px;
   width: calc(100% - 70px);
-  background-image: url("/assets/icons/search8.svg");
+  background-image: url("/assets/icons/search.svg");
   background-repeat: no-repeat;
   background-position: 15px center;
   background-size: 35px;

@@ -35,6 +35,18 @@ export class PhotoService {
     })
   }
 
+  async remove(fileName: string){
+    await fetch(this.url + "/" + fileName, {
+      method: 'DELETE',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "id": fileName
+      })
+    })
+  }
+
   async patchLikes(fileName: string, liked: boolean) {
     // Get current likes from JSON server
     let currentLikes = (await this.getPhotoById(fileName))?.likes

@@ -29,7 +29,7 @@ const storageConfig = multer.diskStorage({
 });
 
 // Creating a Multer Instance
-const upload = multer({
+const file = multer({
     storage: storageConfig,
     fileFilter: multerFilter
 });
@@ -48,7 +48,7 @@ app.use(router)
 router.get('/', (req, res) => {
     res.send('ok')
 })
-router.post('/upload',upload.single('file') ,async (req, res) => {
+router.post('/upload', file.single('file') ,async (req, res) => {
    const { filename: image } = req.file
 
    await sharp(req.file.path)
@@ -59,6 +59,41 @@ router.post('/upload',upload.single('file') ,async (req, res) => {
     )
     res.status(200).json("Uploaded Successfully");
 })
+
+
+const fs = require("fs");
+
+const remove = (req, res) => {
+  const fileName = req.params.name;
+  const directoryFullPath = path.join(__dirname, "../photos/full/" + fileName + ".jpg");
+  const directoryThumbsPath = path.join(__dirname, "../photos/thumbs/" + fileName + ".jpg");
+  const directoryRemovedFullPath = path.join(__dirname, "../photos/removed/full/" + fileName + ".jpg");
+  const directoryRemovedThumbsPath = path.join(__dirname, "../photos/removed/thumbs/" + fileName + ".jpg");
+
+  // Remove full image
+  fs.rename(directoryFullPath, directoryRemovedFullPath, (err) => {
+    if (err) {
+      res.status(500).send({
+        message: "Could not delete the file. " + err,
+      });
+    } else {
+      fs.rename(directoryThumbsPath, directoryRemovedThumbsPath, (err) => {
+        if (err) {
+          res.status(500).send({
+            message: "Could not delete the file. " + err,
+          });
+        } else {
+          res.status(200).send({
+            message: "File is deleted.",
+          });
+        }
+      });
+    }
+  });
+};
+
+router.delete("/:name", remove);
+
 
 app.listen(8080, function () {
     console.log(`server is started and listening at port: ${PORT}`);

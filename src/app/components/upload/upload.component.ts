@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
-import { UploadDialogComponent } from "../upload-dialog/upload-dialog.component";
+import { DialogComponent } from "../dialog/dialog.component";
 import imageCompression from "browser-image-compression";
 import { DomSanitizer } from "@angular/platform-browser";
 
@@ -247,12 +247,15 @@ export class UploadComponent {
 
     // Display dialog message on first entering. Should only be once.
     if (localStorage.getItem("uploadDialogFlag") != "true") {
-      this._dialog.open(UploadDialogComponent, {
+      this._dialog.open(DialogComponent, {
         data: {
           title: "About uploading",
-          message: "You can upload all your photos here if you rather use your camera without this website.</br>Make sure you have already taken your pictures."
+          message: "You can upload all your photos here if you rather use your camera without this website.</br>Make sure you have already taken your pictures.",
+          closeButton: "Groovy!",
+          closeButtonColor: "#fd7543",
+          closeButtonTextColor: "White"
         }
-      });
+      })
       localStorage.setItem("uploadDialogFlag", "true")
     }
 

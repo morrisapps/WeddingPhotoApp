@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+  <p [innerHTML]="data.message"></p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="horizontalcenter" style="margin-bottom: 10px;">
+    <button mat-button [style.background-color]="data.closeButtonColor" (click)="onClose()" ><span class="buttonText" [style.color]="data.closeButtonTextColor">{{data.closeButton}}</span></button>
+    <button *ngIf="data.yesButton != null" mat-button mat-dialog-close [style.background-color]="data.yesButtonColor" (click)="onYes()" ><span class="buttonText"  [style.color]="data.yesButtonTextColor">{{data.yesButton}}</span></button>
+  </div>
+</mat-dialog-actions>
