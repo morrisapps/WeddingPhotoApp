@@ -93,10 +93,9 @@ export class UploadComponent {
 
     // Save files into files variable
     Array.from(event.target.files as File[]).forEach(file => {
-      // File has to be converted to blob and then into a new File in order to change the name
-      var blob = file.slice(0, file.size, 'image/jpg');
-      this.files!.push(new File([blob], Date.now().toString()+file.name.split("\.")[0], {type: 'image/jpg'}))
+      this.files?.push(file)
     });
+
     this.hidden = true
 
     // Set upload button disabled
@@ -108,19 +107,18 @@ export class UploadComponent {
 
   }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action);
-  }
-
   // Save picture
   async post() {
     this.uploaded = 0
     this.showSpinner = true
 
     new Promise((resolve,reject)=>{
+      const reader = new FileReader();
       Array.from(this.files!).map(async file => {
+
+        let fileName = Date.now().toString()+file.name.split("\.")[0]
+
         // Read the Blob as DataURL using the FileReader API
-        const reader = new FileReader();
         reader.onloadend = async () => {
           // Get full res photo as base 64
           const PHOTO_BASE_64 = reader.result as string
@@ -129,14 +127,14 @@ export class UploadComponent {
           if (file) {
             this.UpdateProgress(3);
             // Upload full image
-            (await this._uploadService.uploadFiles(PHOTO_BASE_64, file.name as string))
+            (await this._uploadService.uploadFiles(PHOTO_BASE_64, fileName as string))
             .subscribe(async (res: any) => {
               this.UpdateProgress(3);
               // Create image object to get width and height
               var img = new Image();
               img.onload = () => {
                 // Post to json server
-                this.PhotoService.post(file.name, img.width, img.height).then(async () => {
+                this.PhotoService.post(fileName, img.width, img.height).then(async () => {
                   this.UpdateProgress(2);
                   if (this.uploaded == (this.files!.length * 8)){
                     resolve(true)
@@ -173,17 +171,17 @@ export class UploadComponent {
             resolve(true)
         }, 600)
       }).then(() => {
-              // Upload fully finished
+        // Upload fully finished
 
-              // Posted picture to DB, stop spinner and show snackbar
-              this.showSpinner = false,
-              this._snackBar.open("Photo(s) uploaded to gallery!", "", {
-                duration: 4000,
-                panelClass: 'upload-snackbar'
-              });
-              this.uploadButtonDisabled = true
-              this.fileForm.nativeElement.reset()
-              this.progress = 0
+        // Posted picture to DB, stop spinner and show snackbar
+        this.showSpinner = false,
+        this._snackBar.open("Photo(s) uploaded to gallery!", "", {
+          duration: 4000,
+          panelClass: 'upload-snackbar'
+        });
+        this.uploadButtonDisabled = true
+        this.fileForm.nativeElement.reset()
+        this.progress = 0
       })
   })}
 
