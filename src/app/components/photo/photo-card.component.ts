@@ -52,7 +52,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
             <img [hidden]="!imgLoaded" #photo class="listing-photo" id="photo" src="http://morrisapps.ddns.net/photos/thumbs/{{photoInformation.id}}.jpg"
               [name]="[photoInformation.id]" (load)="onLoad()">
           </div>
-          <button mat-fab class="remove-button" (click)="remove()" style="width: 50px; height: 50px; background-color: red">
+          <button mat-fab class="remove-button" *ngIf="isRemovable" (click)="remove()" style="width: 50px; height: 50px; background-color: red">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -86,6 +86,8 @@ export class PhotoCardComponent {
 
   imgLoaded: boolean;
   likePressed: boolean;
+
+  isRemovable: string | null = null;
 
   photoHeight: string;
 
@@ -138,9 +140,10 @@ export class PhotoCardComponent {
             // Refresh gallery
             this._router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
               this._router.navigate(['/gallery'])
-              this._snackBar.open("Photo delete from gallery!", "", {
+              this._snackBar.open("Photo deleted from gallery!", "", {
                 duration: 4000,
-                panelClass: 'upload-snackbar'
+                panelClass: 'upload-snackbar',
+                verticalPosition: 'top'
               });
             })
           })
@@ -155,7 +158,7 @@ export class PhotoCardComponent {
       this.photoInformation.likes = 0
     }
     // Get localStorage by photo name. If present, then has already liked.
-    let isLiked = localStorage.getItem(this.photoInformation.id)
+    let isLiked = localStorage.getItem(this.photoInformation.id+"like")
 
     this.likePressed = true
     setTimeout(() => {
@@ -167,7 +170,7 @@ export class PhotoCardComponent {
       this.photoInformation.likes += 1
       this.PhotoService.patchLikes(this.photoInformation.id, true)
       // Flag localStorage as this photo has been liked.
-      localStorage.setItem(this.photoInformation.id, "true")
+      localStorage.setItem(this.photoInformation.id+"like", "true")
       // Set icon to represent change
       this.likeIcon.nativeElement.textContent = "favorite"
     } else {
@@ -176,7 +179,7 @@ export class PhotoCardComponent {
         this.photoInformation.likes -= 1
         this.PhotoService.patchLikes(this.photoInformation.id, false)
         // Flag localStorage as this photo has been liked.
-        localStorage.setItem(this.photoInformation.id, "false")
+        localStorage.setItem(this.photoInformation.id+"like", "false")
         // Set icon to represent change
         this.likeIcon.nativeElement.textContent = "favorite_border"
       }
@@ -206,11 +209,17 @@ export class PhotoCardComponent {
     }
 
     // Set initial liked icon
-    let isLiked = localStorage.getItem(this.photoInformation.id)
+    let isLiked = localStorage.getItem(this.photoInformation.id+"like")
     if (isLiked == "true") {
       this.likeIcon.nativeElement.textContent = "favorite"
     } else {
       this.likeIcon.nativeElement.textContent = "favorite_border"
     }
+
+  }
+
+  ngOnInit(){
+    // Set removable flag if user has taken this photo and is still within their localStorage.
+    this.isRemovable = localStorage.getItem(this.photoInformation.id);
   }
 }

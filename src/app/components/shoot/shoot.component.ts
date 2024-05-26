@@ -190,6 +190,10 @@ export class ShootComponent {
                 this.PhotoService.post(fileName, img.width, img.height).then(async () => {
                   // Posted picture to DB, stop spinner and show snackbar, remove from data service
 
+                  // Set localStorage with photo name to flag that this user posted this picture.
+                  // Triggers delete button in gallery
+                  localStorage.setItem(fileName, "true");
+
                   this.showSpinner = false
                   // Open snackbar with random success message
                   const successMessages = [
@@ -213,8 +217,6 @@ export class ShootComponent {
 
                   this.hidden = true
                   this.showCheck = true
-
-                  //localStorage.setItem("","")
                 })
           });
         }

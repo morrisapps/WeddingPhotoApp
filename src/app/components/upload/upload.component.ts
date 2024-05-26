@@ -104,7 +104,6 @@ export class UploadComponent {
     } else {
       this.uploadButtonDisabled = true
     }
-
   }
 
   // Save picture
@@ -113,11 +112,10 @@ export class UploadComponent {
     this.showSpinner = true
 
     new Promise((resolve,reject)=>{
-      const reader = new FileReader();
-      Array.from(this.files!).map(async file => {
+      Array.from(this.files!).map(file => {
 
         let fileName = Date.now().toString()+file.name.split("\.")[0]
-
+        const reader = new FileReader();
         // Read the Blob as DataURL using the FileReader API
         reader.onloadend = async () => {
           // Get full res photo as base 64
@@ -136,6 +134,9 @@ export class UploadComponent {
                 // Post to json server
                 this.PhotoService.post(fileName, img.width, img.height).then(async () => {
                   this.UpdateProgress(2);
+                  // Set localStorage with photo name to flag that this user posted this picture.
+                  // Triggers delete button in gallery
+                  localStorage.setItem(fileName, "true");
                   if (this.uploaded == (this.files!.length * 8)){
                     resolve(true)
                   }
@@ -157,7 +158,7 @@ export class UploadComponent {
           reader.readAsDataURL(blob);
         })
         .catch(function (error) {
-          console.log(error.message); // output: I just want to stop
+          console.log(error.message);
         });
 
       })
@@ -179,6 +180,7 @@ export class UploadComponent {
           duration: 4000,
           panelClass: 'upload-snackbar'
         });
+
         this.uploadButtonDisabled = true
         this.fileForm.nativeElement.reset()
         this.progress = 0
