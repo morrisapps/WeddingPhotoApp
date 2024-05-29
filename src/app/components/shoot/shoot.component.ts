@@ -222,8 +222,7 @@ export class ShootComponent {
 
     // Compress file
     imageCompression(file, {
-      maxSizeMB: 1,
-      preserveExif: true
+      maxSizeMB: 1
     })
     .then(function (compressedFile) {
       // Gather photo file as blob for reader
@@ -231,7 +230,10 @@ export class ShootComponent {
       reader.readAsDataURL(blob);
     })
     .catch(function (error) {
-      console.log(error.message); // output: I just want to stop
+      console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
+      // Attempt using un-compressed file
+      var blob = file.slice(0, file.size, 'image/jpg');
+      reader.readAsDataURL(blob);
     });
 
 

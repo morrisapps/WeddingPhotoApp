@@ -85,16 +85,16 @@ export class UploadComponent {
   isMultiple = false;
 
   // Upload photos input
-  selectedFile: any = null;
   onFileSelected(event: any): void {
 
     // Reset files array
-    this.files = new Array()
+    this.files = event.target.files as File[]
 
+    console.log(this.files)
     // Save files into files variable
-    Array.from(event.target.files as File[]).forEach(file => {
-      this.files?.push(file)
-    });
+    // Array.from(event.target.files as File[]).forEach(file => {
+    //   this.files?.push(file)
+    // });
 
     this.hidden = true
 
@@ -118,39 +118,42 @@ export class UploadComponent {
         const reader = new FileReader();
         // Read the Blob as DataURL using the FileReader API
         reader.onloadend = async () => {
-          // Get full res photo as base 64
-          const PHOTO_BASE_64 = reader.result as string
+          try {
+            // Get full res photo as base 64
+            const PHOTO_BASE_64 = reader.result as string
 
-          // Save picture using express multer (fileupload service)
-          if (file) {
-            this.UpdateProgress(3);
-            // Upload full image
-            (await this._uploadService.uploadFiles(PHOTO_BASE_64, fileName as string))
-            .subscribe(async (res: any) => {
+            // Save picture using express multer (fileupload service)
+            if (file) {
               this.UpdateProgress(3);
-              // Create image object to get width and height
-              var img = new Image();
-              img.onload = () => {
-                // Post to json server
-                this.PhotoService.post(fileName, img.width, img.height).then(async () => {
-                  this.UpdateProgress(2);
-                  // Set localStorage with photo name to flag that this user posted this picture.
-                  // Triggers delete button in gallery
-                  localStorage.setItem(fileName, "true");
-                  if (this.uploaded == (this.files!.length * 8)){
-                    resolve(true)
-                  }
-                })
-              };
-              img.src = PHOTO_BASE_64;
-            });
+              // Upload full image
+              (await this._uploadService.uploadFiles(PHOTO_BASE_64, fileName as string))
+              .subscribe(async (res: any) => {
+                this.UpdateProgress(3);
+                // Create image object to get width and height
+                var img = new Image();
+                img.onload = () => {
+                  // Post to json server
+                  this.PhotoService.post(fileName, img.width, img.height).then(async () => {
+                    this.UpdateProgress(2);
+                    // Set localStorage with photo name to flag that this user posted this picture.
+                    // Triggers delete button in gallery
+                    localStorage.setItem(fileName, "true");
+                    if (this.uploaded == (this.files!.length * 8)){
+                      resolve(true)
+                    }
+                  })
+                };
+                img.src = PHOTO_BASE_64;
+              });
+            }
+          } catch(error) {
+            console.log("Error posting image: "+error)
           }
         };
 
         // Compress file
         imageCompression(file, {
-          maxSizeMB: 1,
-          preserveExif: true
+          maxSizeMB: 1
         })
         .then(function (compressedFile) {
           // Gather photo file as blob for reader
@@ -158,7 +161,10 @@ export class UploadComponent {
           reader.readAsDataURL(blob);
         })
         .catch(function (error) {
-          console.log(error.message);
+          console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
+          // Attempt using un-compressed file
+          var blob = file.slice(0, file.size, 'image/jpg');
+          reader.readAsDataURL(blob);
         });
 
       })

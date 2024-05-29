@@ -42,7 +42,7 @@ export class AdminComponent {
 
   validatePassword(){
     this._http.get(
-      'http://morrisapps.ddns.net:8080/admin'
+      'https://morrisapps.ddns.net:8080/admin'
     ).subscribe((result) => {
 
       // Encrypts the given password utilizing cipher key
