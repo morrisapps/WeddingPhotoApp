@@ -87,14 +87,8 @@ export class UploadComponent {
   // Upload photos input
   onFileSelected(event: any): void {
 
-    // Reset files array
+    // Set files array
     this.files = event.target.files as File[]
-
-    console.log(this.files)
-    // Save files into files variable
-    // Array.from(event.target.files as File[]).forEach(file => {
-    //   this.files?.push(file)
-    // });
 
     this.hidden = true
 

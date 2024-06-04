@@ -63,12 +63,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           <mat-card-subtitle *ngIf="this.photoInformation.likes > 0" style="margin-left:8px; margin-top: 30px" >Likes:</mat-card-subtitle>
           <mat-card-subtitle [@shake]="this.likePressed" *ngIf="this.photoInformation.likes > 0" style="margin-left:3px; margin-top: 30px" >{{photoInformation.likes}}</mat-card-subtitle>
           <span style="flex: 1 1 auto;"></span>
-          <button mat-fab (click)="updateLikes()" style="margin-right: 10px; width: 50px; height: 50px;">
-            <mat-icon #likeIcon>favorite</mat-icon>
-          </button>
-          <button mat-fab id="save" (click)="download()" style="width: 50px; height: 50px;">
-            <mat-icon>get_app</mat-icon>
-          </button>
+          <div class="circle-div" style="margin-right: 2%;">
+            <button mat-fab (click)="updateLikes()" class="circle-button">
+              <mat-icon #likeIcon>favorite</mat-icon>
+            </button>
+          </div>
+          <div class="circle-div">
+            <button mat-fab id="save" (click)="download()" class="circle-button">
+              <mat-icon>get_app</mat-icon>
+            </button>
+          </div>
+
         </mat-card-actions>
       </mat-card>
     </section>
