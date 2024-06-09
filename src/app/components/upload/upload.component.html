@@ -1,7 +1,49 @@
 
 <div #rootDiv class="root-div">
-  <div [hidden]="showSpinner">
+  <div [hidden]="!showCheck" style="width: 95vw; max-width: 400px;" class="center">
+    <mat-card >
+      <mat-card-content style="margin-bottom: 10px" class="center-content">
+      <svg viewBox="0 0 130.2 130.2">
+          <circle
+            class="path circle"
+            fill="none"
+            stroke="#73AF55"
+            stroke-width="6"
+            stroke-miterlimit="10"
+            cx="65.1"
+            cy="65.1"
+            r="62.1"
+          />
+          <polyline
+            class="path check"
+            fill="none"
+            stroke="#73AF55"
+            stroke-width="6"
+            stroke-linecap="round"
+            stroke-miterlimit="10"
+            points="100.2,40.2 51.5,88.8 29.8,67.5"
+          />
+        </svg>
+      </mat-card-content>
+      <p class="success">Uploaded to gallery!</p>
+      <mat-card-footer style="margin-top: 20px;">
+        <div class="center-content">
+          <div>
+            <button mat-raised-button style="margin-bottom: 15px; background-color: #E4FFC4; font-size: 20px;"  id="save" (click)="fileInput.click()" class="button">
+              <mat-icon svgIcon="upload" inline="true" class="icon"></mat-icon>
+              <span class="button-text">Upload more!</span>
+            </button>
+            <button mat-raised-button style="background-color: #CDE0F3; font-size: 20px;" [routerLink]="['/gallery']" class="button">
+              <mat-icon svgIcon="viewgallery" inline="true" class="icon"></mat-icon>
+              <span class="button-text">View in Gallery</span>
+            </button>
+          </div>
+        </div>
+      </mat-card-footer>
+    </mat-card>
+  </div>
 
+  <div [hidden]="!showFileInput">
     <div class="center">
       <mat-card style="width: 95dvw; max-width: 400px;">
         <mat-card-title class="center-content">What's your name?</mat-card-title>

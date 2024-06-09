@@ -45,8 +45,9 @@ export class UploadComponent {
   PhotoService: PhotoService = inject(PhotoService);
   photoBase64: string = "";
 
-  hidden: boolean = false;
   showSpinner: boolean = false;
+  showCheck: boolean = false;
+  showFileInput: boolean = true;
 
   uploadDisabled: boolean = true;
   uploadButtonDisabled: boolean = true;
@@ -79,6 +80,18 @@ export class UploadComponent {
       'upload',
       this._domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/upload.svg")
     );
+    this._matIconRegistry.addSvgIcon(
+      'anotherphoto',
+      this._domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/anotherphoto.svg")
+    );
+    this._matIconRegistry.addSvgIcon(
+      'viewgallery',
+      this._domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/viewgallery.svg")
+    );
+    this._matIconRegistry.addSvgIcon(
+      'camerapicture',
+      this._domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/camerapicture.svg")
+    );
   }
 
   // Storing files in a File array
@@ -86,11 +99,11 @@ export class UploadComponent {
 
   // Upload photos input
   onFileSelected(event: any): void {
-
     // Set files array
     this.files = event.target.files as File[]
 
-    this.hidden = true
+    this.showCheck = false
+    this.showFileInput = true
 
     // Set upload button disabled
     if (this.files.length >= 1 && (localStorage.getItem('User'))) {
@@ -104,6 +117,8 @@ export class UploadComponent {
   async post() {
     this.uploaded = 0
     this.showSpinner = true
+    this.showCheck = false
+    this.showFileInput = false
 
     new Promise((resolve,reject)=>{
       Array.from(this.files!).map(file => {
@@ -184,6 +199,8 @@ export class UploadComponent {
         this.uploadButtonDisabled = true
         this.fileForm.nativeElement.reset()
         this.progress = 0
+
+        this.showCheck = true
       })
   })}
 

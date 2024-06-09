@@ -32,7 +32,7 @@ import imageCompression from 'browser-image-compression';
   ],
   template: `
   <div #rootDiv class="root-div">
-  <div [hidden]="!showCheck" style="width: 95vw; max-width: 400px;" class="center">
+    <div [hidden]="!showCheck" style="width: 95vw; max-width: 400px;" class="center">
       <mat-card >
         <mat-card-content style="margin-bottom: 10px" class="center-content">
         <svg viewBox="0 0 130.2 130.2">
@@ -59,18 +59,17 @@ import imageCompression from 'browser-image-compression';
         </mat-card-content>
         <p class="success">Saved to gallery!</p>
         <mat-card-footer style="margin-top: 20px;">
-              <div class="center-content">
-                <div>
-                  <button mat-raised-button style="margin-bottom: 15px; background-color: #E4FFC4"  id="save" (click)="fileInput.click()" class="button">
-                    <mat-icon svgIcon="anotherphoto" inline="true" class="icon"></mat-icon>
-                    <span class="button-text">Take another!</span>
-                  </button>
-                  <button mat-raised-button style="background-color: #CDE0F3" [routerLink]="['/gallery']" class="button">
-                    <mat-icon svgIcon="viewgallery" inline="true" class="icon"></mat-icon>
-                    <span class="button-text">View in Gallery</span>
-                  </button>
-                </div>
-
+          <div class="center-content">
+            <div>
+              <button mat-raised-button style="margin-bottom: 15px; background-color: #E4FFC4"  id="save" (click)="fileInput.click()" class="button">
+                <mat-icon svgIcon="anotherphoto" inline="true" class="icon"></mat-icon>
+                <span class="button-text">Take another!</span>
+              </button>
+              <button mat-raised-button style="background-color: #CDE0F3" [routerLink]="['/gallery']" class="button">
+                <mat-icon svgIcon="viewgallery" inline="true" class="icon"></mat-icon>
+                <span class="button-text">View in Gallery</span>
+              </button>
+            </div>
           </div>
         </mat-card-footer>
       </mat-card>
@@ -140,7 +139,7 @@ export class ShootComponent {
     );
     this.matIconRegistry.addSvgIcon(
       'viewgallery',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/viewgallery6.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/viewgallery.svg")
     );
     this.matIconRegistry.addSvgIcon(
       'camerapicture',

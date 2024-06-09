@@ -194,7 +194,7 @@ export class PhotoCardComponent {
 
   download() {
     const a = document.createElement('a')
-    a.href = "http://morrisapps.ddns.net/photos/full/"+this.photoInformation.id+".jpg"
+    a.href = "https://morrisapps.ddns.net/photos/full/"+this.photoInformation.id+".jpg"
     a.download = this.photoInformation.id+"-full.jpg"
     document.body.appendChild(a)
     a.click()

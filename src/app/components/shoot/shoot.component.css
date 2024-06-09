@@ -90,12 +90,12 @@ mat-card-title {
 
 .icon {
   font-size: 70px;
-  height: 60px;
-  width: 60px;
-  min-height: 60px;
-  min-width: 60px;
+  height: 75px;
+  width: 75px;
+  min-height: 75px;
+  min-width: 75px;
   line-height: 60px;
-  margin-left: 20px;
+  margin-left: 12px;
 }
 
 .icon-small {
