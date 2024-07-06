@@ -33,7 +33,7 @@ import { MatIconModule } from '@angular/material/icon';
     </mat-form-field>
     <mat-spinner style="margin:0 auto; margin-top:33vh;"  *ngIf="show"></mat-spinner>
     <section class="results">
-      <app-photo-card *ngFor="let photo of filteredPhotoList" [photoInformation]="photo"></app-photo-card>
+      <app-gallery-card *ngFor="let photo of filteredGalleryList" [galleryInformation]="photo"></app-gallery-card>
     </section>
   </div>
 

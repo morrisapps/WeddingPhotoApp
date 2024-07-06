@@ -25,11 +25,11 @@ section.listing a::after {
   margin-left: 5px;
 }
 
-.photo-container {
+.gallery-container {
   position: relative;
 }
 
-.photo-container img {
+.gallery-container img {
   display: block;
   max-width:100%;
   min-width:100%;
@@ -89,18 +89,18 @@ section.listing a::after {
   justify-content: center;
 }
 
-.photo-div {
+.gallery-div {
   position: relative;
 }
 
-.photo-div .center-spinner {
+.gallery-div .center-spinner {
   position: absolute;
   display: block;
   top: calc(50% - 80px);
   left: calc(50% - 50px);
 }
 
-.photo-container .remove-button {
+.gallery-container .remove-button {
   position: absolute;
   bottom: calc(100% - 60px);
   left: calc(100% - 60px);

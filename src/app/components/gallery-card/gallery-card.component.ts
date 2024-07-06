@@ -72,7 +72,7 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
         <div style="position: relative; margin-top: -20px;">
           <div [style.visibility]="(isServerOperation) ? 'hidden' : 'visible' ">
             <mat-card-content>
-              <mat-card-subtitle style="margin-top:10px; padding-top: 5px;">gallerygrapher: {{galleryInformation.author}}</mat-card-subtitle>
+              <mat-card-subtitle style="margin-top:10px; padding-top: 5px;">Photographer: {{galleryInformation.author}}</mat-card-subtitle>
             </mat-card-content>
             <mat-card-actions style="margin-top: -40px;">
               <mat-card-subtitle *ngIf="this.galleryInformation.likes > 0" style="margin-left:8px; margin-top: 30px" >Likes:</mat-card-subtitle>
