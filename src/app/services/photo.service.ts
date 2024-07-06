@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { PhotoInformation } from '../interfaces/photo-information';
+import { GalleryInformation } from '../interfaces/gallery-information';
+import { GalleryComment } from '../interfaces/gallery-comment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,18 +9,79 @@ export class PhotoService {
 
   url = 'https://morrisapps.ddns.net:3000/photos';
 
-  async getAllPhotos(): Promise<PhotoInformation[]> {
+  async getAllPhotos(): Promise<GalleryInformation[]> {
     const data = await fetch(this.url);
     return await data.json() ?? [];
   }
 
-  async getPhotoById(id: string): Promise<PhotoInformation | undefined> {
+  async getPhotoById(id: string): Promise<GalleryInformation | undefined> {
     const data = await fetch(`${this.url}/${id}`);
     return await data.json() ?? {};
   }
 
+  async postNewSubDirectory(fileName: string, width: number, height: number) {
+    await fetch("https://morrisapps.ddns.net:3000/subdirectory", {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "id": "CR2024",
+        "data": [
+
+        ]
+      })
+    })
+  }
+
+  async post2(fileName: string, width: number, height: number) {
+    await fetch("https://morrisapps.ddns.net:3000/subdirectory", {
+      method: 'PATCH',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "CR20242": [
+
+        ]
+      })
+    })
+  }
+
+  async deleteComment(commentID: string){
+    await fetch(this.url + "/" + commentID, {
+      method: 'DELETE',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "id": commentID
+      })
+    })
+  }
+
+  async patchComments(photoID: string, comments: GalleryComment[]) {
+    await fetch(this.url+"/"+photoID, {
+      method: 'PATCH',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "comments": comments
+      })
+    })
+  }
 
   async post(fileName: string, width: number, height: number) {
+    let date = new Date()
+    let dformat = [date.getMonth()+1,
+      date.getDate(),
+      date.getFullYear()].join('/') + ' ' +
+     [date.getHours(),
+      date.getMinutes(),
+      date.getSeconds()].join(':') + '-' +
+      date.getMilliseconds();
+
     await fetch(this.url, {
       method: 'POST',
       headers: {
@@ -30,7 +92,8 @@ export class PhotoService {
         "author": localStorage.getItem('User'),
         "width": width,
         "height": height,
-        "likes": 0
+        "likes": 0,
+        "date": dformat
       })
     })
   }

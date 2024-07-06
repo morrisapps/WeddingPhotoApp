@@ -36,6 +36,53 @@ section.listing a::after {
   max-height:100%;
   height: auto;
 }
+.comments-viewport {
+  height: auto;
+  width: 100%;
+}
+
+.comment {
+  height: 50px;
+}
+
+.scroll-div {
+  margin: 4px, 4px;
+  padding: 4px;
+  width: 100%;
+  max-height: 160px;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: justify;
+}
+
+.comment-p {
+  word-wrap: normal;
+  word-break: break-all;
+  white-space: normal;
+  display: block;
+  height: auto;
+  margin: 3px auto;
+  line-height: 1.4;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.comment-more {
+  word-wrap: normal;
+  word-break: break-all;
+  white-space: normal;
+  position: absolute;
+  display: block;
+  height: 30px;
+  margin-top: -15px;
+  line-height: 1.4;
+  top: calc(100% - 100px);
+  background-color: white;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  border-radius: 30px;
+}
 
 .center-content {
   display: flex;
@@ -59,6 +106,18 @@ section.listing a::after {
   left: calc(100% - 60px);
 }
 
+.download-div {
+  position: absolute;
+  bottom: calc(0% + 10px);
+  left: calc(100% - 50px);
+}
+
+.like-div {
+  position: absolute;
+  bottom: calc(0% + 10px);
+  left: calc(100% - 100px);
+}
+
 .circle-div {
   aspect-ratio: 1 / 1 !important;
   width: 15%;
@@ -69,8 +128,4 @@ section.listing a::after {
 .circle-button {
   height: 100%;
   width: 100%;
-}
-
-mat-icon {
-  width: 100px;
 }

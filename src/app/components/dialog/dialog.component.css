@@ -17,6 +17,13 @@ button {
 .buttonText {
   padding-left: 15px;
   padding-right: 15px;
+  white-space:pre !important;
+}
+
+button:disabled,
+button[disabled]{
+  background-color: #cccccc !important;
+  color: #666666;
 }
 
 .mat-button {

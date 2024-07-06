@@ -1,10 +1,17 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
 <mat-dialog-content>
   <p [innerHTML]="data.message"></p>
+  <p [hidden]="data.input == null || data.input == false || data.input == 'undefined'" style="margin-bottom: 20px" class="center-content">
+    <input style="width: 95%; height: 40px; font-size: 20px; text-align: center;" maxlength="20" #input type="text" maxlength="20" matInput [placeholder]="data.inputPlaceHolder" id="input" (input)="inputForm($event)">
+  </p>
 </mat-dialog-content>
 <mat-dialog-actions>
   <div class="horizontalcenter" style="margin-bottom: 10px;">
-    <button mat-button [style.background-color]="data.closeButtonColor" (click)="onClose()" ><span class="buttonText" [style.color]="data.closeButtonTextColor">{{data.closeButton}}</span></button>
-    <button *ngIf="data.yesButton != null" mat-button mat-dialog-close [style.background-color]="data.yesButtonColor" (click)="onYes()" ><span class="buttonText"  [style.color]="data.yesButtonTextColor">{{data.yesButton}}</span></button>
+    <button mat-button #button1 [style.background-color]="data.button1Color" [style.width]="data.button1Width" (click)="onButton1()" >
+      <span class="buttonText" [style.color]="data.button1TextColor">{{data.button1}}</span>
+    </button>
+    <button *ngIf="data.button2 != null" mat-button mat-dialog-close #button2 [style.background-color]="data.button2Color" [style.width]="data.button2Width" (click)="onButton2()" >
+      <span class="buttonText"  [style.color]="data.button2TextColor">{{data.button2}}</span>
+    </button>
   </div>
 </mat-dialog-actions>

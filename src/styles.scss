@@ -1,4 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+.mat-dense-1 {
+  @include mat.all-component-densities(-1);
+}
+
+.mat-dense-2 {
+  @include mat.all-component-densities(-2);
+}
+
+.mat-dense-3 {
+  @include mat.all-component-densities(-3);
+}
+
+.mat-dense-4 {
+  @include mat.all-component-densities(-4);
+}
+
+.mat-dense-5 {
+  @include mat.all-component-densities(-5);
+}
 
 html, body { height: 100%; }
 html {
@@ -10,7 +31,14 @@ html {
   --mdc-snackbar-supporting-text-font: ShakyHandSomeComic, sans-serif;
   --mdc-snackbar-supporting-text-line-height: 30px;
   --mdc-snackbar-supporting-text-size: 35px;
-  --mdc-snackbar-supporting-text-weight: 600
+  --mdc-snackbar-supporting-text-weight: 600;
+
+  /* Mat form field color */
+  --mat-form-field-hover-state-layer-opacity: .08;
+  --mat-form-field-focus-state-layer-opacity: .24;
+  --mat-form-field-state-layer-color: rgba(255, 255, 255, .87);
+  --mdc-filled-text-field-container-color: #ffffff;
+
 }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 

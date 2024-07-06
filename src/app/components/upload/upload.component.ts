@@ -268,9 +268,9 @@ export class UploadComponent {
         data: {
           title: "About uploading",
           message: "You can upload all your photos here if you rather use your camera without this website.</br>Make sure you have already taken your pictures.",
-          closeButton: "Groovy!",
-          closeButtonColor: "#fd7543",
-          closeButtonTextColor: "White"
+          button1: "Groovy!",
+          button1Color: "#fd7543",
+          button1TextColor: "White"
         }
       })
       localStorage.setItem("uploadDialogFlag", "true")

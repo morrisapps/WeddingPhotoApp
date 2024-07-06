@@ -25,6 +25,7 @@ yarn-error.log
 /src/app/servers/dbfam.json
 /src/app/servers/cert.cer
 /src/app/servers/cert.key
+/src/app/servers/express-multer.server.js
 
 # Visual Studio Code
 .vscode/*
