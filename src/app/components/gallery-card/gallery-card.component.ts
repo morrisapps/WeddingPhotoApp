@@ -223,19 +223,44 @@ export class GalleryCardComponent {
       }
     }).afterClosed().subscribe(async result => {
       if (result.button2) {
-        let deleteIndex = this.galleryInformation.comments.findIndex(x => x.id === id);
-        this.galleryInformation.comments.splice(deleteIndex, 1)
-
+        let error = false
         this.isServerOperation = true
+        // Get updated information before deletion
+        this.PhotoService.getPhotoById(this.galleryInformation.id).then((updatedGalleryInformation: GalleryInformation | undefined) => {
+          if (updatedGalleryInformation !== undefined) {
+            if (updatedGalleryInformation.id !== undefined) {
+              this.galleryInformation = updatedGalleryInformation
 
-        this.PhotoService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
-          // Removes cookie flag for this comment
-          localStorage.removeItem(id)
+              let deleteIndex = this.galleryInformation.comments.findIndex(x => x.id === id);
+              this.galleryInformation.comments.splice(deleteIndex, 1)
 
-          // Wait half a second before hidding spinner. Prevents flashing
-          setTimeout(() => {
-            this.isServerOperation = false
-          }, 500);
+              this.PhotoService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
+                // Removes cookie flag for this comment
+                localStorage.removeItem(id)
+
+                // Wait half a second before hidding spinner. Prevents flashing
+                setTimeout(() => {
+                  this.isServerOperation = false
+                }, 500);
+              })
+            } else {
+              error = true
+            }
+          } else {
+            error = true
+          }
+        }).then(() => {
+          // Show Error dialog to user
+          if (error) {
+            this._dialog.open(DialogComponent, {
+              data: {
+                title: "Error",
+                message: "An error occured and could not delete this comment.<br>Try refreshing the page and trying again.",
+                button1: "Okay",
+                input: false
+              }
+            })
+          }
         })
       }
     });
@@ -259,28 +284,59 @@ export class GalleryCardComponent {
     await this.setUserName()
 
     const galleryComment = { id: dformat, comment: this.newComment, author: localStorage.getItem('User') } as GalleryComment
-    if (this.galleryInformation.comments == undefined) {
-      this.galleryInformation.comments = []
-    }
-    this.galleryInformation.comments.push(galleryComment)
 
     this.isServerOperation = true
+    let error = false
 
-    this.PhotoService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
-      // Forces a new reference for the array object and triggers viewport to refresh
-      this.galleryInformation.comments = [...this.galleryInformation.comments]
+    if (this.galleryInformation.comments == undefined) {
+      this.galleryInformation.comments = []
+    } else {
+      // updated galleryInformation
+      this.PhotoService.getPhotoById(this.galleryInformation.id).then((updatedGalleryInformation: GalleryInformation | undefined) => {
+        if (updatedGalleryInformation !== undefined) {
+          if (updatedGalleryInformation.id !== undefined) {
+            // Force comments to be present
+            if (updatedGalleryInformation.comments == undefined) {
+              updatedGalleryInformation.comments = []
+            }
+            this.galleryInformation = updatedGalleryInformation
+            this.galleryInformation.comments.push(galleryComment)
 
-      // Sets cookie with id of comment. Triggers delete button if cookie is found on view.
-      localStorage.setItem(dformat,"true")
+            this.PhotoService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
+              // Forces a new reference for the array object and triggers viewport to refresh
+              this.galleryInformation.comments = [...this.galleryInformation.comments]
 
-      this.commentsScrollToBottom()
-      this.newComment = ""
+              // Sets cookie with id of comment. Triggers delete button if cookie is found on view.
+              localStorage.setItem(dformat,"true")
 
-      // Wait half a second before hidding spinner. Prevents flashing
-      setTimeout(() => {
-        this.isServerOperation = false
-      }, 500);
-    })
+              this.commentsScrollToBottom()
+              this.newComment = ""
+
+              // Wait half a second before hidding spinner. Prevents flashing
+              setTimeout(() => {
+                this.isServerOperation = false
+              }, 500);
+            })
+          } else {
+            error = true
+          }
+        } else {
+          error = true
+        }
+      }).then(() => {
+        // Show Error dialog to user
+        if (error) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: "Error",
+              message: "An error occured and could not update this comment.<br>Try refreshing the page and trying again.",
+              button1: "Okay",
+              input: false
+            }
+          })
+        }
+      })
+    }
   }
 
   async setUserName() {
