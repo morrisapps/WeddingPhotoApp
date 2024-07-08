@@ -59,7 +59,7 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
       <mat-card #matCard>
         <div id="galleryContainer" #galleryContainer class="gallery-container">
           <div [hidden]="!imgLoaded">
-            <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://morrisapps.ddns.net/photos/thumbs/{{galleryInformation.id}}.jpg"
+            <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
               [name]="[galleryInformation.id]" (load)="onLoad()">
             <!-- If cookie is present, then this user is either the author or admin and show delete button -->
             @if (getLocalStorage().getItem(this.galleryInformation.id) == "true" || getLocalStorage().getItem("admin") == "true") {
