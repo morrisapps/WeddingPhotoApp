@@ -20,6 +20,7 @@ yarn-error.log
 .settings/
 *.sublime-workspace
 /photos
+/videos
 /src/app/servers/*
 /src/app/servers/db.json
 /src/app/servers/db2.json

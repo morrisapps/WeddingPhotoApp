@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from "../dialog/dialog.component";
 import { ReactiveFormsModule } from '@angular/forms';
 import { PhotoService } from '../../services/photo.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
@@ -130,7 +132,8 @@ export class ShootComponent {
     private _uploadService: FileuploadService,
     private _renderer: Renderer2,
     private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private _dialog: MatDialog
   ) {
     // Import svg icons
     this.matIconRegistry.addSvgIcon(
@@ -175,48 +178,64 @@ export class ShootComponent {
     const reader = new FileReader();
 
     reader.onloadend = async () => {
-      // Create image object to get width and height
-      var img = new Image();
-      img.onload = async () => {
         // Save picture using express multer (fileupload service)
         // Upload picture
         (await this._uploadService.uploadFiles(reader.result as string, fileName as string))
-        .subscribe( async (res: any) => {
-                // Post to json server
-                this.PhotoService.post(fileName, img.width, img.height).then(async () => {
-                  // Posted picture to DB, stop spinner and show snackbar, remove from data service
+        .subscribe({
+          next: (res) => {
+            // Create image object to get width and height
+            var img = new Image();
+            img.onload = () => {
+              // Post to json server
+              this.PhotoService.post(fileName, img.width, img.height).then(async () => {
+                // Posted picture to DB, stop spinner and show snackbar, remove from data service
 
-                  // Set localStorage with photo name to flag that this user posted this picture.
-                  // Triggers delete button in gallery
-                  localStorage.setItem(fileName, "true");
+                // Set localStorage with photo name to flag that this user posted this picture.
+                // Triggers delete button in gallery
+                localStorage.setItem(fileName, "true");
 
-                  this.showSpinner = false
-                  // Open snackbar with random success message
-                  const successMessages = [
-                    "Groovy Shot! 📸",
-                    "Hey man, nice shot! 🤛😎",
-                    "Psychedelic! ☮️✌️",
-                    "Vibing photo! 🎨",
-                    "🔭 Far out shot!! 👀",
-                    "🌻 Flower power photo! 💐",
-                    "Peace and Love 🫶☮️",
-                    "☮️🌈 Hippy shot! 🌈☮️",
-                    "Rad shooting! ✌️👍",
-                    "Right on, man! 👍😎",
-                    "🪩🕺💃",
-                    "Oh, behave!",
-                    "Fab",
-                    "Gnarly",
-                    "Groovy Baby!"
-                  ]
-                  this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
+                this.showSpinner = false
+                // Open snackbar with random success message
+                const successMessages = [
+                  "Groovy Shot! 📸",
+                  "Hey man, nice shot! 🤛😎",
+                  "Psychedelic! ☮️✌️",
+                  "Vibing photo! 🎨",
+                  "🔭 Far out shot!! 👀",
+                  "🌻 Flower power photo! 💐",
+                  "Peace and Love 🫶☮️",
+                  "☮️🌈 Hippy shot! 🌈☮️",
+                  "Rad shooting! ✌️👍",
+                  "Right on, man! 👍😎",
+                  "🪩🕺💃",
+                  "Oh, behave!",
+                  "Fab",
+                  "Gnarly",
+                  "Groovy Baby!"
+                ]
+                this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
 
-                  this.hidden = true
-                  this.showCheck = true
-                })
-          });
-        }
-      img.src = reader.result as string;
+                this.hidden = true
+                this.showCheck = true
+              })
+            }
+            img.src = reader.result as string;
+          },
+          error: (res) => {
+            this._dialog.open(DialogComponent, {
+              data: {
+                title: "Error",
+                message: "An issue occured when uploading this picture.<br>Please try again.",
+                button1: "Okay",
+                button1Color: "#fd7543",
+                button1TextColor: "White"
+              }
+            })
+            this.showSpinner = false
+            this.showCheck = false
+            this.hidden = false
+          }
+        })
     }
 
     // Compress file

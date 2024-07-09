@@ -54,10 +54,14 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
     ])
   ],
   template: `
-  <div #photoDiv class="photo-div">
+  <div #photoDiv class="gallery-div">
     <section>
       <mat-card #matCard>
         <div id="galleryContainer" #galleryContainer class="gallery-container">
+          <!-- <video width="320" height="240" controls preload="metadata">
+            <source src="https://granted.photos/videos/test.mp4#t=10.1" type="video/mp4">
+          Your browser does not support the video tag.
+          </video> -->
           <div [hidden]="!imgLoaded">
             <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
               [name]="[galleryInformation.id]" (load)="onLoad()">
@@ -167,8 +171,6 @@ export class GalleryCardComponent {
 
   @ViewChild('matCard', { read: ElementRef }) matCard!:ElementRef;
   @ViewChild('galleryContainer', { read: ElementRef }) galleryContainer!:ElementRef;
-  @ViewChild('galleryDiv', { read: ElementRef }) galleryDiv!:ElementRef;
-  @ViewChild('gallery', { read: ElementRef }) gallery!:ElementRef;
   @ViewChild('likeIcon', { read: ElementRef }) likeIcon!:ElementRef;
   @ViewChild('commentsDiv', { read: ElementRef }) commentsDiv!:ElementRef;
 

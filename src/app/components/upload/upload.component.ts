@@ -136,23 +136,45 @@ export class UploadComponent {
               this.UpdateProgress(3);
               // Upload full image
               (await this._uploadService.uploadFiles(PHOTO_BASE_64, fileName as string))
-              .subscribe(async (res: any) => {
-                this.UpdateProgress(3);
-                // Create image object to get width and height
-                var img = new Image();
-                img.onload = () => {
-                  // Post to json server
-                  this.PhotoService.post(fileName, img.width, img.height).then(async () => {
-                    this.UpdateProgress(2);
-                    // Set localStorage with photo name to flag that this user posted this picture.
-                    // Triggers delete button in gallery
-                    localStorage.setItem(fileName, "true");
-                    if (this.uploaded == (this.files!.length * 8)){
-                      resolve(true)
+              .subscribe({
+
+                next: (res) => {
+                  this.UpdateProgress(3);
+                  // Create image object to get width and height
+                  var img = new Image();
+                  img.onload = () => {
+                    // Post to json server
+                    this.PhotoService.post(fileName, img.width, img.height).then(async () => {
+                      this.UpdateProgress(2);
+                      // Set localStorage with photo name to flag that this user posted this picture.
+                      // Triggers delete button in gallery
+                      localStorage.setItem(fileName, "true");
+                      if (this.uploaded == (this.files!.length * 8)){
+                        resolve(true)
+                      }
+                    })
+                  };
+                  img.src = PHOTO_BASE_64;
+                },
+
+                error: (res) => {
+                  this._dialog.open(DialogComponent, {
+                    data: {
+                      title: "Error",
+                      message: "An issue occured when uploading this picture.<br>Please try again.",
+                      button1: "Okay",
+                      button1Color: "#fd7543",
+                      button1TextColor: "White"
                     }
                   })
-                };
-                img.src = PHOTO_BASE_64;
+                  this.uploadButtonDisabled = true
+                  this.fileForm.nativeElement.reset()
+                  this.progress = 0
+                  this.showSpinner = false
+                  this.showCheck = false
+                  this.showFileInput = true
+                }
+
               });
             }
           } catch(error) {
