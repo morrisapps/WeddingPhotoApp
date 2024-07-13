@@ -12,7 +12,7 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
-import { PhotoService } from '../../services/photo.service';
+import { DBService } from '../../services/db.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { DialogComponent } from "../dialog/dialog.component";
 import imageCompression from "browser-image-compression";
@@ -42,7 +42,7 @@ export class UploadComponent {
   @ViewChild('fileForm', { read: ElementRef }) fileForm!:ElementRef;
   @ViewChild('textEllipsis', { read: ElementRef }) textEllipsis!:ElementRef;
 
-  PhotoService: PhotoService = inject(PhotoService);
+  DBService: DBService = inject(DBService);
   photoBase64: string = "";
 
   showSpinner: boolean = false;
@@ -115,116 +115,122 @@ export class UploadComponent {
 
   // Save picture
   async post() {
-    this.uploaded = 0
-    this.showSpinner = true
-    this.showCheck = false
-    this.showFileInput = false
+    // Check if uploading is disabled
+    this.DBService.checkIfStopDB().then(async (result) => {
+      if (!result) {
+        this.uploaded = 0
+        this.showSpinner = true
+        this.showCheck = false
+        this.showFileInput = false
 
-    new Promise((resolve,reject)=>{
-      Array.from(this.files!).map(file => {
+        new Promise((resolve,reject)=>{
+          Array.from(this.files!).map(file => {
 
-        let fileName = Date.now().toString()+file.name.split("\.")[0]
-        const reader = new FileReader();
-        // Read the Blob as DataURL using the FileReader API
-        reader.onloadend = async () => {
-          try {
-            // Get full res photo as base 64
-            const PHOTO_BASE_64 = reader.result as string
+            let fileName = Date.now().toString()+file.name.split("\.")[0]
+            const reader = new FileReader();
+            // Read the Blob as DataURL using the FileReader API
+            reader.onloadend = async () => {
+              try {
+                // Get full res photo as base 64
+                const PHOTO_BASE_64 = reader.result as string
 
-            // Save picture using express multer (fileupload service)
-            if (file) {
-              this.UpdateProgress(3);
-              // Upload full image
-              (await this._uploadService.uploadFiles(PHOTO_BASE_64, fileName as string))
-              .subscribe({
-
-                next: (res) => {
+                // Save picture using express multer (fileupload service)
+                if (file) {
                   this.UpdateProgress(3);
-                  // Create image object to get width and height
-                  var img = new Image();
-                  img.onload = () => {
-                    // Post to json server
-                    this.PhotoService.post(fileName, img.width, img.height).then(async () => {
-                      this.UpdateProgress(2);
-                      // Set localStorage with photo name to flag that this user posted this picture.
-                      // Triggers delete button in gallery
-                      localStorage.setItem(fileName, "true");
-                      if (this.uploaded == (this.files!.length * 8)){
-                        resolve(true)
-                      }
-                    })
-                  };
-                  img.src = PHOTO_BASE_64;
-                },
+                  // Upload full image
+                  (await this._uploadService.uploadFiles(PHOTO_BASE_64, fileName as string))
+                  .subscribe({
 
-                error: (res) => {
-                  this._dialog.open(DialogComponent, {
-                    data: {
-                      title: "Error",
-                      message: "An issue occured when uploading this picture.<br>Please try again.",
-                      button1: "Okay",
-                      button1Color: "#fd7543",
-                      button1TextColor: "White"
+                    next: (res) => {
+                      this.UpdateProgress(3);
+                      // Create image object to get width and height
+                      var img = new Image();
+                      img.onload = () => {
+                        // Post to json server
+                        this.DBService.post(fileName, img.width, img.height).then(async () => {
+                          this.UpdateProgress(2);
+                          // Set localStorage with photo name to flag that this user posted this picture.
+                          // Triggers delete button in gallery
+                          localStorage.setItem(fileName, "true");
+                          if (this.uploaded == (this.files!.length * 8)){
+                            resolve(true)
+                          }
+                        })
+                      };
+                      img.src = PHOTO_BASE_64;
+                    },
+
+                    error: (res) => {
+                      this._dialog.open(DialogComponent, {
+                        data: {
+                          title: "Error",
+                          message: "An issue occured when uploading this picture.<br>Please try again.",
+                          button1: "Okay",
+                          button1Color: "#fd7543",
+                          button1TextColor: "White"
+                        }
+                      })
+                      this.uploadButtonDisabled = true
+                      this.fileForm.nativeElement.reset()
+                      this.progress = 0
+                      this.showSpinner = false
+                      this.showCheck = false
+                      this.showFileInput = true
                     }
-                  })
-                  this.uploadButtonDisabled = true
-                  this.fileForm.nativeElement.reset()
-                  this.progress = 0
-                  this.showSpinner = false
-                  this.showCheck = false
-                  this.showFileInput = true
+
+                  });
                 }
+              } catch(error) {
+                console.log("Error posting image: "+error)
+              }
+            };
 
-              });
-            }
-          } catch(error) {
-            console.log("Error posting image: "+error)
-          }
-        };
+            // Compress file
+            imageCompression(file, {
+              maxSizeMB: 1
+            })
+            .then(function (compressedFile) {
+              // Gather photo file as blob for reader
+              var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
+              reader.readAsDataURL(blob);
+            })
+            .catch(function (error) {
+              console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
+              // Attempt using un-compressed file
+              var blob = file.slice(0, file.size, 'image/jpg');
+              reader.readAsDataURL(blob);
+            });
 
-        // Compress file
-        imageCompression(file, {
-          maxSizeMB: 1
+          })
+        }).then(() => {
+          new Promise((resolve, reject) => {
+            // Final progress update
+            this.progress = 100
+
+            // a resolved promise after .6 second to show the progress longer
+            setTimeout(() => {
+                resolve(true)
+            }, 600)
+          }).then(() => {
+            // Upload fully finished
+
+            // Posted picture to DB, stop spinner and show snackbar
+            this.showSpinner = false,
+            this._snackBar.open("Photo(s) uploaded to gallery!", "", {
+              duration: 4000,
+              panelClass: 'upload-snackbar'
+            });
+
+            this.uploadButtonDisabled = true
+            this.fileForm.nativeElement.reset()
+            this.progress = 0
+
+            this.showCheck = true
+          })
         })
-        .then(function (compressedFile) {
-          // Gather photo file as blob for reader
-          var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
-          reader.readAsDataURL(blob);
-        })
-        .catch(function (error) {
-          console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
-          // Attempt using un-compressed file
-          var blob = file.slice(0, file.size, 'image/jpg');
-          reader.readAsDataURL(blob);
-        });
-
-      })
-    }).then(() => {
-      new Promise((resolve, reject) => {
-        // Final progress update
-        this.progress = 100
-
-        // a resolved promise after .6 second to show the progress longer
-        setTimeout(() => {
-            resolve(true)
-        }, 600)
-      }).then(() => {
-        // Upload fully finished
-
-        // Posted picture to DB, stop spinner and show snackbar
-        this.showSpinner = false,
-        this._snackBar.open("Photo(s) uploaded to gallery!", "", {
-          duration: 4000,
-          panelClass: 'upload-snackbar'
-        });
-
-        this.uploadButtonDisabled = true
-        this.fileForm.nativeElement.reset()
-        this.progress = 0
-
-        this.showCheck = true
-      })
-  })}
+      }
+    })
+  }
 
   UpdateProgress(weight: number) {
     // Total weight is all the weight totaled that is passed in and should be divided by.

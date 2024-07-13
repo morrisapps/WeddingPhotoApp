@@ -2,7 +2,7 @@ import { Component, ElementRef, Renderer2, ViewChild, inject } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { GalleryCardComponent } from '../gallery-card/gallery-card.component';
 import { GalleryInformation } from '../../interfaces/gallery-information';
-import { PhotoService } from '../../services/photo.service';
+import { DBService } from '../../services/db.service';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -43,13 +43,13 @@ import { MatIconModule } from '@angular/material/icon';
 export class GalleryComponent {
   filteredGalleryList: GalleryInformation[] = [];
   galleryList: GalleryInformation[] = [];
-  PhotoService: PhotoService = inject(PhotoService);
+  DBService: DBService = inject(DBService);
   show: boolean = true;
 
   @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
 
   constructor(private renderer: Renderer2) {
-    this.PhotoService.getAllPhotos().then((galleryList: GalleryInformation[]) => {
+    this.DBService.getAllPhotos().then((galleryList: GalleryInformation[]) => {
       this.galleryList = galleryList;
       this.galleryList.reverse()
       this.filteredGalleryList = galleryList;

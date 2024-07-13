@@ -1,5 +1,5 @@
 <div style="width: 95vw; max-width: 400px;" class="center">
-  <mat-card >
+  <mat-card *ngIf="!isAdmin">
     <mat-card-content style="margin-bottom: 20px" class="center-content-block">
       <p class="center-content" >Please enter Admin password</p>
       <div class="center-content" style="width:100%; margin-top: 20px;">
@@ -26,4 +26,25 @@
 
     </mat-card-footer>
   </mat-card>
+
+  <mat-card *ngIf="isAdmin">
+    <mat-card-content>
+      <mat-card-title  class="toggle">Admin Settings</mat-card-title>
+      <section>
+        <mat-slide-toggle [(ngModel)]="adminDelete" class="toggle" (change)="setAdminSettings()">
+          Enable delete any photo and comment
+        </mat-slide-toggle>
+        <mat-slide-toggle [(ngModel)]="stopDB" class="toggle" (change)="setAdminSettings()">
+          Stop all users from uploading and commenting
+        </mat-slide-toggle>
+        <mat-slide-toggle [(ngModel)]="showStream" class="toggle" (change)="setAdminSettings()">
+          Show dialog message that stream is currently on
+        </mat-slide-toggle>
+        <mat-slide-toggle [(ngModel)]="showKahoot" class="toggle" (change)="setAdminSettings()">
+          Show dialog message for link to Kahoot!
+        </mat-slide-toggle>
+      </section>
+    </mat-card-content>
+  </mat-card>
+
 </div>

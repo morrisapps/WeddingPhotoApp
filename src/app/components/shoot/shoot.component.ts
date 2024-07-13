@@ -11,7 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from "../dialog/dialog.component";
 import { ReactiveFormsModule } from '@angular/forms';
-import { PhotoService } from '../../services/photo.service';
+import { DBService } from '../../services/db.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer } from "@angular/platform-browser";
@@ -108,7 +108,7 @@ import imageCompression from 'browser-image-compression';
 export class ShootComponent {
   @ViewChild('nameInput', { read: ElementRef }) nameInput!:ElementRef;
 
-  PhotoService: PhotoService = inject(PhotoService);
+  DBService: DBService = inject(DBService);
   photoBase64: string = "";
 
   hidden: boolean = false;
@@ -164,99 +164,103 @@ export class ShootComponent {
 
   // Save picture
   async post() {
+    // Check if uploading is disabled
+    this.DBService.checkIfStopDB().then(async (result) => {
+      if (!result) {
+        this.showCheck = false
+        this.hidden = true
+        this.showSpinner = true
+        let cameraFileInput = document.getElementById("cameraFileInput") as HTMLInputElement
 
-    this.showCheck = false
-    this.hidden = true
-    this.showSpinner = true
-    let cameraFileInput = document.getElementById("cameraFileInput") as HTMLInputElement
-
-    let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
-    let file = cameraFileInput.files![0]
+        let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
+        let file = cameraFileInput.files![0]
 
 
-    // Read the Blob as DataURL using the FileReader API
-    const reader = new FileReader();
+        // Read the Blob as DataURL using the FileReader API
+        const reader = new FileReader();
 
-    reader.onloadend = async () => {
-        // Save picture using express multer (fileupload service)
-        // Upload picture
-        (await this._uploadService.uploadFiles(reader.result as string, fileName as string))
-        .subscribe({
-          next: (res) => {
-            // Create image object to get width and height
-            var img = new Image();
-            img.onload = () => {
-              // Post to json server
-              this.PhotoService.post(fileName, img.width, img.height).then(async () => {
-                // Posted picture to DB, stop spinner and show snackbar, remove from data service
+        reader.onloadend = async () => {
+            // Save picture using express multer (fileupload service)
+            // Upload picture
+            (await this._uploadService.uploadFiles(reader.result as string, fileName as string))
+            .subscribe({
+              next: (res) => {
+                // Create image object to get width and height
+                var img = new Image();
+                img.onload = () => {
+                  // Post to json server
+                  this.DBService.post(fileName, img.width, img.height).then(async () => {
+                    // Posted picture to DB, stop spinner and show snackbar, remove from data service
 
-                // Set localStorage with photo name to flag that this user posted this picture.
-                // Triggers delete button in gallery
-                localStorage.setItem(fileName, "true");
+                    // Set localStorage with photo name to flag that this user posted this picture.
+                    // Triggers delete button in gallery
+                    localStorage.setItem(fileName, "true");
 
+                    this.showSpinner = false
+                    // Open snackbar with random success message
+                    const successMessages = [
+                      "Groovy Shot! 📸",
+                      "Hey man, nice shot! 🤛😎",
+                      "Psychedelic! ☮️✌️",
+                      "Vibing photo! 🎨",
+                      "🔭 Far out shot!! 👀",
+                      "🌻 Flower power photo! 💐",
+                      "Peace and Love 🫶☮️",
+                      "☮️🌈 Hippy shot! 🌈☮️",
+                      "Rad shooting! ✌️👍",
+                      "Right on, man! 👍😎",
+                      "🪩🕺💃",
+                      "Oh, behave!",
+                      "Fab",
+                      "Gnarly",
+                      "Groovy Baby!"
+                    ]
+                    this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
+
+                    this.hidden = true
+                    this.showCheck = true
+                  })
+                }
+                img.src = reader.result as string;
+              },
+              error: (res) => {
+                this._dialog.open(DialogComponent, {
+                  data: {
+                    title: "Error",
+                    message: "An issue occured when uploading this picture.<br>Please try again.",
+                    button1: "Okay",
+                    button1Color: "#fd7543",
+                    button1TextColor: "White"
+                  }
+                })
                 this.showSpinner = false
-                // Open snackbar with random success message
-                const successMessages = [
-                  "Groovy Shot! 📸",
-                  "Hey man, nice shot! 🤛😎",
-                  "Psychedelic! ☮️✌️",
-                  "Vibing photo! 🎨",
-                  "🔭 Far out shot!! 👀",
-                  "🌻 Flower power photo! 💐",
-                  "Peace and Love 🫶☮️",
-                  "☮️🌈 Hippy shot! 🌈☮️",
-                  "Rad shooting! ✌️👍",
-                  "Right on, man! 👍😎",
-                  "🪩🕺💃",
-                  "Oh, behave!",
-                  "Fab",
-                  "Gnarly",
-                  "Groovy Baby!"
-                ]
-                this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
-
-                this.hidden = true
-                this.showCheck = true
-              })
-            }
-            img.src = reader.result as string;
-          },
-          error: (res) => {
-            this._dialog.open(DialogComponent, {
-              data: {
-                title: "Error",
-                message: "An issue occured when uploading this picture.<br>Please try again.",
-                button1: "Okay",
-                button1Color: "#fd7543",
-                button1TextColor: "White"
+                this.showCheck = false
+                this.hidden = false
               }
             })
-            this.showSpinner = false
-            this.showCheck = false
-            this.hidden = false
-          }
+        }
+
+        // Compress file
+        imageCompression(file, {
+          maxSizeMB: 1
         })
-    }
+        .then(function (compressedFile) {
+          // Gather photo file as blob for reader
+          var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
+          reader.readAsDataURL(blob);
+        })
+        .catch(function (error) {
+          console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
+          // Attempt using un-compressed file
+          var blob = file.slice(0, file.size, 'image/jpg');
+          reader.readAsDataURL(blob);
+        });
 
-    // Compress file
-    imageCompression(file, {
-      maxSizeMB: 1
+
+        // Reset cameraFileInput to free memory
+        cameraFileInput.value = ''
+      }
     })
-    .then(function (compressedFile) {
-      // Gather photo file as blob for reader
-      var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
-      reader.readAsDataURL(blob);
-    })
-    .catch(function (error) {
-      console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
-      // Attempt using un-compressed file
-      var blob = file.slice(0, file.size, 'image/jpg');
-      reader.readAsDataURL(blob);
-    });
-
-
-    // Reset cameraFileInput to free memory
-    cameraFileInput.value = ''
   }
 
   // User name form

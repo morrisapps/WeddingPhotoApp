@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { PhotoService } from '../../services/photo.service';
+import { DBService } from '../../services/db.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { DialogComponent } from '../dialog/dialog.component';
@@ -66,7 +66,7 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
             <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
               [name]="[galleryInformation.id]" (load)="onLoad()">
             <!-- If cookie is present, then this user is either the author or admin and show delete button -->
-            @if (getLocalStorage().getItem(this.galleryInformation.id) == "true" || getLocalStorage().getItem("admin") == "true") {
+            @if (getLocalStorage().getItem(this.galleryInformation.id) == "true" || getLocalStorage().getItem("adminDelete") == "true") {
               <button mat-fab class="remove-button" (click)="remove()" style="width: 50px; height: 50px; background-color: red">
                 <mat-icon>delete</mat-icon>
               </button>
@@ -110,7 +110,7 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
                       </span>
                       <br>
                       <!-- If cookie is present, then this user is either the author or admin and show delete -->
-                      @if (getLocalStorage().getItem(galleryComment.id) == "true" || getLocalStorage().getItem("admin") == "true") {
+                      @if (getLocalStorage().getItem(galleryComment.id) == "true" || getLocalStorage().getItem("adminDelete") == "true") {
                         <span>
                           <a href="javascript:void(0);" (click)="deleteComment(galleryComment.id)">
                             Delete
@@ -156,7 +156,7 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 export class GalleryCardComponent {
   @Input() galleryInformation!: GalleryInformation;
 
-  PhotoService: PhotoService = inject(PhotoService);
+  DBService: DBService = inject(DBService);
 
   imgLoaded: boolean;
   likePressed: boolean;
@@ -210,62 +210,67 @@ export class GalleryCardComponent {
   }
 
   deleteComment(id: string) {
-    // Prompt dialog to verify if user wants to remove this comment
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: "Delete this Comment?",
-        message: "Are you sure you want to delete this comment?",
-        button1: "Cancel",
-        button1Color: "#EBEBEB",
-        button1TextColor: "Black",
-        button2: "Delete!",
-        button2Color: "red",
-        button2TextColor: "white",
-        input: false
-      }
-    }).afterClosed().subscribe(async result => {
-      if (result.button2) {
-        let error = false
-        this.isServerOperation = true
-        // Get updated information before deletion
-        this.PhotoService.getPhotoById(this.galleryInformation.id).then((updatedGalleryInformation: GalleryInformation | undefined) => {
-          if (updatedGalleryInformation !== undefined) {
-            if (updatedGalleryInformation.id !== undefined) {
-              this.galleryInformation = updatedGalleryInformation
-
-              let deleteIndex = this.galleryInformation.comments.findIndex(x => x.id === id);
-              this.galleryInformation.comments.splice(deleteIndex, 1)
-
-              this.PhotoService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
-                // Removes cookie flag for this comment
-                localStorage.removeItem(id)
-
-                // Wait half a second before hidding spinner. Prevents flashing
-                setTimeout(() => {
-                  this.isServerOperation = false
-                }, 500);
-              })
-            } else {
-              error = true
-            }
-          } else {
-            error = true
+    // Check if uploading is disabled
+    this.DBService.checkIfStopDB().then((result) => {
+      if (!result) {
+        // Prompt dialog to verify if user wants to remove this comment
+        this._dialog.open(DialogComponent, {
+          data: {
+            title: "Delete this Comment?",
+            message: "Are you sure you want to delete this comment?",
+            button1: "Cancel",
+            button1Color: "#EBEBEB",
+            button1TextColor: "Black",
+            button2: "Delete!",
+            button2Color: "red",
+            button2TextColor: "white",
+            input: false
           }
-        }).then(() => {
-          // Show Error dialog to user
-          if (error) {
-            this._dialog.open(DialogComponent, {
-              data: {
-                title: "Error",
-                message: "An error occured and could not delete this comment.<br>Try refreshing the page and trying again.",
-                button1: "Okay",
-                input: false
+        }).afterClosed().subscribe(async result => {
+          if (result.button2) {
+            let error = false
+            this.isServerOperation = true
+            // Get updated information before deletion
+            this.DBService.getPhotoById(this.galleryInformation.id).then((updatedGalleryInformation: GalleryInformation | undefined) => {
+              if (updatedGalleryInformation !== undefined) {
+                if (updatedGalleryInformation.id !== undefined) {
+                  this.galleryInformation = updatedGalleryInformation
+
+                  let deleteIndex = this.galleryInformation.comments.findIndex(x => x.id === id);
+                  this.galleryInformation.comments.splice(deleteIndex, 1)
+
+                  this.DBService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
+                    // Removes cookie flag for this comment
+                    localStorage.removeItem(id)
+
+                    // Wait half a second before hidding spinner. Prevents flashing
+                    setTimeout(() => {
+                      this.isServerOperation = false
+                    }, 500);
+                  })
+                } else {
+                  error = true
+                }
+              } else {
+                error = true
+              }
+            }).then(() => {
+              // Show Error dialog to user
+              if (error) {
+                this._dialog.open(DialogComponent, {
+                  data: {
+                    title: "Error",
+                    message: "An error occured and could not delete this comment.<br>Try refreshing the page and trying again.",
+                    button1: "Okay",
+                    input: false
+                  }
+                })
               }
             })
           }
-        })
+        });
       }
-    });
+    })
   }
 
   // Used only to return localStorage into angular template
@@ -274,71 +279,76 @@ export class GalleryCardComponent {
   }
 
   async patchComment() {
-    let date = new Date()
-    let dformat = [date.getMonth()+1,
-      date.getDate(),
-      date.getFullYear()].join('/') + ' ' +
-     [date.getHours(),
-      date.getMinutes(),
-      date.getSeconds()].join(':') + '-' +
-      date.getMilliseconds();
+    // Check if uploading is disabled
+    this.DBService.checkIfStopDB().then(async (result) => {
+      if (!result) {
+        let date = new Date()
+        let dformat = [date.getMonth()+1,
+          date.getDate(),
+          date.getFullYear()].join('/') + ' ' +
+         [date.getHours(),
+          date.getMinutes(),
+          date.getSeconds()].join(':') + '-' +
+          date.getMilliseconds();
 
-    await this.setUserName()
+        await this.setUserName()
 
-    const galleryComment = { id: dformat, comment: this.newComment, author: localStorage.getItem('User') } as GalleryComment
+        const galleryComment = { id: dformat, comment: this.newComment, author: localStorage.getItem('User') } as GalleryComment
 
-    this.isServerOperation = true
-    let error = false
+        this.isServerOperation = true
+        let error = false
 
-    if (this.galleryInformation.comments == undefined) {
-      this.galleryInformation.comments = []
-    } else {
-      // updated galleryInformation
-      this.PhotoService.getPhotoById(this.galleryInformation.id).then((updatedGalleryInformation: GalleryInformation | undefined) => {
-        if (updatedGalleryInformation !== undefined) {
-          if (updatedGalleryInformation.id !== undefined) {
-            // Force comments to be present
-            if (updatedGalleryInformation.comments == undefined) {
-              updatedGalleryInformation.comments = []
-            }
-            this.galleryInformation = updatedGalleryInformation
-            this.galleryInformation.comments.push(galleryComment)
-
-            this.PhotoService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
-              // Forces a new reference for the array object and triggers viewport to refresh
-              this.galleryInformation.comments = [...this.galleryInformation.comments]
-
-              // Sets cookie with id of comment. Triggers delete button if cookie is found on view.
-              localStorage.setItem(dformat,"true")
-
-              this.commentsScrollToBottom()
-              this.newComment = ""
-
-              // Wait half a second before hidding spinner. Prevents flashing
-              setTimeout(() => {
-                this.isServerOperation = false
-              }, 500);
-            })
-          } else {
-            error = true
-          }
+        if (this.galleryInformation.comments == undefined) {
+          this.galleryInformation.comments = []
         } else {
-          error = true
-        }
-      }).then(() => {
-        // Show Error dialog to user
-        if (error) {
-          this._dialog.open(DialogComponent, {
-            data: {
-              title: "Error",
-              message: "An error occured and could not update this comment.<br>Try refreshing the page and trying again.",
-              button1: "Okay",
-              input: false
+          // updated galleryInformation
+          this.DBService.getPhotoById(this.galleryInformation.id).then((updatedGalleryInformation: GalleryInformation | undefined) => {
+            if (updatedGalleryInformation !== undefined) {
+              if (updatedGalleryInformation.id !== undefined) {
+                // Force comments to be present
+                if (updatedGalleryInformation.comments == undefined) {
+                  updatedGalleryInformation.comments = []
+                }
+                this.galleryInformation = updatedGalleryInformation
+                this.galleryInformation.comments.push(galleryComment)
+
+                this.DBService.patchComments(this.galleryInformation.id, this.galleryInformation.comments).then(async () => {
+                  // Forces a new reference for the array object and triggers viewport to refresh
+                  this.galleryInformation.comments = [...this.galleryInformation.comments]
+
+                  // Sets cookie with id of comment. Triggers delete button if cookie is found on view.
+                  localStorage.setItem(dformat,"true")
+
+                  this.commentsScrollToBottom()
+                  this.newComment = ""
+
+                  // Wait half a second before hidding spinner. Prevents flashing
+                  setTimeout(() => {
+                    this.isServerOperation = false
+                  }, 500);
+                })
+              } else {
+                error = true
+              }
+            } else {
+              error = true
+            }
+          }).then(() => {
+            // Show Error dialog to user
+            if (error) {
+              this._dialog.open(DialogComponent, {
+                data: {
+                  title: "Error",
+                  message: "An error occured and could not update this comment.<br>Try refreshing the page and trying again.",
+                  button1: "Okay",
+                  input: false
+                }
+              })
             }
           })
         }
-      })
-    }
+      }
+    })
   }
 
   async setUserName() {
@@ -393,39 +403,44 @@ export class GalleryCardComponent {
   }
 
   remove() {
-    // Prompt dialog to verify if user wants to remove this picture
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: "Delete this picture?",
-        message: "Do you want to delete this picture and stop it from displaying in the gallery and on the venue screens?",
-        button1: "Cancel",
-        button1Color: "#EBEBEB",
-        button1TextColor: "Black",
-        button2: "Delete!",
-        button2Color: "red",
-        button2TextColor: "white",
-        input: false
-      }
-    }).afterClosed().subscribe(async result => {
-      if (result.button2) {
-        // Remove picture from JSON server
-        this.PhotoService.remove(this.galleryInformation.id).then(async () => {
-          // Remove picture and thumbnail
-          (await this._uploadService.removeFile(this.galleryInformation.id))
-          .subscribe(async (res: any) => {
-            // Refresh gallery
-            this._router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
-              this._router.navigate(['/gallery'])
-              this._snackBar.open("Photo deleted from gallery!", "", {
-                duration: 4000,
-                panelClass: 'upload-snackbar',
-                verticalPosition: 'top'
-              });
+    // Check if uploading is disabled
+    this.DBService.checkIfStopDB().then(async (result) => {
+      if (!result) {
+        // Prompt dialog to verify if user wants to remove this picture
+        this._dialog.open(DialogComponent, {
+          data: {
+            title: "Delete this picture?",
+            message: "Do you want to delete this picture and stop it from displaying in the gallery and on the venue screens?",
+            button1: "Cancel",
+            button1Color: "#EBEBEB",
+            button1TextColor: "Black",
+            button2: "Delete!",
+            button2Color: "red",
+            button2TextColor: "white",
+            input: false
+          }
+        }).afterClosed().subscribe(async result => {
+          if (result.button2) {
+            // Remove picture from JSON server
+            this.DBService.remove(this.galleryInformation.id).then(async () => {
+              // Remove picture and thumbnail
+              (await this._uploadService.removeFile(this.galleryInformation.id))
+              .subscribe(async (res: any) => {
+                // Refresh gallery
+                this._router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
+                  this._router.navigate(['/gallery'])
+                  this._snackBar.open("Photo deleted from gallery!", "", {
+                    duration: 4000,
+                    panelClass: 'upload-snackbar',
+                    verticalPosition: 'top'
+                  });
+                })
+              })
             })
-          })
-        })
+          }
+        });
       }
-    });
+    })
   }
 
   updateLikes() {
@@ -444,7 +459,7 @@ export class GalleryCardComponent {
     if (isLiked != "true") {
       // Add Like
       this.galleryInformation.likes += 1
-      this.PhotoService.patchLikes(this.galleryInformation.id, true)
+      this.DBService.patchLikes(this.galleryInformation.id, true)
       // Flag localStorage as this gallery has been liked.
       localStorage.setItem(this.galleryInformation.id+"like", "true")
       // Set icon to represent change
@@ -453,7 +468,7 @@ export class GalleryCardComponent {
       // Remove Like
       if (this.galleryInformation.likes > 0) {
         this.galleryInformation.likes -= 1
-        this.PhotoService.patchLikes(this.galleryInformation.id, false)
+        this.DBService.patchLikes(this.galleryInformation.id, false)
         // Flag localStorage as this card has been liked.
         localStorage.setItem(this.galleryInformation.id+"like", "false")
         // Set icon to represent change

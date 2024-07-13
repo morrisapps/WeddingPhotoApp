@@ -1,11 +1,15 @@
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
+import { DialogComponent } from '../dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DBService } from '../../services/db.service';
+import { AdminInformation } from '../../interfaces/admin-information';
 
 
 @Component({
@@ -51,7 +55,14 @@ export class HomeComponent {
 
   toolbarHeight = localStorage.getItem("toolbarHeight")
 
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer, private renderer: Renderer2){
+  DBService: DBService = inject(DBService);
+
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+    private renderer: Renderer2,
+    private _dialog: MatDialog,
+    ){
     this.matIconRegistry.addSvgIcon(
       'camera',
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/camera.svg")
@@ -69,5 +80,51 @@ export class HomeComponent {
   ngAfterViewInit() {
     // set root div height minus 20 px margin
     this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
+
+    // Check if should show stream or Kahoot dialog
+    this.DBService.getAdmin().then((adminInfo: AdminInformation | any) => {
+      if (adminInfo.showKahoot) {
+        // Prompt dialog to verify if user wants to remove this comment
+        this._dialog.open(DialogComponent, {
+          data: {
+            title: "Play Kahoot!",
+            message: 'Kahoot is now opened for players to join!<br>Please join by clicking "Play Kahoot!"',
+            button1: "Play Kahoot!",
+            button1Color: "#fd7543",
+            button1TextColor: "White",
+            button2: "No Thanks",
+            button2Color: "#f9f9f9",
+            button2TextColor: "Black",
+            input: false
+          }
+        }).afterClosed().subscribe(result => {
+          if (result.button1 !== '' && result.button1 !== null && result.button1 !== false && result.button1 !== 'undefined') {
+            window.open("https://neopets.com", "_blank");
+          }
+        })
+      }
+
+      if (adminInfo.showStream) {
+        // Prompt dialog to verify if user wants to remove this comment
+        this._dialog.open(DialogComponent, {
+          data: {
+            title: "Watch the Wedding Ceremony!",
+            message: 'Our Wedding is taking place now!<br>Please watch our ceremony stream by clicking "Watch Stream"',
+            button1: "Watch Stream",
+            button1Color: "#fd7543",
+            button1TextColor: "White",
+            button2: "No Thanks",
+            button2Color: "#f9f9f9",
+            button2TextColor: "Black",
+            input: false
+          }
+        }).afterClosed().subscribe(result => {
+          if (result.button1 !== '' && result.button1 !== null && result.button1 !== false && result.button1 !== 'undefined') {
+            window.open("https://neopets.com", "_blank");
+          }
+        })
+      }
+
+    })
   }
 }

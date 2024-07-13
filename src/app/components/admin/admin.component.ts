@@ -1,11 +1,15 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { HttpClient } from '@angular/common/http';
+import { DBService } from '../../services/db.service';
 import * as CryptoJS from 'crypto-js';
+import { AdminInformation } from '../../interfaces/admin-information';
 
 @Component({
   selector: 'app-admin',
@@ -15,7 +19,9 @@ import * as CryptoJS from 'crypto-js';
     MatCardModule,
     MatInputModule,
     MatFormFieldModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSlideToggleModule,
+    FormsModule
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
@@ -29,8 +35,21 @@ export class AdminComponent {
   isPasswordAttempted = false;
   isPasswordSuccesfull = false;
   isPasswordInputted = false;
+  isAdmin = false;
 
-  constructor( private _http: HttpClient) {}
+  DBService: DBService = inject(DBService);
+
+  adminDelete = false;
+  stopDB = false;
+  showStream = false;
+  showKahoot = false;
+
+  adminInfo: AdminInformation | undefined;
+
+  constructor( private _http: HttpClient) {
+    this.getAdminInfo()
+
+  }
 
   passwordInput(event: any) {
     if (event.target.value.length >= 3) {
@@ -41,10 +60,7 @@ export class AdminComponent {
   }
 
   validatePassword(){
-    this._http.get(
-      'https://morrisapps.ddns.net:8080/admin'
-    ).subscribe((result) => {
-
+    this.DBService.getAdmin().then((adminInfo: AdminInformation | any) => {
       // Encrypts the given password utilizing cipher key
       let encrypted = CryptoJS.AES.encrypt(
         this.password.nativeElement.value, CryptoJS.enc.Utf8.parse(this.key), {
@@ -57,7 +73,7 @@ export class AdminComponent {
 
       this.isPasswordAttempted = true
       // Check if encrypted password equals stored encrypted pass from get request
-      if (encrypted == result) {
+      if (encrypted == adminInfo.saltedPassword) {
         this.isPasswordSuccesfull = true
 
         //Set localStorage to flag admin
@@ -69,7 +85,38 @@ export class AdminComponent {
       } else {
         this.isPasswordSuccesfull = false
       }
+
+    });
+  }
+
+  setAdminSettings() {
+
+    localStorage.setItem("adminDelete", this.adminDelete as unknown as string)
+
+    let adminInfo: AdminInformation = {
+      saltedPassword: '',
+      stopDB: this.stopDB as unknown as boolean,
+      showKahoot: this.showKahoot as unknown as boolean,
+      showStream: this.showStream as unknown as boolean
+    }
+    this.DBService.postAdmin(adminInfo)
+  }
+
+  getAdminInfo() {
+    this.DBService.getAdmin().then((adminInfo: AdminInformation | any) => {
+      if (localStorage.getItem("adminDelete") == "true") {
+        this.adminDelete = true
+      }
+      this.stopDB = adminInfo.stopDB
+      this.showKahoot = adminInfo.showKahoot
+      this.showStream = adminInfo.showStream
     })
+  }
+
+  ngOnInit(){
+    if (localStorage.getItem("admin") == "true") {
+      this.isAdmin = true
+    }
   }
 
 }
