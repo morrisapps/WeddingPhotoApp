@@ -4,6 +4,7 @@ import { GalleryComponent } from './components/gallery/gallery.component';
 import { ShootComponent } from './components/shoot/shoot.component';
 import { UploadComponent } from './components/upload/upload.component';
 import { AdminComponent } from './components/admin/admin.component';
+import { GamesComponent } from './components/games/games.component';
 
 export const routes: Routes = [
   {
@@ -24,16 +25,21 @@ export const routes: Routes = [
   {
     path: 'shoot',
     component: ShootComponent,
-    title: 'Take a photo'
+    title: 'Take a photo!'
   },
   {
     path: 'upload',
     component: UploadComponent,
-    title: 'Upload Photos'
+    title: 'Upload Photos!'
   },
   {
     path: 'photos',
     redirectTo: '../../photos',
-    title: 'photos'
+    title: 'Photos!'
+  },
+  {
+    path: 'games',
+    component: GamesComponent,
+    title: 'Games!'
   }
 ];

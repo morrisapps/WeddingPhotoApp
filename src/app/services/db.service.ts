@@ -153,7 +153,7 @@ export class DBService {
       currentLikes -= 1
     }
 
-    await fetch(this.url + '/photos' + fileName, {
+    await fetch(this.url + '/photos/' + fileName, {
       method: 'PATCH',
       headers: {
          'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ export class DBService {
     return new Promise<boolean>(async (resolve, reject) => {
       await this.getAdmin().then((adminInfo: AdminInformation | any) => {
         if (adminInfo.stopDB) {
-          // Display dialog warning user
+          // Display dialog warning
           this._dialog.open(DialogComponent, {
             data: {
               title: "Feature Disabled",

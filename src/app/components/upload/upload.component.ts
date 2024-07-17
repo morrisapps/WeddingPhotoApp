@@ -295,7 +295,7 @@ export class UploadComponent {
       this._dialog.open(DialogComponent, {
         data: {
           title: "About uploading",
-          message: "You can upload all your photos here if you rather use your camera without this website.</br>Make sure you have already taken your pictures.",
+          message: "You can upload all your photos here if you rather use your camera's app.</br>Make sure you have already taken your pictures.",
           button1: "Groovy!",
           button1Color: "#fd7543",
           button1TextColor: "White"

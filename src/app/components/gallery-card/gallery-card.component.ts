@@ -480,7 +480,7 @@ export class GalleryCardComponent {
 
   download() {
     const a = document.createElement('a')
-    a.href = "https://morrisapps.ddns.net/photos/full/"+this.galleryInformation.id+".jpg"
+    a.href = "https://granted.photos/photos/full/"+this.galleryInformation.id+".jpg"
     a.download = this.galleryInformation.id+"-full.jpg"
     document.body.appendChild(a)
     a.click()
