@@ -32,3 +32,19 @@
 tr {
   text-align: center;
 }
+
+.most-likes {
+  display: grid;
+  column-gap: 14px;
+  row-gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  justify-content: space-around;
+}
+
+.button {
+  width: 250px;
+  height: 50px;
+  margin-top: 20px;
+  /* background-color: #ff4400;
+  color: white */
+}

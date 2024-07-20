@@ -1,8 +1,8 @@
 .center {
   position: absolute;
-  top: calc(50%);
+  top: calc(50dvh);
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -30dvh);
 }
 
 .center-content {
@@ -33,4 +33,8 @@
 
 .toggle {
   margin-bottom: 10px;
+}
+
+.most-likes {
+  justify-content: space-around;
 }

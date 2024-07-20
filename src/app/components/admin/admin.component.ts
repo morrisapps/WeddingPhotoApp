@@ -10,6 +10,8 @@ import { HttpClient } from '@angular/common/http';
 import { DBService } from '../../services/db.service';
 import * as CryptoJS from 'crypto-js';
 import { AdminInformation } from '../../interfaces/admin-information';
+import { GalleryInformation } from '../../interfaces/gallery-information';
+import { GalleryCardComponent } from '../gallery-card/gallery-card.component';
 
 @Component({
   selector: 'app-admin',
@@ -21,7 +23,8 @@ import { AdminInformation } from '../../interfaces/admin-information';
     MatFormFieldModule,
     MatButtonModule,
     MatSlideToggleModule,
-    FormsModule
+    FormsModule,
+    GalleryCardComponent,
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
@@ -45,6 +48,9 @@ export class AdminComponent {
   showKahoot = false;
 
   adminInfo: AdminInformation | undefined;
+
+  mostLikes: GalleryInformation[] | undefined;
+  showMostLikes = false;
 
   constructor( private _http: HttpClient) {
     this.getAdminInfo()
@@ -78,7 +84,7 @@ export class AdminComponent {
 
         //Set localStorage to flag admin
         localStorage.setItem("admin","true")
-
+        this.isAdmin = true
         // Reset form
         this.isPasswordInputted = false
         this.password.nativeElement.value = ""
@@ -113,7 +119,15 @@ export class AdminComponent {
     })
   }
 
-  ngOnInit(){
+  async getMostLikes() {
+    // Set mostLikes photos
+    await this.DBService.getMostLikes().then((result) => {
+      this.mostLikes = result as unknown as GalleryInformation[]
+      this.showMostLikes = true
+    })
+  }
+
+  async ngOnInit(){
     if (localStorage.getItem("admin") == "true") {
       this.isAdmin = true
     }

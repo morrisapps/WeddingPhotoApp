@@ -31,8 +31,6 @@ export class DBService {
     return await data.json() ?? {};
   }
 
-
-
   async postNewSubDirectory(fileName: string, width: number, height: number) {
     await fetch("https://morrisapps.ddns.net:3000/subdirectory", {
       method: 'POST',
@@ -83,6 +81,27 @@ export class DBService {
       body: JSON.stringify({
         "comments": comments
       })
+    })
+  }
+
+  async getMostLikes(): Promise<GalleryInformation> {
+    const data = await fetch(this.url+'/photos');
+    return await data.json().then((result) => {
+      let mostLikes: any = [];
+      for (let i = 0; i < result.length; i++) {
+        if (mostLikes.length == 0) {
+          if (result[i].likes !== undefined) {
+            mostLikes = [result[i]]
+          }
+        } else {
+          if (result[i].likes > mostLikes[0].likes) {
+            mostLikes = [result[i]]
+          } else if (result[i].likes == mostLikes[0].likes) {
+            mostLikes.push(result[i])
+          }
+        }
+      }
+      return mostLikes
     })
   }
 

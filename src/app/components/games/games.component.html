@@ -8,14 +8,14 @@
     <div class="center-content">
       <img src="/assets/graphics/polaroiddance.png" style="width: 80px; height: 95px; display: inline-block; margin: -20px; margin-bottom: -15px;">
     </div>
-    <p style="text-align: center">During the reception, we invite all our guests to take photos and share them within this website.<br>The MC will determine the best pictures in the gallery under these catagories to win 10$ gift cards!</p>
+    <p style="text-align: center">During the reception, we invite all our guests to take photos and share them within this website.<br>The MC will determine the best pictures in the gallery under these catagories to win $10 gift cards!</p>
     <div class="center-content">
       <table mat-table>
         <tr>
           <td>Best Picture of Groom and Bride</td>
         </tr>
         <tr mat-header-row >
-          <td>Best Booth picture</td>
+          <td>Best Photo Booth picture</td>
         </tr>
         <tr mat-row >
           <td>Goofiest Picture</td>
@@ -28,6 +28,20 @@
         </tr>
       </table>
     </div>
+    <div class="center-content">
+      <button *ngIf="!showMostLikes" mat-raised-button (click)="getMostLikes()" class="button">
+        <span>Show Most Liked Photos</span>
+      </button>
+      <button *ngIf="showMostLikes" mat-raised-button (click)="showMostLikes = false" class="button">
+        <span>Hide Most Liked Photos</span>
+      </button>
+    </div>
+
+    <section *ngIf="showMostLikes" class="most-likes" style="margin-bottom: 20px">
+      <div *ngFor="let photo of mostLikes" style="margin-top: 20px">
+        <app-gallery-card [galleryInformation]="photo"></app-gallery-card>
+      </div>
+    </section>
 
     <p class="center-content title">Kahoot!</p>
     <div class="center-content">
@@ -40,7 +54,7 @@
     <div class="center-content">
       <img src="/assets/graphics/cartoonphotos.png" style="width: 70px; height: 70px; display: inline-block; margin: -20px; margin-bottom: 0px;">
     </div>
-    <p style="text-align: center">All guests under 18 will receive a Photo Bingo card where they can take pictures to fill in squares.<br>Allison will give out prizes for 1 line, all edges, and full card.</p>
+    <p style="text-align: center">All guests under 18 will receive a Photo Bingo card where they can take pictures to fill in squares.<br>Allison will give out prizes for 1 line, card frame, and full card.</p>
 
 
     <p class="center-content title">Actual Bingo</p>
@@ -70,13 +84,13 @@
           <th>Prize</th>
         </tr>
         <tr>
-          <td>10$ Gift Card</td>
+          <td>$10 Gift Card</td>
         </tr>
         <tr>
-          <td>20$ Gift Card</td>
+          <td>$20 Gift Card</td>
         </tr>
         <tr>
-          <td>40$ Gift Card</td>
+          <td>$40 Gift Card</td>
         </tr>
       </table>
     </div>
@@ -101,13 +115,13 @@
           <th>Prize</th>
         </tr>
         <tr>
-          <td>20$ Gift Card</td>
+          <td>$20 Gift Card</td>
         </tr>
         <tr>
-          <td>40$ Gift Card</td>
+          <td>$40 Gift Card</td>
         </tr>
         <tr>
-          <td>80$ Gift Card</td>
+          <td>$80 Gift Card</td>
         </tr>
       </table>
     </div>
