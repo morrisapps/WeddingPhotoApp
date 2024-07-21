@@ -1,11 +1,61 @@
+<div style="width: 95vw; max-width: 400px;" class="center">
 
-<div style="background-color: orange;">
-  <div style="width: 100vw; height: 100vh; background-color: orange;" class="center">
+    <mat-card *ngIf="!isAdmin">
+      <mat-card-content style="margin-bottom: 20px" class="center-content-block">
+        <p class="center-content" >Please enter Admin password</p>
+        <div class="center-content" style="width:100%; margin-top: 20px;">
+          <mat-form-field style="width:100%;">
+            <mat-label>Password</mat-label>
+            <input matInput #password type="password" (input)="passwordInput($event)">
+          </mat-form-field>
+        </div>
 
+        <div class="center-content">
+          <button [disabled]="!isPasswordInputted" mat-raised-button (click)="validatePassword()" class="button">
+            <span>Login</span>
+          </button>
+        </div>
 
-      <span style="font-size:500px; font-family: Shagadelic; margin-bottom: 400px; color: white; background-color: orange;"><br>&nbsp;G&nbsp;</span>
+        <div *ngIf="isPasswordAttempted" style="margin-top: 20px; margin-bottom: -20px">
+          <p *ngIf="!isPasswordSuccesfull" class="center-content" style="color:red">Wrong password!</p>
+          <p *ngIf="isPasswordSuccesfull" class="center-content" style="color: green">Logged in.<br>You may delete any photo(s) in the gallery.</p>
+        </div>
 
-  </div>
+      </mat-card-content>
+
+      <mat-card-footer>
+
+      </mat-card-footer>
+    </mat-card>
+
+    <mat-card *ngIf="isAdmin">
+      <mat-card-content>
+        <mat-card-title  class="toggle">Admin Settings</mat-card-title>
+        <section>
+          <mat-slide-toggle [(ngModel)]="adminDelete" class="toggle" (change)="setAdminSettings()">
+            Enable Admindelete any photo and comment
+          </mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="stopDB" class="toggle" (change)="setAdminSettings()">
+            Stop all users from uploading and commenting
+          </mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="showStream" class="toggle" (change)="setAdminSettings()">
+            Show dialog message that stream is currently on
+          </mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="showKahoot" class="toggle" (change)="setAdminSettings()">
+            Show dialog message for link to Kahoot!
+          </mat-slide-toggle>
+          <div class="center-content">
+            <button *ngIf="!showMostLikes" mat-raised-button (click)="getMostLikes()" class="button" style="width: 200px; margin-top: 20px;">
+              <span>Show Most Liked Photos</span>
+            </button>
+          </div>
+        </section>
+      </mat-card-content>
+    </mat-card>
+  <section *ngIf="showMostLikes" class="most-likes" style="margin-bottom: 20px">
+    <div *ngFor="let photo of mostLikes" style="margin-top: 20px">
+      <app-gallery-card [galleryInformation]="photo"></app-gallery-card>
+    </div>
+  </section>
 </div>
-
 
