@@ -44,18 +44,24 @@
           <mat-slide-toggle [(ngModel)]="showKahoot" class="toggle" (change)="setAdminSettings()">
             Show dialog message for link to Kahoot!
           </mat-slide-toggle>
-          <div class="center-content">
-            <button *ngIf="!showMostLikes" mat-raised-button (click)="getMostLikes()" class="button" style="width: 200px; margin-top: 20px;">
-              <span>Show Most Liked Photos</span>
-            </button>
-          </div>
         </section>
       </mat-card-content>
+      <div class="center-content">
+        <app-slide-show></app-slide-show>
+      </div>
+      <div class="center-content">
+        <button *ngIf="!showMostLikes" mat-raised-button (click)="getMostLikes()" style="width: 250px; margin-bottom: 10px;">
+          <span>Show Most Liked Photos</span>
+        </button>
+      </div>
     </mat-card>
   <section *ngIf="showMostLikes" class="most-likes" style="margin-bottom: 20px">
     <div *ngFor="let photo of mostLikes" style="margin-top: 20px">
       <app-gallery-card [galleryInformation]="photo"></app-gallery-card>
     </div>
   </section>
+
 </div>
+
+
 

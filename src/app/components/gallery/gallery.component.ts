@@ -24,7 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
   ],
   template: `
   <div #rootDiv class="root-div">
-    <mat-form-field style="width: 100%">
+    <mat-form-field style="width: 100%; margin-top: 5px">
       <span matTextPrefix>
         <mat-icon class="icon-size" style="margin-left: 5px;">search</mat-icon>
       </span>

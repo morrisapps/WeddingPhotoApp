@@ -7,5 +7,7 @@ export interface GalleryInformation {
   height: number;
   likes: number;
   date: Date;
+  showncount: number;
+  prevcount: number;
   comments: GalleryComment[];
 }

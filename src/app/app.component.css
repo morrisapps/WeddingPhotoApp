@@ -45,3 +45,20 @@ header {
   min-width: 70px;
   line-height: 70px;
 }
+
+.drawer-button {
+  font-size: 40px;
+  height: 40px;
+  width: 40px;
+  min-height: 40px;
+  min-width: 40px;
+  line-height: 40px;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0px !important;
+  display: inline-flex !important;
+}
+
+.title-center {
+  margin: 0 auto;
+}

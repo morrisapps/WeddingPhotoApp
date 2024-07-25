@@ -12,6 +12,7 @@ import * as CryptoJS from 'crypto-js';
 import { AdminInformation } from '../../interfaces/admin-information';
 import { GalleryInformation } from '../../interfaces/gallery-information';
 import { GalleryCardComponent } from '../gallery-card/gallery-card.component';
+import { SlideShowComponent } from '../slide-show/slide-show.component';
 
 @Component({
   selector: 'app-admin',
@@ -25,7 +26,8 @@ import { GalleryCardComponent } from '../gallery-card/gallery-card.component';
     MatSlideToggleModule,
     FormsModule,
     GalleryCardComponent,
-  ],
+    SlideShowComponent
+],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })

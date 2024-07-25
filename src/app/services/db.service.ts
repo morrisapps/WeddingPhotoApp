@@ -26,6 +26,99 @@ export class DBService {
     return await data.json() ?? {};
   }
 
+  async getSlidePhotos(): Promise<GalleryInformation[] | void> {
+    const data = await fetch(this.url+'/photos');
+    // Get sorted photos by how many times they been shown. Retrieves the lowest 20.
+    const sortedPhotos = await data.json().then(async (result) => {
+
+      // Filter out any prev count photos, and reduce their count
+      let prevFilterPhotos: any = []
+      for (let i = 0; i < result.length; i++) {
+        // If showncount or prev count is undefined, set to 0
+        if (result[i].showncount == undefined) {
+          result[i].showncount = 0
+        }
+        if (result[i].prevcount == undefined) {
+          result[i].prevcount = 0
+        }
+
+
+        if (result[i].prevcount > 0) {
+          // Don't add to array, reduce prev count
+          result[i].prevcount --
+        } else {
+          prevFilterPhotos.push(result[i])
+        }
+        this.patchSlideCounts(result[i].id, result[i].showncount, result[i].prevcount)
+      }
+
+      // If filtered too many photos to not fill all slides randomly
+      if (result.length >= 20) {
+        while (prevFilterPhotos.length < 20) {
+          prevFilterPhotos.push(result[result.length * Math.random() | 0])
+        }
+      } else {
+        // Use all available photos
+        prevFilterPhotos = result
+      }
+
+      const sortedPhotos = await prevFilterPhotos.toSorted((a: GalleryInformation, b: GalleryInformation) => a.showncount > b.showncount)
+
+      return sortedPhotos.slice(0, 20)
+    })
+
+    return await this.shuffleArray(sortedPhotos).then((shuffleSortedPhotos) => {
+      shuffleSortedPhotos = shuffleSortedPhotos
+      for (let i = 0; i < shuffleSortedPhotos.length; i++) {
+        // shown count is increased so that it appears less often in the slide show
+        shuffleSortedPhotos[i].showncount ++
+        // prev count is set to 2 so that it won't re appear within two cycles of the slide show
+        shuffleSortedPhotos[i].prevcount = 2
+        this.patchSlideCounts(shuffleSortedPhotos[i].id, shuffleSortedPhotos[i].showncount, shuffleSortedPhotos[i].prevcount)
+      }
+      return shuffleSortedPhotos
+    })
+
+  }
+
+  async shuffleArray(array: any): Promise<any[]>{
+    for (var i = array.length - 1; i > 0; i--) {
+
+        // Generate random number
+        var j = Math.floor(Math.random() * (i + 1));
+
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+
+    return await array;
+  }
+
+  async resetSlideCount(): Promise<any> {
+    const data = await fetch(this.url+'/photos');
+    return await data.json().then(async (result) => {
+      for (let i = 0; i < result.length; i++) {
+        result[i].showncount = 0
+        result[i].prevcount = 0
+        await this.patchSlideCounts(result[i].id, result[i].showncount, result[i].prevcount)
+      }
+    })
+  }
+
+  async patchSlideCounts(id: string, showncount: number, prevcount: number) {
+    await fetch(this.url + '/photos/' + id, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "showncount": showncount,
+        "prevcount": prevcount
+      })
+    })
+  }
+
   async getAdmin(): Promise<Object | undefined> {
     const data = await fetch(this.url+'/admin');
     return await data.json() ?? {};
@@ -126,7 +219,9 @@ export class DBService {
         "width": width,
         "height": height,
         "likes": 0,
-        "date": dformat
+        "date": dformat,
+        "showncount": 0,
+        "prevcount": 0
       })
     })
   }

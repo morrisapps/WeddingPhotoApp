@@ -1,0 +1,26 @@
+<button mat-raised-button (click)="openSlides()">Open Slides</button>
+<button mat-raised-button (click)="resetSlides()">Reset Slide counts</button>
+<lightgallery #lightGalleryElement id="lightGalleryElement"
+  [settings]="{
+    mode: 'lg-fade',
+    startClass: 'lg-fade',
+    plugins: [lgAutoPlay, lgFullScreen],
+    autoplay: true,
+    autoplayControls: true,
+    allowMediaOverlap: true,
+    progressBar: false,
+    counter: false,
+    hideBarsDelay: 500,
+    slideShowInterval: 10000,
+    speed: 5000,
+    preload: 10,
+    backdropDuration: 400,
+    slideEndAnimation: false,
+    startAnimationDuration: 10000,
+    controls: true,
+    dynamic: true,
+    dynamicEl: this.items,
+    appendSubHtmlTo: '.lg-item',
+  }"
+  [onInit]="onInit">
+</lightgallery>
