@@ -18,7 +18,6 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 
 
 @Component({
@@ -35,8 +34,7 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
     FormsModule,
     MatInputModule,
     MatFormFieldModule,
-    MatExpansionModule,
-    InfiniteScrollDirective
+    MatExpansionModule
   ],
   animations: [
     trigger('shake', [

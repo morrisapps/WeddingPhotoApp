@@ -1,44 +1,49 @@
 <div>
   <main class="main">
-    <mat-toolbar #toolbar color="primary" style="background-color:#F85F28; position: fixed; z-index: 2; container-type: size;" >
-      <div style="position: fixed">
-        <button mat-icon-button class="drawer-button" style="margin-left:-10px; margin-top: 5px;" (click)="drawer.toggle()">
-          <mat-icon class="drawer-button">menu</mat-icon>
-        </button>
-      </div>
-      <div class="title-center">
-        <button mat-button [routerLink]="['/']" style="font-size:22px; font-family: Shagadelic;">
-          Granted Photos
-        </button>
-      </div>
-      <div></div>
-    </mat-toolbar>
-
-    <mat-drawer-container #drawerContainer class="example-container">
-      <mat-drawer #drawer class="example-sidenav" mode="over" [autoFocus]="false">
-        <div fxLayout="column">
-          <button mat-button [routerLink]="['/']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="home" inline="true" class="mat-button-icon"></mat-icon>Home</button>
-          <button mat-button [routerLink]="['/shoot']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="camera" inline="true" class="mat-button-icon"></mat-icon>Take a Photo</button>
-          <button mat-button [routerLink]="['/upload']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="upload" inline="true" class="mat-button-icon"></mat-icon>Upload Photos</button>
-          <button mat-button [routerLink]="['/gallery']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="gallery" inline="true" class="mat-button-icon"></mat-icon>Gallery</button>
-          <button mat-button [routerLink]="['/games']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="prizes" inline="true" class="mat-button-icon"></mat-icon>Games & Prizes</button>
-          <button mat-button [routerLink]="['/stream']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
-            <mat-icon svgIcon="play" inline="true" class="mat-button-icon"></mat-icon>Live Stream</button>
-          <button mat-button (click)="openURL('https://kahoot.it/?pin=4211472&refer_method=link'); drawerContainer.close()" class="button-sidenav">
-            <mat-icon svgIcon="kahootbutton" inline="true" class="mat-button-icon"></mat-icon>Kahoot!</button>
-          <button mat-button (click)="openURL('https://crgrant2024.wixsite.com/wedding'); drawerContainer.close()" class="button-sidenav">
-            <mat-icon svgIcon="wedding" inline="true" class="mat-button-icon"></mat-icon>Our Website!</button>
+    <div>
+      <mat-toolbar #toolbar color="primary" style="background-color:#F85F28; position: fixed; z-index: 2; container-type: size;" >
+        <div style="position: fixed">
+          <button mat-icon-button class="drawer-button" style="margin-left:-10px; margin-top: 5px;" (click)="drawer.toggle()">
+            <mat-icon class="drawer-button">menu</mat-icon>
+          </button>
         </div>
-      </mat-drawer>
+        <div class="title-center">
+          <button mat-button [routerLink]="['/']" style="font-size:22px; font-family: Shagadelic;">
+            Granted Photos
+          </button>
+        </div>
+        <div></div>
+      </mat-toolbar>
+    </div>
 
-      <section class="content" #content (click)="drawerContainer.close()" >
-        <router-outlet></router-outlet>
-      </section>
-    </mat-drawer-container>
+    <div>
+      <mat-drawer-container #drawerContainer class="example-container">
+        <mat-drawer #drawer class="sidenav" mode="over" [autoFocus]="false">
+          <div fxLayout="column">
+            <button mat-button [routerLink]="['/']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
+              <mat-icon svgIcon="home" inline="true" class="mat-button-icon"></mat-icon>Home</button>
+            <button mat-button [routerLink]="['/shoot']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
+              <mat-icon svgIcon="camera" inline="true" class="mat-button-icon"></mat-icon>Take a Photo</button>
+            <button mat-button [routerLink]="['/upload']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
+              <mat-icon svgIcon="upload" inline="true" class="mat-button-icon"></mat-icon>Upload Photos</button>
+            <button mat-button [routerLink]="['/gallery']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
+              <mat-icon svgIcon="gallery" inline="true" class="mat-button-icon"></mat-icon>Gallery</button>
+            <button mat-button [routerLink]="['/games']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
+              <mat-icon svgIcon="prizes" inline="true" class="mat-button-icon"></mat-icon>Games & Prizes</button>
+            <button mat-button [routerLink]="['/stream']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
+              <mat-icon svgIcon="play" inline="true" class="mat-button-icon"></mat-icon>Live Stream</button>
+            <button mat-button (click)="openURL('https://kahoot.it/?pin=4211472&refer_method=link'); drawerContainer.close()" class="button-sidenav">
+              <mat-icon svgIcon="kahootbutton" inline="true" class="mat-button-icon"></mat-icon>Kahoot!</button>
+            <button mat-button (click)="openURL('https://crgrant2024.wixsite.com/wedding'); drawerContainer.close()" class="button-sidenav">
+              <mat-icon svgIcon="wedding" inline="true" class="mat-button-icon"></mat-icon>Our Website!</button>
+          </div>
+        </mat-drawer>
+
+        <div #content (click)="drawerContainer.close()" >
+          <router-outlet></router-outlet>
+        </div>
+      </mat-drawer-container>
+    </div>
+
   </main>
 </div>

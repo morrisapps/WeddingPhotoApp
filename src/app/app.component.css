@@ -20,7 +20,7 @@ header {
   justify-content: center;
 }
 
-.example-sidenav {
+.sidenav {
   width: 100dvw;
   max-width: 550px;
   padding: 5px;
@@ -61,4 +61,15 @@ header {
 
 .title-center {
   margin: 0 auto;
+}
+
+.scroll-div {
+  margin: 4px, 4px;
+  padding: 4px;
+  width: 100%;
+  max-height: 160px;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: justify;
 }

@@ -79,7 +79,7 @@ export class HomeComponent {
 
   ngAfterViewInit() {
     // set root div height minus 20 px margin
-    this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
+    this.renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100dvh - '+this.toolbarHeight+'px - 20px)');
 
     // Check if should show stream or Kahoot dialog
     this.DBService.getAdmin().then((adminInfo: AdminInformation | any) => {
