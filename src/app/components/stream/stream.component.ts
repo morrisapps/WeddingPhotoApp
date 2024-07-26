@@ -16,12 +16,14 @@ export class StreamComponent {
 
   @ViewChild('rootDiv', { read: ElementRef }) rootDiv!:ElementRef;
 
+  toolbarHeight = localStorage.getItem("toolbarHeight") as string
+
   constructor (
     private _renderer: Renderer2
   ) {}
 
   ngAfterViewInit() {
     // set root div height minus 20 px margin
-    this._renderer.setStyle(this.rootDiv.nativeElement, 'min-height', 'calc(100% - 20px)');
+    this._renderer.setStyle(this.rootDiv.nativeElement, 'height', 'calc(100dvh - '+this.toolbarHeight+'px)');
   }
 }
