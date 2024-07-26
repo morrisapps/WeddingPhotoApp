@@ -55,6 +55,14 @@ export class AppComponent implements AfterViewInit {
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/website.svg")
     );
     this.matIconRegistry.addSvgIcon(
+      'play',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/play.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'kahootbutton',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/kahoot-button.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       'prizes',
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/prizes.svg")
     );
@@ -62,6 +70,10 @@ export class AppComponent implements AfterViewInit {
       'wedding',
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/wedding.svg")
     );
+  }
+
+  openURL(URL: string){
+    window.open(URL, "_blank");
   }
 
   ngAfterViewInit() {

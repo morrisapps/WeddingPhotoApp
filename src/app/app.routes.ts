@@ -5,6 +5,7 @@ import { ShootComponent } from './components/shoot/shoot.component';
 import { UploadComponent } from './components/upload/upload.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { GamesComponent } from './components/games/games.component';
+import { StreamComponent } from './components/stream/stream.component';
 
 export const routes: Routes = [
   {
@@ -41,5 +42,10 @@ export const routes: Routes = [
     path: 'games',
     component: GamesComponent,
     title: 'Games!'
+  },
+  {
+    path: 'stream',
+    component: StreamComponent,
+    title: 'Wedding Live Stream!'
   }
 ];
