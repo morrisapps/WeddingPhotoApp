@@ -88,14 +88,16 @@ export class SlideShowComponent {
                   right:0;
                   bottom:5px;
                   padding-bottom: 10px;
-                  width: 100%;
+                  margin-left: -20dvw;
+                  margin-right: -20dvw;
+                  width: 100%
                   height: 100%;
-                  background-color: rgba(0, 0, 0, 0.9);
+                  background-color: rgba(0, 0, 0, 0.8);
                   filter: progid:DXImageTransform.Microsoft.gradient
                         (startcolorstr=#7F000000,endcolorstr=#7F000000) 9;
                 ">
-                  <h4 style="font-size: 90px; font-family: ShakyHandSomeComic;">
-                    Photographed by: <span style="font-size: 110px; font-family: Roboto, 'Helvetica Neue';">`+ item.author +`</span>
+                  <h4 style="font-size: 7dvw; font-family: ShakyHandSomeComic;">
+                    Photo by: <span style="font-size: 8dvw; font-family: Roboto, 'Helvetica Neue';">`+ item.author +`</span>
                   </h4>
                 </div>`
             }

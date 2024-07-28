@@ -24,6 +24,7 @@ header {
   width: 100dvw;
   max-width: 550px;
   padding: 5px;
+  position:fixed;
 }
 
 .button-sidenav {
