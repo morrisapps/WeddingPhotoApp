@@ -1,139 +1,146 @@
 <div #rootDiv class="root-div">
-  <div style="width: 50%; min-width: 350px;">
+  <div>
+    <!-- rgba(184, 33, 158, 0.8); -->
+    <div style="background-color: rgb(226, 10, 143, 0.8); width: 100%; min-width: 100%; padding-top: 10px; padding-bottom: 20px;">
+      <p class="center-content title" style="color:white; font-size: 32px;">Let's play some games!</p>
+      <p style="text-align: center; color:white;">To futher celebrate and have fun we have several games planned during the reception.<br>The games will be announced by our MC's when it's time to play.<br>We encourage everyone to have a great time playing these games, but if you want to sit this one out no biggie!</p>
+    </div>
+    <div class="center-content">
+      <div style="width: 50%; min-width: 350px; max-width: 700px; padding: 10px;padding-bottom: 20px;">
 
-      <p class="center-content title" style="color:rgb(226, 10, 143); font-size: 32px;">Let's play some games!</p>
-      <p style="text-align: center">To futher celebrate and have fun we have several games planned during the reception.<br>The games will be announced by our MC's when it's time to play.<br>We encourage everyone to have a great time playing these games, but if you want to sit this one out no biggie!</p>
+        <mat-card style="margin-top: 20px;">
+          <p class="center-content title">Photo Competition</p>
+          <div class="center-content">
+            <img src="/assets/graphics/polaroiddance.png" style="width: 80px; height: 95px; display: inline-block; margin: -20px; margin-bottom: -15px;">
+          </div>
+          <p style="text-align: center">During the reception, we invite all our guests to take photos and share them within this website.<br>The MC will determine the best pictures in the gallery under these catagories to win $10 gift cards!</p>
+          <div class="center-content">
+            <table mat-table>
+              <tr>
+                <td>Best Picture of Groom and Bride</td>
+              </tr>
+              <tr mat-header-row >
+                <td>Best Photo Booth picture</td>
+              </tr>
+              <tr mat-row >
+                <td>Goofiest Picture</td>
+              </tr>
+              <tr mat-row >
+                <td>Grooviest Picture</td>
+              </tr>
+              <tr mat-header-row >
+                <td>Most Liked Picture</td>
+              </tr>
+            </table>
+          </div>
+          <div class="center-content" style="margin-bottom: 20px;">
+            <button *ngIf="!showMostLikes" mat-raised-button (click)="getMostLikes()" class="button">
+              <span>Show Most Liked Photos</span>
+            </button>
+            <button *ngIf="showMostLikes" mat-raised-button (click)="showMostLikes = false" class="button">
+              <span>Hide Most Liked Photos</span>
+            </button>
+          </div>
+          <section *ngIf="showMostLikes" class="most-likes" style="margin-bottom: 20px">
+            <div *ngFor="let photo of mostLikes" style="margin-top: 20px">
+              <app-gallery-card [galleryInformation]="photo"></app-gallery-card>
+            </div>
+          </section>
+        </mat-card>
 
+        <mat-card style="margin-top: 20px;">
+          <p class="center-content title">Kahoot!</p>
+          <div class="center-content">
+            <img src="/assets/graphics/kahoot.png" style="width: 110px; height: 110px; display: inline-block; margin: -35px; margin-bottom: -20px;">
+          </div>
+          <p style="text-align: center">After speeches, we will be playing a few games such as the shoe game and Kahoot!<br>Kahoot will involve using your phone. Winner receives a 40$ gift card.</p>
+        </mat-card>
 
-    <mat-card style="margin-top: 20px;">
-      <p class="center-content title">Photo Competition</p>
-      <div class="center-content">
-        <img src="/assets/graphics/polaroiddance.png" style="width: 80px; height: 95px; display: inline-block; margin: -20px; margin-bottom: -15px;">
-      </div>
-      <p style="text-align: center">During the reception, we invite all our guests to take photos and share them within this website.<br>The MC will determine the best pictures in the gallery under these catagories to win $10 gift cards!</p>
-      <div class="center-content">
-        <table mat-table>
-          <tr>
-            <td>Best Picture of Groom and Bride</td>
-          </tr>
-          <tr mat-header-row >
-            <td>Best Photo Booth picture</td>
-          </tr>
-          <tr mat-row >
-            <td>Goofiest Picture</td>
-          </tr>
-          <tr mat-row >
-            <td>Grooviest Picture</td>
-          </tr>
-          <tr mat-header-row >
-            <td>Most Liked Picture</td>
-          </tr>
-        </table>
-      </div>
-      <div class="center-content" style="margin-bottom: 20px;">
-        <button *ngIf="!showMostLikes" mat-raised-button (click)="getMostLikes()" class="button">
-          <span>Show Most Liked Photos</span>
-        </button>
-        <button *ngIf="showMostLikes" mat-raised-button (click)="showMostLikes = false" class="button">
-          <span>Hide Most Liked Photos</span>
-        </button>
-      </div>
-      <section *ngIf="showMostLikes" class="most-likes" style="margin-bottom: 20px">
-        <div *ngFor="let photo of mostLikes" style="margin-top: 20px">
-          <app-gallery-card [galleryInformation]="photo"></app-gallery-card>
-        </div>
-      </section>
-    </mat-card>
+        <mat-card style="margin-top: 20px;">
+          <p class="center-content title">Photo Bingo</p>
+          <p class="center-content title" style="Margin-top: -20px;">(For Kids and Teens)</p>
+          <div class="center-content">
+            <img src="/assets/graphics/cartoonphotos.png" style="width: 70px; height: 70px; display: inline-block; margin: -20px; margin-bottom: 0px;">
+          </div>
+          <p style="text-align: center">All guests under 18 will receive a Photo Bingo card where they can take pictures to fill in squares.<br>Allison will give out prizes for 1 line, card frame, and full card.</p>
+        </mat-card>
 
-    <mat-card style="margin-top: 20px;">
-      <p class="center-content title">Kahoot!</p>
-      <div class="center-content">
-        <img src="/assets/graphics/kahoot.png" style="width: 110px; height: 110px; display: inline-block; margin: -35px; margin-bottom: -20px;">
-      </div>
-      <p style="text-align: center">After speeches, we will be playing a few games such as the shoe game and Kahoot!<br>Kahoot will involve using your phone. Winner receives a 40$ gift card.</p>
-    </mat-card>
+        <mat-card style="margin-top: 20px;">
+          <p class="center-content title">Actual Bingo</p>
+          <div class="center-content">
+            <img src="/assets/graphics/bingo.png" style="width: 70px; height: 70px; display: inline-block; margin: -20px; margin-bottom: 0px;">
+          </div>
+          <p style="text-align: center">Beginning at <b>10:30 pm</b>(ish), we will have some bingo games with prizes to play.<br>It's free to play for all our guests, so join the fun!</p>
+          <h4 style="text-align: center;"><span style="color: rgb(25, 151, 0)">Green Star</span> Card Games</h4>
+          <div class="center-content">
+            <table style="display: inline-block; padding-right: 10%;">
+              <tr>
+                <th>Game</th>
+              </tr>
+              <tr>
+                <td>Any Line</td>
+              </tr>
+              <tr>
+                <td>Any Two Lines</td>
+              </tr>
+              <tr>
+                <td>Corner Stamps</td>
+              </tr>
+            </table>
 
-    <mat-card style="margin-top: 20px;">
-      <p class="center-content title">Photo Bingo</p>
-      <p class="center-content title" style="Margin-top: -20px;">(For Kids and Teens)</p>
-      <div class="center-content">
-        <img src="/assets/graphics/cartoonphotos.png" style="width: 70px; height: 70px; display: inline-block; margin: -20px; margin-bottom: 0px;">
-      </div>
-      <p style="text-align: center">All guests under 18 will receive a Photo Bingo card where they can take pictures to fill in squares.<br>Allison will give out prizes for 1 line, card frame, and full card.</p>
-    </mat-card>
+            <table style="display: inline-block;">
+              <tr>
+                <th>Prize</th>
+              </tr>
+              <tr>
+                <td>$10 Gift Card</td>
+              </tr>
+              <tr>
+                <td>$20 Gift Card ($10 shared)</td>
+              </tr>
+              <tr>
+                <td>$40 Gift Card ($20 shared)</td>
+              </tr>
+            </table>
+          </div>
+          <h4 style="text-align: center;"><span style="color: rgb(79, 79, 248)">Blue Square</span> Card Games</h4>
+          <div class="center-content" style="margin-bottom: 10px;">
+            <table style="display: inline-block; padding-right: 10%;">
+              <tr>
+                <th>Game</th>
+              </tr>
+              <tr>
+                <td>Two lines X</td>
+              </tr>
+              <tr>
+                <td>Card Frame</td>
+              </tr>
+              <tr>
+                <td>Full Card</td>
+              </tr>
+            </table>
+            <table style="display: inline-block;">
+              <tr>
+                <th>Prize</th>
+              </tr>
+              <tr>
+                <td>$20 Gift Card</td>
+              </tr>
+              <tr>
+                <td>$40 Gift Card (20$ shared)</td>
+              </tr>
+              <tr>
+                <td>$80 Gift Card (40$ shared)</td>
+              </tr>
+            </table>
+          </div>
+        </mat-card>
 
-    <mat-card style="margin-top: 20px;">
-      <p class="center-content title">Actual Bingo</p>
-      <div class="center-content">
-        <img src="/assets/graphics/bingo.png" style="width: 70px; height: 70px; display: inline-block; margin: -20px; margin-bottom: 0px;">
       </div>
-      <p style="text-align: center">Beginning at <b>10:30 pm</b>(ish), we will have some bingo games with prizes to play.<br>It's free to play for all our guests, so join the fun!</p>
-      <h4 style="text-align: center;"><span style="color: rgb(25, 151, 0)">Green Star</span> Card Games</h4>
-      <div class="center-content">
-        <table style="display: inline-block; padding-right: 10%;">
-          <tr>
-            <th>Game</th>
-          </tr>
-          <tr>
-            <td>Any Line</td>
-          </tr>
-          <tr>
-            <td>Any Two Lines</td>
-          </tr>
-          <tr>
-            <td>Corner Stamps</td>
-          </tr>
-        </table>
-
-        <table style="display: inline-block;">
-          <tr>
-            <th>Prize</th>
-          </tr>
-          <tr>
-            <td>$10 Gift Card</td>
-          </tr>
-          <tr>
-            <td>$20 Gift Card ($10 shared)</td>
-          </tr>
-          <tr>
-            <td>$40 Gift Card ($20 shared)</td>
-          </tr>
-        </table>
-      </div>
-      <h4 style="text-align: center;"><span style="color: rgb(79, 79, 248)">Blue Square</span> Card Games</h4>
-      <div class="center-content" style="margin-bottom: 10px;">
-        <table style="display: inline-block; padding-right: 10%;">
-          <tr>
-            <th>Game</th>
-          </tr>
-          <tr>
-            <td>Two lines X</td>
-          </tr>
-          <tr>
-            <td>Card Frame</td>
-          </tr>
-          <tr>
-            <td>Full Card</td>
-          </tr>
-        </table>
-        <table style="display: inline-block;">
-          <tr>
-            <th>Prize</th>
-          </tr>
-          <tr>
-            <td>$20 Gift Card</td>
-          </tr>
-          <tr>
-            <td>$40 Gift Card (20$ shared)</td>
-          </tr>
-          <tr>
-            <td>$80 Gift Card (40$ shared)</td>
-          </tr>
-        </table>
-      </div>
-    </mat-card>
+    </div>
 
   </div>
+
 </div>
 
 

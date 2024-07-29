@@ -1,8 +1,6 @@
 .root-div {
-  padding: 10px;
-  padding-bottom: 20px;
-  display: flex;
-  justify-content: center;
+
+
 }
 
 .root-div::before {
@@ -12,15 +10,15 @@
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.2;
+  opacity: 1;
 
   z-index: -1;
 
-  background: url("/assets/graphics/4965007.jpg");
+  background: url("/assets/graphics/7639233-min2.jpg");
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: 100% 90%;
-  background-color: #EA5754FF;
+  background-position: 100% 100%;
+  background-color: #E10A8F;
 }
 
 
