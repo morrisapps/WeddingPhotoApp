@@ -104,7 +104,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
                     <p *ngFor="let galleryComment of this.galleryInformation.comments" class="comment-p">
                       <span>
                         <strong>{{galleryComment.author}}</strong>
-                        {{galleryComment.comment}}
+                        <span style="margin-left: 5px;">{{galleryComment.comment}}</span>
                       </span>
                       <br>
                       <!-- If cookie is present, then this user is either the author or admin and show delete -->
@@ -115,7 +115,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
                           </a>
                         </span>
                       }
-
                     </p>
                   </div>
                 }

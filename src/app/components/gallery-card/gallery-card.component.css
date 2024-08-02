@@ -57,8 +57,6 @@ section.listing a::after {
 }
 
 .comment-p {
-  word-wrap: normal;
-  word-break: break-all;
   white-space: normal;
   display: block;
   height: auto;
@@ -66,6 +64,7 @@ section.listing a::after {
   line-height: 1.4;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+  text-align: start;
 }
 
 .comment-more {

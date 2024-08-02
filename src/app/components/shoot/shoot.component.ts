@@ -34,6 +34,8 @@ import imageCompression from 'browser-image-compression';
   ],
   template: `
   <div #rootDiv class="root-div">
+    <input hidden (change)="post()" #fileInput type="file" accept="image/*" capture="environment">
+
     <div [hidden]="!showCheck" style="width: 95vw; max-width: 400px;" class="center">
       <mat-card >
         <mat-card-content style="margin-bottom: 10px" class="center-content">
@@ -75,7 +77,6 @@ import imageCompression from 'browser-image-compression';
           </div>
         </mat-card-footer>
       </mat-card>
-      <input hidden (change)="post()" #fileInput type="file" id="cameraFileInput" accept="image/*" capture="environment">
     </div>
 
     <div [hidden]="hidden" style="width: 95vw; max-width: 400px;" class="center">
@@ -95,7 +96,6 @@ import imageCompression from 'browser-image-compression';
           </div>
         </mat-card-footer>
       </mat-card>
-      <input hidden (change)="post()" #fileInput type="file" id="cameraFileInput" accept="image/*" capture="environment">
     </div>
 
     <mat-spinner class="center" [ngStyle]="{'top': 'calc( 50% - '+toolbarHeight+'px)'}" *ngIf="showSpinner"></mat-spinner>
@@ -107,6 +107,8 @@ import imageCompression from 'browser-image-compression';
 
 export class ShootComponent {
   @ViewChild('nameInput', { read: ElementRef }) nameInput!:ElementRef;
+  @ViewChild('fileInput', { read: ElementRef }) fileInput!:ElementRef;
+
 
   DBService: DBService = inject(DBService);
   photoBase64: string = "";
@@ -114,6 +116,8 @@ export class ShootComponent {
   hidden: boolean = false;
   showCheck = false;
   showSpinner: boolean = false;
+
+  showUpload: boolean = false;
 
   uploadType: string = "";
 
@@ -164,17 +168,16 @@ export class ShootComponent {
 
   // Save picture
   async post() {
+    let cameraFileInput = this.fileInput.nativeElement
+    let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
+    let file = cameraFileInput.files![0]
+
     // Check if uploading is disabled
     this.DBService.checkIfStopDB().then(async (result) => {
       if (!result) {
         this.showCheck = false
         this.hidden = true
         this.showSpinner = true
-        let cameraFileInput = document.getElementById("cameraFileInput") as HTMLInputElement
-
-        let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
-        let file = cameraFileInput.files![0]
-
 
         // Read the Blob as DataURL using the FileReader API
         const reader = new FileReader();
@@ -256,9 +259,6 @@ export class ShootComponent {
           reader.readAsDataURL(blob);
         });
 
-
-        // Reset cameraFileInput to free memory
-        cameraFileInput.value = ''
       }
     })
   }

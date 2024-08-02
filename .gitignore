@@ -19,15 +19,12 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+
+# Custom
 /photos
 /videos
 /src/app/servers/*
-/src/app/servers/db.json
-/src/app/servers/db2.json
-/src/app/servers/dbfam.json
-/src/app/servers/cert.cer
-/src/app/servers/cert.key
-/src/app/servers/express-multer.server.js
+/src/web.config
 
 # Visual Studio Code
 .vscode/*
@@ -45,6 +42,7 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+
 
 # System files
 .DS_Store

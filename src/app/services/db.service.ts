@@ -124,35 +124,6 @@ export class DBService {
     return await data.json() ?? {};
   }
 
-  async postNewSubDirectory(fileName: string, width: number, height: number) {
-    await fetch("https://morrisapps.ddns.net:3000/subdirectory", {
-      method: 'POST',
-      headers: {
-         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "id": "CR2024",
-        "data": [
-
-        ]
-      })
-    })
-  }
-
-  async post2(fileName: string, width: number, height: number) {
-    await fetch("https://morrisapps.ddns.net:3000/subdirectory", {
-      method: 'PATCH',
-      headers: {
-         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "CR20242": [
-
-        ]
-      })
-    })
-  }
-
   async deleteComment(commentID: string){
     await fetch(this.url + '/photos/' + commentID, {
       method: 'DELETE',

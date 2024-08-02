@@ -106,6 +106,9 @@ export class SlideShowComponent {
       });
     }).then(() => {
       this.lightGallery.updateSlides(this.items,0)
+      // Very strange bug where slides would point to random index.
+      // Running updateSlides a second time fixes this.
+      this.lightGallery.updateSlides(this.items,0)
     });
   }
 
@@ -130,11 +133,14 @@ export class SlideShowComponent {
   }
 
   ngAfterViewInit(){
-    //Once slides reach 20, request new slides
+    //Once slides reach end, request new slides
     this.lightGalleryElement.nativeElement.addEventListener('lgAutoplay', (event) => {
-      if (event.detail.index == 19) {
+      console.log(event.detail.index)
+      console.log(this.lightGallery.galleryItems.length - 1)
+      console.log(this.lightGallery)
+      if (event.detail.index == this.lightGallery.galleryItems.length - 1) {
         // Set delay on getting new slides so that the last photo has time to be seen
-        setTimeout(() => this.getNewSlides(), 11000)
+        setTimeout(() => this.getNewSlides(), 9000)
       }
     })
   }
