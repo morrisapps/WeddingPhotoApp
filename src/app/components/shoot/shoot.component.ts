@@ -36,15 +36,15 @@ import imageCompression from 'browser-image-compression';
   <div #rootDiv class="root-div">
     <input hidden (change)="post()" #fileInput type="file" accept="image/*" capture="environment">
 
-    <div [hidden]="!showCheck" style="width: 95vw; max-width: 400px;" class="center">
+    <div [hidden]="!showCheck" style="width: 95vw; max-width: 400px;" class="center" #successDiv>
       <mat-card >
-        <mat-card-content style="margin-bottom: 10px" class="center-content">
-        <svg viewBox="0 0 130.2 130.2">
+      <div class="success center-content" >
+          <svg viewBox="0 0 130.2 130.2">
             <circle
               class="path circle"
               fill="none"
-              stroke="#73AF55"
-              stroke-width="6"
+              stroke="#508a33"
+              stroke-width="7"
               stroke-miterlimit="10"
               cx="65.1"
               cy="65.1"
@@ -53,16 +53,17 @@ import imageCompression from 'browser-image-compression';
             <polyline
               class="path check"
               fill="none"
-              stroke="#73AF55"
-              stroke-width="6"
+              stroke="#508a33"
+              stroke-width="7"
               stroke-linecap="round"
               stroke-miterlimit="10"
               points="100.2,40.2 51.5,88.8 29.8,67.5"
             />
           </svg>
-        </mat-card-content>
-        <p class="success">Saved to gallery!</p>
-        <mat-card-footer style="margin-top: 20px;">
+          <div style="padding-top: 4px; padding-left: 10px;">Saved to gallery!</div>
+        </div>
+        <img id="photoImg" #photoImg style="min-width: 100%; width: 100%; object-fit: cover; max-height: calc(70dvh - 100px);  overflow: hidden;"/>
+        <mat-card-footer style="margin-top: 25px;">
           <div class="center-content">
             <div>
               <button mat-raised-button style="margin-bottom: 15px; background-color: #E4FFC4"  id="save" (click)="fileInput.click()" class="button">
@@ -108,6 +109,8 @@ import imageCompression from 'browser-image-compression';
 export class ShootComponent {
   @ViewChild('nameInput', { read: ElementRef }) nameInput!:ElementRef;
   @ViewChild('fileInput', { read: ElementRef }) fileInput!:ElementRef;
+  @ViewChild('photoImg', { read: ElementRef }) photoImg!:ElementRef;
+  @ViewChild('successDiv', { read: ElementRef }) successDiv!:ElementRef;
 
 
   DBService: DBService = inject(DBService);
@@ -188,11 +191,9 @@ export class ShootComponent {
             (await this._uploadService.uploadFiles(reader.result as string, fileName as string))
             .subscribe({
               next: (res) => {
-                // Create image object to get width and height
-                var img = new Image();
-                img.onload = () => {
+                this.photoImg.nativeElement.onload = () => {
                   // Post to json server
-                  this.DBService.post(fileName, img.width, img.height).then(async () => {
+                  this.DBService.post(fileName, this.photoImg.nativeElement.width, this.photoImg.nativeElement.height).then(async () => {
                     // Posted picture to DB, stop spinner and show snackbar, remove from data service
 
                     // Set localStorage with photo name to flag that this user posted this picture.
@@ -224,7 +225,7 @@ export class ShootComponent {
                     this.showCheck = true
                   })
                 }
-                img.src = reader.result as string;
+                this.photoImg.nativeElement.src = reader.result as string;
               },
               error: (res) => {
                 this._dialog.open(DialogComponent, {
@@ -297,6 +298,9 @@ export class ShootComponent {
     }
     // set root div height minus 20 px margin
     this._renderer.setStyle(this.rootDiv.nativeElement, 'height', 'calc(100dvh - '+this.toolbarHeight+'px - 20px)');
+
+    // Set successDiv margin to best center
+    this._renderer.setStyle(this.successDiv.nativeElement, 'margin-top', 'calc('+this.toolbarHeight+'px / 2)');
   }
 
 }
