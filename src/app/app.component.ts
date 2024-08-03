@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, Renderer2, AfterViewInit, inject } from '@angular/core';
 import { HomeComponent } from './components/home/home.component';
 import { RouterModule } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
@@ -8,6 +8,8 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatDividerModule} from '@angular/material/divider';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
+import { AdminInformation } from './interfaces/admin-information';
+import { DBService } from './services/db.service';
 
 
 @Component({
@@ -32,6 +34,8 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('toolbar', { read: ElementRef }) toolbar!:ElementRef;
   @ViewChild('drawer', { read: ElementRef }) drawer!:ElementRef;
   @ViewChild('content', { read: ElementRef }) content!:ElementRef;
+
+  DBService: DBService = inject(DBService);
 
   constructor(private renderer: Renderer2, public matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer){
     this.matIconRegistry.addSvgIcon(
@@ -70,6 +74,14 @@ export class AppComponent implements AfterViewInit {
       'wedding',
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/wedding.svg")
     );
+  }
+
+  openKahoot() {
+    // Get kahoot pin from json admin info
+    this.DBService.getAdmin().then((adminInfo: AdminInformation | any) => {
+      adminInfo.kahootPin
+      window.open('https://kahoot.it/?pin='+adminInfo.kahootPin+'&refer_method=link', "_blank");
+    })
   }
 
   openURL(URL: string){

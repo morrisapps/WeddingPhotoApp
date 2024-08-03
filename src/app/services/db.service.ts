@@ -207,6 +207,7 @@ export class DBService {
         "stopDB": adminInfo.stopDB,
         "showKahoot": adminInfo.showKahoot,
         "showStream": adminInfo.showStream,
+        "kahootPin": adminInfo.kahootPin
       })
     })
   }
@@ -246,6 +247,19 @@ export class DBService {
       body: JSON.stringify({
         "id": fileName,
         "likes": currentLikes
+      })
+    })
+  }
+
+  async patchAny(fileName: string, property : string, value: string | number | boolean) {
+    await fetch(this.url + '/photos/' + fileName, {
+      method: 'PATCH',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "id": fileName,
+        [property]: value
       })
     })
   }

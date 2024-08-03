@@ -1,6 +1,6 @@
 import { Component, ElementRef, Renderer2, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -62,6 +62,7 @@ export class HomeComponent {
     private domSanitizer: DomSanitizer,
     private renderer: Renderer2,
     private _dialog: MatDialog,
+    private _router: Router
     ){
     this.matIconRegistry.addSvgIcon(
       'camera',
@@ -99,7 +100,8 @@ export class HomeComponent {
           }
         }).afterClosed().subscribe(result => {
           if (result.button1 !== '' && result.button1 !== null && result.button1 !== false && result.button1 !== 'undefined') {
-            window.open("https://neopets.com", "_blank");
+             // Utilize kahoot pin from admin info
+            window.open('https://kahoot.it/?pin='+adminInfo.kahootPin+'&refer_method=link', "_blank");
           }
         })
       }
@@ -120,7 +122,7 @@ export class HomeComponent {
           }
         }).afterClosed().subscribe(result => {
           if (result.button1 !== '' && result.button1 !== null && result.button1 !== false && result.button1 !== 'undefined') {
-            window.open("https://neopets.com", "_blank");
+            this._router.navigateByUrl('/stream')
           }
         })
       }

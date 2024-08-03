@@ -48,6 +48,7 @@ export class AdminComponent {
   stopDB = false;
   showStream = false;
   showKahoot = false;
+  kahootPin = "";
 
   adminInfo: AdminInformation | undefined;
 
@@ -105,6 +106,7 @@ export class AdminComponent {
       saltedPassword: '',
       stopDB: this.stopDB as unknown as boolean,
       showKahoot: this.showKahoot as unknown as boolean,
+      kahootPin: this.kahootPin as unknown as string,
       showStream: this.showStream as unknown as boolean
     }
     this.DBService.postAdmin(adminInfo)
@@ -118,6 +120,7 @@ export class AdminComponent {
       this.stopDB = adminInfo.stopDB
       this.showKahoot = adminInfo.showKahoot
       this.showStream = adminInfo.showStream
+      this.kahootPin = adminInfo.kahootPin
     })
   }
 

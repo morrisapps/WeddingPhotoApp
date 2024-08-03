@@ -472,8 +472,50 @@ export class GalleryCardComponent {
         this.likeIcon.nativeElement.textContent = "favorite_border"
       }
     }
-
   }
+
+  // updateBestGroomBride() {
+
+  //   if (this.galleryInformation.bestGroomBride != true) {
+  //     this.DBService.patchAny(this.galleryInformation.id, "bestGroomBride", true)
+  //   } else {
+  //     this.DBService.patchAny(this.galleryInformation.id, "bestGroomBride", false)
+  //   }
+
+
+  //   // Check if likes are null, if they are set to zero so that it can be incremented on.
+  //   if (this.galleryInformation.likes == null || this.galleryInformation.likes == undefined) {
+  //     this.galleryInformation.likes = 0
+  //   }
+  //   // Get localStorage by card name. If present, then has already liked.
+  //   let isLiked = localStorage.getItem(this.galleryInformation.id+"like")
+
+  //   this.likePressed = true
+  //   setTimeout(() => {
+  //     this.likePressed = false
+  //   }, 800);
+
+  //   if (isLiked != "true") {
+  //     // Add Like
+  //     this.galleryInformation.likes += 1
+  //     this.DBService.patchLikes(this.galleryInformation.id, true)
+  //     // Flag localStorage as this gallery has been liked.
+  //     localStorage.setItem(this.galleryInformation.id+"like", "true")
+  //     // Set icon to represent change
+  //     this.likeIcon.nativeElement.textContent = "favorite"
+  //   } else {
+  //     // Remove Like
+  //     if (this.galleryInformation.likes > 0) {
+  //       this.galleryInformation.likes -= 1
+  //       this.DBService.patchLikes(this.galleryInformation.id, false)
+  //       // Flag localStorage as this card has been liked.
+  //       localStorage.setItem(this.galleryInformation.id+"like", "false")
+  //       // Set icon to represent change
+  //       this.likeIcon.nativeElement.textContent = "favorite_border"
+  //     }
+  //   }
+
+  // }
 
   download() {
     const a = document.createElement('a')

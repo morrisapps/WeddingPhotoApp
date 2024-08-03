@@ -10,4 +10,8 @@ export interface GalleryInformation {
   showncount: number;
   prevcount: number;
   comments: GalleryComment[];
+  // bestGroomBride: boolean;
+  // bestBooth: boolean;
+  // BestGoofy: boolean;
+  // bestGroovy: boolean;
 }

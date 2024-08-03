@@ -32,7 +32,7 @@
               <mat-icon svgIcon="prizes" inline="true" class="mat-button-icon"></mat-icon>Games & Prizes</button>
             <button mat-button [routerLink]="['/stream']" routerLinkActive="selected no-border txt-bold" class="button-sidenav" (click)="drawerContainer.close()">
               <mat-icon svgIcon="play" inline="true" class="mat-button-icon"></mat-icon>Live Stream</button>
-            <button mat-button (click)="openURL('https://kahoot.it/?pin=4211472&refer_method=link'); drawerContainer.close()" class="button-sidenav">
+            <button mat-button (click)="openKahoot(); drawerContainer.close()" class="button-sidenav">
               <mat-icon svgIcon="kahootbutton" inline="true" class="mat-button-icon"></mat-icon>Kahoot!</button>
             <button mat-button (click)="openURL('https://crgrant2024.wixsite.com/wedding'); drawerContainer.close()" class="button-sidenav">
               <mat-icon svgIcon="wedding" inline="true" class="mat-button-icon"></mat-icon>Our Website!</button>

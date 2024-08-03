@@ -45,6 +45,13 @@
             Show dialog message for link to Kahoot!
           </mat-slide-toggle>
         </section>
+        <mat-form-field style="width: 100%; margin-top: 5px">
+          <mat-label style="margin-left:15px">Kahoot Pin</mat-label>
+          <input style="margin-left:20px" matInput type="text" [(ngModel)]="kahootPin" #filter>
+        </mat-form-field>
+        <button mat-raised-button (click)="setAdminSettings()" style="width: 180px; margin-bottom: 10px; margin-left: -6px;">
+          <span>Update Kahoot Pin</span>
+        </button>
       </mat-card-content>
       <div class="center-content">
         <app-slide-show></app-slide-show>
