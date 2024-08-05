@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AdminInformation } from '../interfaces/admin-information';
 import { GalleryInformation } from '../interfaces/gallery-information';
+import { ContestsInformation } from '../interfaces/contests-information';
 import { GalleryComment } from '../interfaces/gallery-comment';
 import { DialogComponent } from '../components/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -136,6 +137,23 @@ export class DBService {
     })
   }
 
+  async patchContests(contest: string, winners: GalleryInformation[]) {
+    await fetch(this.url + '/contests/', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        [contest]: winners
+      })
+    })
+  }
+
+  async getContestWinners(): Promise<ContestsInformation> {
+    const data = await fetch(this.url+'/contests/');
+    return await data.json() ?? [];
+  }
+
   async patchComments(photoID: string, comments: GalleryComment[]) {
     await fetch(this.url + '/photos/' + photoID, {
       method: 'PATCH',
@@ -148,7 +166,7 @@ export class DBService {
     })
   }
 
-  async getMostLikes(): Promise<GalleryInformation> {
+  async getMostLikes(): Promise<GalleryInformation[]> {
     const data = await fetch(this.url+'/photos');
     return await data.json().then((result) => {
       let mostLikes: any = [];

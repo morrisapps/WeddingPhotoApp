@@ -33,7 +33,10 @@
         <mat-card-title  class="toggle">Admin Settings</mat-card-title>
         <section>
           <mat-slide-toggle [(ngModel)]="adminDelete" class="toggle" (change)="setAdminSettings()">
-            Enable Admindelete any photo and comment
+            Enable Admin delete any photo and comment
+          </mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="adminWinnerSelect" class="toggle" (change)="setAdminSettings()">
+            Enable selecting contest winners
           </mat-slide-toggle>
           <mat-slide-toggle [(ngModel)]="stopDB" class="toggle" (change)="setAdminSettings()">
             Stop all users from uploading and commenting
@@ -55,6 +58,7 @@
       </mat-card-content>
       <div class="center-content">
         <app-slide-show></app-slide-show>
+        <app-slide-show-contests></app-slide-show-contests>
       </div>
       <div class="center-content">
         <button *ngIf="!showMostLikes" mat-raised-button (click)="getMostLikes()" style="width: 250px; margin-bottom: 10px;">

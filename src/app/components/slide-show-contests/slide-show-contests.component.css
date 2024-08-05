@@ -1,0 +1,27 @@
+/* @import url('lightgallery/scss/lightgallery-bundle.scss'); */
+
+/* @import 'lightgallery/scss/lightgallery'; */
+@import url("https://cdn.jsdelivr.net/npm/lightgallery@2.8.0-beta.2/css/lightgallery-bundle.min.css");
+@import url("https://cdn.jsdelivr.net/npm/lightgallery@2.8.0-beta.2/css/lg-zoom.css");
+@import url("https://cdn.jsdelivr.net/npm/lightgallery@2.8.0-beta.2/css/lg-fullscreen.css");
+@import url("https://cdn.jsdelivr.net/npm/lightgallery@2.8.0-beta.2/css/lg-autoplay.css");
+
+body {
+  margin: 0;
+}
+.gallery-item {
+  margin: 5px;
+}
+
+
+.lightGallery-captions {
+  h4,
+  p {
+      transition: transform 5.4s ease-in-out, opacity 5.4s ease-in;
+  }
+}
+
+button {
+  margin: 10px;
+  width: 180px;
+}

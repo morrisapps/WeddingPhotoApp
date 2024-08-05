@@ -105,6 +105,12 @@ section.listing a::after {
   left: calc(100% - 60px);
 }
 
+.contest-button {
+  position: relative;
+  bottom: 10px;
+  left: 10px;
+}
+
 .download-div {
   position: absolute;
   bottom: calc(0% + 10px);

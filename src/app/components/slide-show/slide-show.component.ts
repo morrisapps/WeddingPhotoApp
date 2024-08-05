@@ -78,6 +78,7 @@ export class SlideShowComponent {
             ...this.items,
             {
               id: item.id,
+              size: '1400-933',
               src:
                 'https://granted.photos/photos/full/'+item.id+'.jpg',
               subHtml: `

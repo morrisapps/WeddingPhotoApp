@@ -13,6 +13,7 @@ import { AdminInformation } from '../../interfaces/admin-information';
 import { GalleryInformation } from '../../interfaces/gallery-information';
 import { GalleryCardComponent } from '../gallery-card/gallery-card.component';
 import { SlideShowComponent } from '../slide-show/slide-show.component';
+import { SlideShowContestsComponent } from '../slide-show-contests/slide-show-contests.component';
 
 @Component({
   selector: 'app-admin',
@@ -26,7 +27,8 @@ import { SlideShowComponent } from '../slide-show/slide-show.component';
     MatSlideToggleModule,
     FormsModule,
     GalleryCardComponent,
-    SlideShowComponent
+    SlideShowComponent,
+    SlideShowContestsComponent
 ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
@@ -45,6 +47,7 @@ export class AdminComponent {
   DBService: DBService = inject(DBService);
 
   adminDelete = false;
+  adminWinnerSelect = false;
   stopDB = false;
   showStream = false;
   showKahoot = false;
@@ -101,6 +104,7 @@ export class AdminComponent {
   setAdminSettings() {
 
     localStorage.setItem("adminDelete", this.adminDelete as unknown as string)
+    localStorage.setItem("adminWinnerSelect", this.adminWinnerSelect as unknown as string)
 
     let adminInfo: AdminInformation = {
       saltedPassword: '',
@@ -116,6 +120,9 @@ export class AdminComponent {
     this.DBService.getAdmin().then((adminInfo: AdminInformation | any) => {
       if (localStorage.getItem("adminDelete") == "true") {
         this.adminDelete = true
+      }
+      if (localStorage.getItem("adminWinnerSelect") == "true") {
+        this.adminWinnerSelect = true
       }
       this.stopDB = adminInfo.stopDB
       this.showKahoot = adminInfo.showKahoot

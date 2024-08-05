@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 
 @Component({
@@ -34,7 +35,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     FormsModule,
     MatInputModule,
     MatFormFieldModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatGridListModule
   ],
   animations: [
     trigger('shake', [
@@ -73,6 +75,31 @@ import { MatExpansionModule } from '@angular/material/expansion';
         </div>
         <div style="position: relative; margin-top: -20px;">
           <div [style.visibility]="(isServerOperation) ? 'hidden' : 'visible' ">
+            <!-- If cookie is present, then enable contest buttons -->
+            @if (getLocalStorage().getItem("adminWinnerSelect") == "true") {
+              <mat-grid-list cols="2" rowHeight="50px" style="margin-left: -20px; margin-top: 40px;">
+                <mat-grid-tile>
+                  <button mat-raised-button #bestGroomBride class="contest-button" (click)="setBestGroomBride()" style="width: 120px; height: 30px;">
+                    Best Groom & Bride
+                  </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <button mat-raised-button #bestPhotoBooth class="contest-button" (click)="setBestPhotoBooth()" style="width: 120px; height: 30px;">
+                    Best Photo Booth
+                  </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <button mat-raised-button #goofiestPhoto class="contest-button" (click)="setGoofiestPhoto()" style="width: 120px; height: 30px;">
+                    Goofiest Photo
+                  </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <button mat-raised-button #grooviestPhoto class="contest-button" (click)="setGrooviestPhoto()" style="width: 120px; height: 30px;">
+                    Grooviest Photo
+                  </button>
+                </mat-grid-tile>
+              </mat-grid-list>
+            }
             <mat-card-content>
               <mat-card-subtitle style="margin-top:10px; padding-top: 5px;">Photographer: {{galleryInformation.author}}</mat-card-subtitle>
             </mat-card-content>
@@ -171,6 +198,11 @@ export class GalleryCardComponent {
   @ViewChild('likeIcon', { read: ElementRef }) likeIcon!:ElementRef;
   @ViewChild('commentsDiv', { read: ElementRef }) commentsDiv!:ElementRef;
 
+  @ViewChild('bestGroomBride', { read: ElementRef }) bestGroomBride!:ElementRef;
+  @ViewChild('bestPhotoBooth', { read: ElementRef }) bestPhotoBooth!:ElementRef;
+  @ViewChild('goofiestPhoto', { read: ElementRef }) goofiestPhoto!:ElementRef;
+  @ViewChild('grooviestPhoto', { read: ElementRef }) grooviestPhoto!:ElementRef;
+
   constructor(
     private _dialog: MatDialog,
     private _router: Router,
@@ -195,6 +227,112 @@ export class GalleryCardComponent {
       // Check if more element should be visible
       this.checkMoreScroll()
     });
+  }
+
+  setBestGroomBride() {
+    this.DBService.getContestWinners().then((result) => {
+      // Determine if this media is already selected as winner
+      if (!(result.bestGroomBride.filter(value => value.id == this.galleryInformation.id).length > 0)) {
+        result.bestGroomBride.push(this.galleryInformation)
+
+        this.DBService.patchContests("bestGroomBride", result.bestGroomBride).then(() => {
+
+          this.bestGroomBride.nativeElement?.style.setProperty('background-color', '#6AC755')
+        })
+      } else {
+        // Already selected, so now remove this media
+        let deleteIndex = result.bestGroomBride.findIndex(x => x.id === this.galleryInformation.id);
+        result.bestGroomBride.splice(deleteIndex, 1)
+        this.DBService.patchContests("bestGroomBride", result.bestGroomBride).then(() => {
+
+          this.bestGroomBride.nativeElement?.style.setProperty('background-color', 'white')
+        })
+      }
+    })
+  }
+
+  setBestPhotoBooth() {
+    this.DBService.getContestWinners().then((result) => {
+      // Determine if this media is already selected as winner
+      if (!(result.bestPhotoBooth.filter(value => value.id == this.galleryInformation.id).length > 0)) {
+        result.bestPhotoBooth.push(this.galleryInformation)
+
+        this.DBService.patchContests("bestPhotoBooth", result.bestPhotoBooth).then(() => {
+
+          this.bestPhotoBooth.nativeElement?.style.setProperty('background-color', '#6AC755')
+        })
+      } else {
+        // Already selected, so now remove this media
+        let deleteIndex = result.bestPhotoBooth.findIndex(x => x.id === this.galleryInformation.id);
+        result.bestPhotoBooth.splice(deleteIndex, 1)
+        this.DBService.patchContests("bestPhotoBooth", result.bestPhotoBooth).then(() => {
+
+          this.bestPhotoBooth.nativeElement?.style.setProperty('background-color', 'white')
+        })
+      }
+    })
+  }
+
+  setGoofiestPhoto() {
+    this.DBService.getContestWinners().then((result) => {
+      // Determine if this media is already selected as winner
+      if (!(result.goofiestPhoto.filter(value => value.id == this.galleryInformation.id).length > 0)) {
+        result.goofiestPhoto.push(this.galleryInformation)
+
+        this.DBService.patchContests("goofiestPhoto", result.goofiestPhoto).then(() => {
+
+          this.goofiestPhoto.nativeElement?.style.setProperty('background-color', '#6AC755')
+        })
+      } else {
+        // Already selected, so now remove this media
+        let deleteIndex = result.goofiestPhoto.findIndex(x => x.id === this.galleryInformation.id);
+        result.goofiestPhoto.splice(deleteIndex, 1)
+        this.DBService.patchContests("goofiestPhoto", result.goofiestPhoto).then(() => {
+
+          this.goofiestPhoto.nativeElement?.style.setProperty('background-color', 'white')
+        })
+      }
+    })
+  }
+
+  setGrooviestPhoto() {
+    this.DBService.getContestWinners().then((result) => {
+      // Determine if this media is already selected as winner
+      if (!(result.grooviestPhoto.filter(value => value.id == this.galleryInformation.id).length > 0)) {
+        result.grooviestPhoto.push(this.galleryInformation)
+
+        this.DBService.patchContests("grooviestPhoto", result.grooviestPhoto).then(() => {
+
+          this.grooviestPhoto.nativeElement?.style.setProperty('background-color', '#6AC755')
+        })
+      } else {
+        // Already selected, so now remove this media
+        let deleteIndex = result.grooviestPhoto.findIndex(x => x.id === this.galleryInformation.id);
+        result.grooviestPhoto.splice(deleteIndex, 1)
+        this.DBService.patchContests("grooviestPhoto", result.grooviestPhoto).then(() => {
+
+          this.grooviestPhoto.nativeElement?.style.setProperty('background-color', 'white')
+        })
+      }
+    })
+  }
+
+  getAllContests() {
+    this.DBService.getContestWinners().then((result) => {
+      // Determine if this media is already selected as winner
+      if (result.bestGroomBride != undefined && result.bestGroomBride.filter(value => value.id == this.galleryInformation.id).length > 0) {
+        this.bestGroomBride.nativeElement?.style.setProperty('background-color', '#6AC755')
+      }
+      if (result.bestPhotoBooth != undefined && result.bestPhotoBooth.filter(value => value.id == this.galleryInformation.id).length > 0) {
+        this.bestPhotoBooth.nativeElement?.style.setProperty('background-color', '#6AC755')
+      }
+      if (result.goofiestPhoto != undefined && result.goofiestPhoto.filter(value => value.id == this.galleryInformation.id).length > 0) {
+        this.goofiestPhoto.nativeElement?.style.setProperty('background-color', '#6AC755')
+      }
+      if (result.grooviestPhoto != undefined &&  result.grooviestPhoto.filter(value => value.id == this.galleryInformation.id).length > 0) {
+        this.grooviestPhoto.nativeElement?.style.setProperty('background-color', '#6AC755')
+      }
+    })
   }
 
   commentsScrollToBottom() {
@@ -545,6 +683,8 @@ export class GalleryCardComponent {
     } else {
       this.likeIcon.nativeElement.textContent = "favorite_border"
     }
+
+    this.getAllContests()
 
   }
 
