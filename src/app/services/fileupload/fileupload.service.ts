@@ -16,7 +16,7 @@ export class FileuploadService {
   async uploadFiles(base64: string, fileName: string) {
     const formData = new FormData();
 
-    formData.append('file', this.Base64ToFile(base64, fileName+".jpg"));
+    formData.append('file', this.Base64ToFile(base64, fileName));
     return this.http.post(
       'https://morrisapps.ddns.net:8080/upload',
       formData

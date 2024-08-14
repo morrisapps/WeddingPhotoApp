@@ -69,7 +69,7 @@ export class SlideShowContestsComponent {
               id: item.id,
               size: "",
               src:
-                'https://granted.photos/photos/full/'+item.id+'.jpg',
+                'https://granted.photos/photos/full/'+item.id,
               subHtml: `
                   <div style="
                   position:fixed;
@@ -114,7 +114,7 @@ export class SlideShowContestsComponent {
               id: item.id,
               size: "",
               src:
-                'https://granted.photos/photos/full/'+item.id+'.jpg',
+                'https://granted.photos/photos/full/'+item.id,
               subHtml: `
                   <div style="
                   position:fixed;
@@ -159,7 +159,7 @@ export class SlideShowContestsComponent {
               id: item.id,
               size: "",
               src:
-                'https://granted.photos/photos/full/'+item.id+'.jpg',
+                'https://granted.photos/photos/full/'+item.id,
               subHtml: `
                   <div style="
                   position:fixed;
@@ -204,7 +204,7 @@ export class SlideShowContestsComponent {
               id: item.id,
               size: "",
               src:
-                'https://granted.photos/photos/full/'+item.id+'.jpg',
+                'https://granted.photos/photos/full/'+item.id,
               subHtml: `
                   <div style="
                   position:fixed;
@@ -250,7 +250,7 @@ export class SlideShowContestsComponent {
                 id: item.id,
                 size: "",
                 src:
-                  'https://granted.photos/photos/full/'+item.id+'.jpg',
+                  'https://granted.photos/photos/full/'+item.id,
                 subHtml: `
                     <div style="
                     position:fixed;

@@ -80,7 +80,7 @@ export class SlideShowComponent {
               id: item.id,
               size: '1400-933',
               src:
-                'https://granted.photos/photos/full/'+item.id+'.jpg',
+                'https://granted.photos/photos/full/'+item.id,
               subHtml: `
                 <div [hidden]="!showFileInput" style="
                   position:relative;

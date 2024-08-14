@@ -63,7 +63,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
           Your browser does not support the video tag.
           </video> -->
           <div [hidden]="!imgLoaded">
-            <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
+            <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}"
               [name]="[galleryInformation.id]" (load)="onLoad()">
             <!-- If cookie is present, then this user is either the author or admin and show delete button -->
             @if (getLocalStorage().getItem(this.galleryInformation.id) == "true" || getLocalStorage().getItem("adminDelete") == "true") {
@@ -657,8 +657,8 @@ export class GalleryCardComponent {
 
   download() {
     const a = document.createElement('a')
-    a.href = "https://granted.photos/photos/full/"+this.galleryInformation.id+".jpg"
-    a.download = this.galleryInformation.id+"-full.jpg"
+    a.href = "https://granted.photos/photos/full/"+this.galleryInformation.id
+    a.download = this.galleryInformation.id
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)

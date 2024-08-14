@@ -126,7 +126,7 @@ export class UploadComponent {
         new Promise((resolve,reject)=>{
           Array.from(this.files!).map(file => {
 
-            let fileName = Date.now().toString()+file.name.split("\.")[0]
+            let fileName = Date.now().toString()+file.name.split("\.")[0]+".jpg"
             const reader = new FileReader();
             // Read the Blob as DataURL using the FileReader API
             reader.onloadend = async () => {

@@ -172,7 +172,7 @@ export class ShootComponent {
   // Save picture
   async post() {
     let cameraFileInput = this.fileInput.nativeElement
-    let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])
+    let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])+".jpg"
     let file = cameraFileInput.files![0]
 
     // Check if uploading is disabled
