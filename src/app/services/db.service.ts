@@ -43,14 +43,12 @@ export class DBService {
           result[i].prevcount = 0
         }
 
-
         if (result[i].prevcount > 0) {
           // Don't add to array, reduce prev count
           result[i].prevcount --
         } else {
           prevFilterPhotos.push(result[i])
         }
-        this.patchSlideCounts(result[i].id, result[i].showncount, result[i].prevcount)
       }
 
       // If filtered too many photos to not fill all slides randomly
@@ -171,15 +169,17 @@ export class DBService {
     return await data.json().then((result) => {
       let mostLikes: any = [];
       for (let i = 0; i < result.length; i++) {
-        if (mostLikes.length == 0) {
-          if (result[i].likes !== undefined) {
-            mostLikes = [result[i]]
-          }
-        } else {
-          if (result[i].likes > mostLikes[0].likes) {
-            mostLikes = [result[i]]
-          } else if (result[i].likes == mostLikes[0].likes) {
-            mostLikes.push(result[i])
+        if (!result[i].isTemplate) {
+          if (mostLikes.length == 0) {
+            if (result[i].likes !== undefined) {
+              mostLikes = [result[i]]
+            }
+          } else {
+            if (result[i].likes > mostLikes[0].likes) {
+              mostLikes = [result[i]]
+            } else if (result[i].likes == mostLikes[0].likes) {
+              mostLikes.push(result[i])
+            }
           }
         }
       }
@@ -210,7 +210,8 @@ export class DBService {
         "likes": 0,
         "date": dformat,
         "showncount": 0,
-        "prevcount": 0
+        "prevcount": 0,
+        "isTemplate": false
       })
     })
   }

@@ -10,4 +10,5 @@ export interface GalleryInformation {
   showncount: number;
   prevcount: number;
   comments: GalleryComment[];
+  isTemplate: boolean;
 }

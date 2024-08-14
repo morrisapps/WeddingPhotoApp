@@ -76,7 +76,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
         <div style="position: relative; margin-top: -20px;">
           <div [style.visibility]="(isServerOperation) ? 'hidden' : 'visible' ">
             <!-- If cookie is present, then enable contest buttons -->
-            @if (getLocalStorage().getItem("adminWinnerSelect") == "true") {
+            @if (getLocalStorage().getItem("adminWinnerSelect") == "true" && !this.galleryInformation.isTemplate) {
               <mat-grid-list cols="2" rowHeight="50px" style="margin-left: -20px; margin-top: 40px;">
                 <mat-grid-tile>
                   <button mat-raised-button #bestGroomBride class="contest-button" (click)="setBestGroomBride()" style="width: 120px; height: 30px;">
@@ -121,7 +121,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
             <mat-card-actions style="margin-top: -10px;">
               <div #commentsDiv class="scroll-div" style="margin-left: 3px; width:100%; z-index: 2;">
                 @if (this.galleryInformation.comments.length == 0) {
-                  <p class="center-content" style="margin-bottom: 5px; margin-top: 5px;">Be the first to comment!</p>
+                  <p class="center-content" style="margin-bottom: 5px; margin-top: 15px;">Be the first to comment!</p>
                 }
                 @if (this.galleryInformation.comments.length > 0) {
                   <div style="max-height: 150px;">
