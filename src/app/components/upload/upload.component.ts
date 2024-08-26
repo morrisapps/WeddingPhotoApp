@@ -11,6 +11,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
+import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DBService } from '../../services/db.service';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
@@ -32,6 +34,8 @@ import { DomSanitizer } from "@angular/platform-browser";
     MatIconModule,
     MatProgressBarModule,
     MatToolbarModule,
+    MatRadioModule,
+    FormsModule,
     ReactiveFormsModule
   ],
   templateUrl: './upload.component.html',
@@ -51,6 +55,9 @@ export class UploadComponent {
 
   uploadDisabled: boolean = true;
   uploadButtonDisabled: boolean = true;
+
+  // Defaulted radiobutton to Full
+  radioButtonValue: string = "Full";
 
 
   files?: File[];
@@ -185,22 +192,31 @@ export class UploadComponent {
               }
             };
 
-            // Compress file
-            imageCompression(file, {
-              maxSizeMB: 1
-            })
-            .then(function (compressedFile) {
+            // Determine if uploading should use compression or not based on radioButtonValue
+            if (this.radioButtonValue == "Full") {
               // Gather photo file as blob for reader
-              var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
-              reader.readAsDataURL(blob);
-            })
-            .catch(function (error) {
-              console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
-              // Attempt using un-compressed file
               var blob = file.slice(0, file.size, 'image/jpg');
+              // Begin upload through reader
               reader.readAsDataURL(blob);
-            });
-
+            } else {
+              // Compress file
+              imageCompression(file, {
+                maxSizeMB: 1
+              })
+              .then(function (compressedFile) {
+                // Gather photo file as blob for reader
+                var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
+                // Begin upload through reader
+                reader.readAsDataURL(blob);
+              })
+              .catch(function (error) {
+                console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
+                // Attempt using un-compressed file
+                var blob = file.slice(0, file.size, 'image/jpg');
+                // Begin upload through reader
+                reader.readAsDataURL(blob);
+              });
+            }
           })
         }).then(() => {
           new Promise((resolve, reject) => {
@@ -279,6 +295,9 @@ export class UploadComponent {
   }
 
   ngAfterViewInit() {
+
+    setTimeout(() => {console.log(this.radioButtonValue)}, 5000);
+
     // When selecting name input, make all text highlighted
     let nameInput = document.getElementById("nameInput") as HTMLInputElement
     nameInput.addEventListener(`focus`, () => nameInput.select());

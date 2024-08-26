@@ -64,14 +64,28 @@
                 <span style="line-height: 0px;">Browse...</span>
               </button>
               <form #fileForm style="margin-top:0px; max-width: 80px; display: inline-block;">
-                <input (change)="onFileSelected($event)" class="fileInput" #fileInput type="file" id="fileInput" accept="image/*" multiple="multiple">
+                <input (change)="onFileSelected($event)" class="fileInput" #fileInput type="file" id="fileInput" accept="video/*,image/*" multiple="multiple">
               </form>
             </div>
-            <div class="center-content">
-              <button mat-raised-button *ngIf="!uploadButtonDisabled" style="margin-bottom: 5px; background-color: #E4FFC4"  id="save" (click)="post()" class="button">
-                <mat-icon svgIcon="upload" inline="true" class="icon"></mat-icon>
-                <span class="button-text">UPLOAD TO GALLERY</span>
-              </button>
+            <div *ngIf="!uploadButtonDisabled">
+              <div>
+                <mat-card-title class="center-content">Select Resolution</mat-card-title>
+              </div>
+              <div class="center-content" style="margin-left: 10px;">
+                <mat-radio-group aria-label="Select Quality" [(ngModel)]="radioButtonValue">
+                  <mat-radio-button value="Full">Full (Better Quality)</mat-radio-button>
+                  <mat-radio-button value="Web">Web Format (Faster Upload)</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div style="margin-bottom: 20px;">
+                <mat-card-title class="center-content">Upload to Gallery</mat-card-title>
+              </div>
+              <div class="center-content">
+                <button mat-raised-button style="margin-bottom: 5px; background-color: #E4FFC4"  id="save" (click)="post()" class="button">
+                  <mat-icon svgIcon="upload" inline="true" class="icon"></mat-icon>
+                  <span class="button-text">START UPLOAD</span>
+                </button>
+              </div>
             </div>
           </mat-card-content>
         </mat-card>

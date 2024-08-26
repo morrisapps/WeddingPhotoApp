@@ -82,7 +82,7 @@ export class SlideShowComponent {
               src:
                 'https://granted.photos/photos/full/'+item.id,
               subHtml: `
-                <div [hidden]="!showFileInput" style="
+                <div style="
                   position:relative;
                   top: -40px;
                   left:0;
