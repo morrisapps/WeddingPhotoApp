@@ -2,6 +2,7 @@ import { GalleryComment } from './gallery-comment';
 
 export interface GalleryInformation {
   id: string;
+  fileType: string;
   author: string;
   width: number;
   height: number;

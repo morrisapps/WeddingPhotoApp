@@ -80,7 +80,7 @@ export class SlideShowComponent {
               id: item.id,
               size: '1400-933',
               src:
-                'https://granted.photos/photos/full/'+item.id,
+                'https://granted.photos/photos/full/'+item.id+item.fileType,
               subHtml: `
                 <div style="
                   position:relative;

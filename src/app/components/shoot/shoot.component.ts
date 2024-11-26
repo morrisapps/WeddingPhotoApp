@@ -171,9 +171,13 @@ export class ShootComponent {
 
   // Save picture
   async post() {
-    let cameraFileInput = this.fileInput.nativeElement
-    let fileName = (Date.now().toString() + cameraFileInput.files![0].name.split("\.")[0])+".jpg"
-    let file = cameraFileInput.files![0]
+    const cameraFileInput = this.fileInput.nativeElement
+
+    const fileTypelastIndex = cameraFileInput.files![0].name.lastIndexOf(".");
+    const fileName = Date.now().toString()+cameraFileInput.files![0].name.slice(0, fileTypelastIndex);
+    const fileType = cameraFileInput.files![0].name.slice(fileTypelastIndex);
+
+    const file = cameraFileInput.files![0]
 
     // Check if uploading is disabled
     this.DBService.checkIfStopDB().then(async (result) => {
@@ -188,12 +192,12 @@ export class ShootComponent {
         reader.onloadend = async () => {
             // Save picture using express multer (fileupload service)
             // Upload picture
-            (await this._uploadService.uploadFiles(reader.result as string, fileName as string))
+            (await this._uploadService.uploadFiles(reader.result as string, fileName+fileType as string, file.type))
             .subscribe({
               next: (res) => {
                 this.photoImg.nativeElement.onload = () => {
                   // Post to json server
-                  this.DBService.post(fileName, this.photoImg.nativeElement.width, this.photoImg.nativeElement.height).then(async () => {
+                  this.DBService.post(fileName, fileType, this.photoImg.nativeElement.width, this.photoImg.nativeElement.height).then(async () => {
                     // Posted picture to DB, stop spinner and show snackbar, remove from data service
 
                     // Set localStorage with photo name to flag that this user posted this picture.

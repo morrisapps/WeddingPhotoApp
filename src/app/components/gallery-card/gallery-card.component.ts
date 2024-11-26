@@ -63,7 +63,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
           Your browser does not support the video tag.
           </video> -->
           <div [hidden]="!imgLoaded">
-            <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}"
+            <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
               [name]="[galleryInformation.id]" (load)="onLoad()">
             <!-- If cookie is present, then this user is either the author or admin and show delete button -->
             @if (getLocalStorage().getItem(this.galleryInformation.id) == "true" || getLocalStorage().getItem("adminDelete") == "true") {
@@ -73,7 +73,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
             }
           </div>
         </div>
-        <div style="position: relative; margin-top: -20px;">
+        <div
+
+        style="position: relative; margin-top: -20px;">
           <div [style.visibility]="(isServerOperation) ? 'hidden' : 'visible' ">
             <!-- If cookie is present, then enable contest buttons -->
             @if (getLocalStorage().getItem("adminWinnerSelect") == "true" && !this.galleryInformation.isTemplate) {
@@ -559,7 +561,7 @@ export class GalleryCardComponent {
             // Remove picture from JSON server
             this.DBService.remove(this.galleryInformation.id).then(async () => {
               // Remove picture and thumbnail
-              (await this._uploadService.removeFile(this.galleryInformation.id))
+              (await this._uploadService.removeFile(this.galleryInformation.id, this.galleryInformation.fileType))
               .subscribe(async (res: any) => {
                 // Refresh gallery
                 this._router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
@@ -657,8 +659,8 @@ export class GalleryCardComponent {
 
   download() {
     const a = document.createElement('a')
-    a.href = "https://granted.photos/photos/full/"+this.galleryInformation.id
-    a.download = this.galleryInformation.id
+    a.href = "https://granted.photos/photos/full/"+this.galleryInformation.id+this.galleryInformation.fileType
+    a.download = this.galleryInformation.id+this.galleryInformation.fileType
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)

@@ -132,20 +132,25 @@ export class UploadComponent {
 
         new Promise((resolve,reject)=>{
           Array.from(this.files!).map(file => {
+            console.log(file)
+            console.log(typeof file)
 
-            let fileName = Date.now().toString()+file.name.split("\.")[0]+".jpg"
+            const fileTypelastIndex = file.name.lastIndexOf(".");
+            const fileName = Date.now().toString()+file.name.slice(0, fileTypelastIndex);
+            const fileType = file.name.slice(fileTypelastIndex);
+
             const reader = new FileReader();
             // Read the Blob as DataURL using the FileReader API
             reader.onloadend = async () => {
               try {
                 // Get full res photo as base 64
-                const PHOTO_BASE_64 = reader.result as string
+                const MEDIA_BASE_64 = reader.result as string
 
                 // Save picture using express multer (fileupload service)
                 if (file) {
                   this.UpdateProgress(3);
                   // Upload full image
-                  (await this._uploadService.uploadFiles(PHOTO_BASE_64, fileName as string))
+                  (await this._uploadService.uploadFiles(MEDIA_BASE_64, fileName+fileType as string, file.type))
                   .subscribe({
 
                     next: (res) => {
@@ -154,7 +159,7 @@ export class UploadComponent {
                       var img = new Image();
                       img.onload = () => {
                         // Post to json server
-                        this.DBService.post(fileName, img.width, img.height).then(async () => {
+                        this.DBService.post(fileName, fileType, img.width, img.height).then(async () => {
                           this.UpdateProgress(2);
                           // Set localStorage with photo name to flag that this user posted this picture.
                           // Triggers delete button in gallery
@@ -164,7 +169,8 @@ export class UploadComponent {
                           }
                         })
                       };
-                      img.src = PHOTO_BASE_64;
+                      console.log(fileName);
+                      img.src = MEDIA_BASE_64;
                     },
 
                     error: (res) => {
@@ -195,7 +201,7 @@ export class UploadComponent {
             // Determine if uploading should use compression or not based on radioButtonValue
             if (this.radioButtonValue == "Full") {
               // Gather photo file as blob for reader
-              var blob = file.slice(0, file.size, 'image/jpg');
+              var blob = file.slice(0, file.size, file.type);
               // Begin upload through reader
               reader.readAsDataURL(blob);
             } else {
@@ -205,14 +211,14 @@ export class UploadComponent {
               })
               .then(function (compressedFile) {
                 // Gather photo file as blob for reader
-                var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
+                var blob = compressedFile.slice(0, compressedFile.size, file.type);
                 // Begin upload through reader
                 reader.readAsDataURL(blob);
               })
               .catch(function (error) {
                 console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
                 // Attempt using un-compressed file
-                var blob = file.slice(0, file.size, 'image/jpg');
+                var blob = file.slice(0, file.size, file.type);
                 // Begin upload through reader
                 reader.readAsDataURL(blob);
               });
@@ -246,6 +252,31 @@ export class UploadComponent {
         })
       }
     })
+  }
+
+  async getMediaDimensions(file: File) {
+    // if ((file.type.match("image/")?.toString()) == "image/") {
+    //   return new Promise((resolve, reject) => {
+    //     // Create image object to get width and height
+    //     var img = new Image();
+    //     img.onload = () => {
+    //       // Post to json server
+    //       this.DBService.post(fileName, img.width, img.height).then(async () => {
+    //         this.UpdateProgress(2);
+    //         // Set localStorage with photo name to flag that this user posted this picture.
+    //         // Triggers delete button in gallery
+    //         localStorage.setItem(fileName, "true");
+    //         if (this.uploaded == (this.files!.length * 8)){
+    //           resolve(true)
+    //         }
+    //       })
+    //     };
+    //     console.log(fileName);
+    //     img.src = MEDIA_BASE_64;
+    //   })
+    // } else if ((file.type.match("video/")?.toString()) == "video/") {
+
+    // }
   }
 
   UpdateProgress(weight: number) {
@@ -295,8 +326,6 @@ export class UploadComponent {
   }
 
   ngAfterViewInit() {
-
-    setTimeout(() => {console.log(this.radioButtonValue)}, 5000);
 
     // When selecting name input, make all text highlighted
     let nameInput = document.getElementById("nameInput") as HTMLInputElement

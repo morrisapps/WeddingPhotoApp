@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class DBService {
 
-  url = 'https://morrisapps.ddns.net:3000';
+  url = 'https://granted.photos:3000';
 
   constructor(
     private _dialog: MatDialog,
@@ -187,7 +187,7 @@ export class DBService {
     })
   }
 
-  async post(fileName: string, width: number, height: number) {
+  async post(fileName: string, fileType: string, width: number, height: number) {
     let date = new Date()
     let dformat = [date.getMonth()+1,
       date.getDate(),
@@ -204,6 +204,7 @@ export class DBService {
       },
       body: JSON.stringify({
         "id": fileName,
+        "fileType": fileType,
         "author": localStorage.getItem('User'),
         "width": width,
         "height": height,
