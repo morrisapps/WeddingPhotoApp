@@ -659,8 +659,8 @@ export class GalleryCardComponent {
 
   download() {
     const a = document.createElement('a')
-    a.href = "https://granted.photos/photos/full/"+this.galleryInformation.id+this.galleryInformation.fileType
-    a.download = this.galleryInformation.id+this.galleryInformation.fileType
+    a.href = "https://granted.photos/photos/full/"+this.galleryInformation.id+this.galleryInformation.fileExtension
+    a.download = this.galleryInformation.id+this.galleryInformation.fileExtension
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)

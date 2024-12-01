@@ -154,36 +154,10 @@ export class UploadComponent {
                     next: (res) => {
                       this.UpdateProgress(3);
 
-                      // Gets type from file.type to be used to determine what object media will instantiate
-                      const slashIndex = file.type.indexOf("/")
-                      const type = file.type.slice(0, slashIndex)
-
-                      // Determine media type based on file type
+                      // Create image object to get height and width from thumbnail
                       let image = new Image();
-                      let video = document.createElement('video');
-                      if (type == "image") {
-                        // Triggers onload event handler
-                        image.src = "https://granted.photos/photos/full/"+fileName+fileExtension
-                      } else if (type == "video") {
-                        // Triggers loadeddata event handler
-                        video.src = "https://granted.photos/photos/full/"+fileName+fileExtension
-                      } else {
-                        throw "The media uploaded is not supported"
-                      }
-
-                      // Process videos
-                      video.addEventListener( "loadeddata",  () => {
-                        // Post to json server
-                        this.DBService.post(fileName, fileExtension, file.type, video.width, video.height).then(async () => {
-                          this.UpdateProgress(2);
-                          // Set localStorage with photo name to flag that this user posted this picture.
-                          // Triggers delete button in gallery
-                          localStorage.setItem(fileName, "true");
-                          if (this.uploaded == (this.files!.length * 8)){
-                            resolve(true)
-                          }
-                        })
-                      }, false );
+                      // Triggers onload event handler
+                      image.src = "https://granted.photos/photos/thumbs/"+fileName+".jpg"
 
                       // Process images
                       image.onload = () => {
