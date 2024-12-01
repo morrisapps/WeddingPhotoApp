@@ -173,9 +173,9 @@ export class ShootComponent {
   async post() {
     const cameraFileInput = this.fileInput.nativeElement
 
-    const fileTypelastIndex = cameraFileInput.files![0].name.lastIndexOf(".");
-    const fileName = Date.now().toString()+cameraFileInput.files![0].name.slice(0, fileTypelastIndex);
-    const fileType = cameraFileInput.files![0].name.slice(fileTypelastIndex);
+    const fileExtensionlastIndex = cameraFileInput.files![0].name.lastIndexOf(".");
+    const fileName = Date.now().toString()+cameraFileInput.files![0].name.slice(0, fileExtensionlastIndex);
+    const fileExtension = cameraFileInput.files![0].name.slice(fileExtensionlastIndex);
 
     const file = cameraFileInput.files![0]
 
@@ -190,17 +190,20 @@ export class ShootComponent {
         const reader = new FileReader();
 
         reader.onloadend = async () => {
-            // Save picture using express multer (fileupload service)
-            // Upload picture
-            (await this._uploadService.uploadFiles(reader.result as string, fileName+fileType as string, file.type))
+            // Get full file base 64
+            const MEDIA_BASE_64 = reader.result as string
+
+            // Save file using express multer (fileupload service)
+            // Upload file
+            (await this._uploadService.uploadFiles(MEDIA_BASE_64, fileName+fileExtension as string, file.type))
             .subscribe({
               next: (res) => {
                 this.photoImg.nativeElement.onload = () => {
                   // Post to json server
-                  this.DBService.post(fileName, fileType, this.photoImg.nativeElement.width, this.photoImg.nativeElement.height).then(async () => {
-                    // Posted picture to DB, stop spinner and show snackbar, remove from data service
+                  this.DBService.post(fileName, fileExtension, file.type, this.photoImg.nativeElement.width, this.photoImg.nativeElement.height).then(async () => {
+                    // Posted file to DB, stop spinner and show snackbar, remove from data service
 
-                    // Set localStorage with photo name to flag that this user posted this picture.
+                    // Set localStorage with photo name to flag that this user posted this file.
                     // Triggers delete button in gallery
                     localStorage.setItem(fileName, "true");
 
@@ -229,7 +232,7 @@ export class ShootComponent {
                     this.showCheck = true
                   })
                 }
-                this.photoImg.nativeElement.src = reader.result as string;
+                this.photoImg.nativeElement.src = "https://granted.photos/photos/full/"+fileName+fileExtension
               },
               error: (res) => {
                 this._dialog.open(DialogComponent, {

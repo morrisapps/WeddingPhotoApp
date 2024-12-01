@@ -187,7 +187,7 @@ export class DBService {
     })
   }
 
-  async post(fileName: string, fileType: string, width: number, height: number) {
+  async post(fileName: string, fileExtension: string, fileType: string, width: number, height: number) {
     let date = new Date()
     let dformat = [date.getMonth()+1,
       date.getDate(),
@@ -204,6 +204,7 @@ export class DBService {
       },
       body: JSON.stringify({
         "id": fileName,
+        "fileExtension": fileExtension,
         "fileType": fileType,
         "author": localStorage.getItem('User'),
         "width": width,

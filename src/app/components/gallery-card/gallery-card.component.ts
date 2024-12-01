@@ -561,7 +561,7 @@ export class GalleryCardComponent {
             // Remove picture from JSON server
             this.DBService.remove(this.galleryInformation.id).then(async () => {
               // Remove picture and thumbnail
-              (await this._uploadService.removeFile(this.galleryInformation.id, this.galleryInformation.fileType))
+              (await this._uploadService.removeFile(this.galleryInformation.id, this.galleryInformation.fileExtension))
               .subscribe(async (res: any) => {
                 // Refresh gallery
                 this._router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{

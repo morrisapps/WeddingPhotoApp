@@ -132,12 +132,10 @@ export class UploadComponent {
 
         new Promise((resolve,reject)=>{
           Array.from(this.files!).map(file => {
-            console.log(file)
-            console.log(typeof file)
 
-            const fileTypelastIndex = file.name.lastIndexOf(".");
-            const fileName = Date.now().toString()+file.name.slice(0, fileTypelastIndex);
-            const fileType = file.name.slice(fileTypelastIndex);
+            const fileExtensionlastIndex = file.name.lastIndexOf(".");
+            const fileName = Date.now().toString()+file.name.slice(0, fileExtensionlastIndex);
+            const fileExtension = file.name.slice(fileExtensionlastIndex);
 
             const reader = new FileReader();
             // Read the Blob as DataURL using the FileReader API
@@ -149,17 +147,48 @@ export class UploadComponent {
                 // Save picture using express multer (fileupload service)
                 if (file) {
                   this.UpdateProgress(3);
-                  // Upload full image
-                  (await this._uploadService.uploadFiles(MEDIA_BASE_64, fileName+fileType as string, file.type))
+                  // Upload file
+                  (await this._uploadService.uploadFiles(MEDIA_BASE_64, fileName+fileExtension as string, file.type))
                   .subscribe({
 
                     next: (res) => {
                       this.UpdateProgress(3);
-                      // Create image object to get width and height
-                      var img = new Image();
-                      img.onload = () => {
+
+                      // Gets type from file.type to be used to determine what object media will instantiate
+                      const slashIndex = file.type.indexOf("/")
+                      const type = file.type.slice(0, slashIndex)
+
+                      // Determine media type based on file type
+                      let image = new Image();
+                      let video = document.createElement('video');
+                      if (type == "image") {
+                        // Triggers onload event handler
+                        image.src = "https://granted.photos/photos/full/"+fileName+fileExtension
+                      } else if (type == "video") {
+                        // Triggers loadeddata event handler
+                        video.src = "https://granted.photos/photos/full/"+fileName+fileExtension
+                      } else {
+                        throw "The media uploaded is not supported"
+                      }
+
+                      // Process videos
+                      video.addEventListener( "loadeddata",  () => {
                         // Post to json server
-                        this.DBService.post(fileName, fileType, img.width, img.height).then(async () => {
+                        this.DBService.post(fileName, fileExtension, file.type, video.width, video.height).then(async () => {
+                          this.UpdateProgress(2);
+                          // Set localStorage with photo name to flag that this user posted this picture.
+                          // Triggers delete button in gallery
+                          localStorage.setItem(fileName, "true");
+                          if (this.uploaded == (this.files!.length * 8)){
+                            resolve(true)
+                          }
+                        })
+                      }, false );
+
+                      // Process images
+                      image.onload = () => {
+                        // Post to json server
+                        this.DBService.post(fileName, fileExtension, file.type, image.width, image.height).then(async () => {
                           this.UpdateProgress(2);
                           // Set localStorage with photo name to flag that this user posted this picture.
                           // Triggers delete button in gallery
@@ -169,8 +198,6 @@ export class UploadComponent {
                           }
                         })
                       };
-                      console.log(fileName);
-                      img.src = MEDIA_BASE_64;
                     },
 
                     error: (res) => {

@@ -13,18 +13,18 @@ export class FileuploadService {
 
   // Function to send a post request along
   // with files to server
-  async uploadFiles(base64: string, fileName: string, type: string) {
+  async uploadFiles(base64: string, fileName: string, fileType: string) {
     const formData = new FormData();
-    formData.append('file', this.Base64ToFile(base64, fileName, type));
+    formData.append('file', this.Base64ToFile(base64, fileName, fileType));
     return this.http.post(
       'https://granted.photos:8080/upload',
       formData
     );
   }
 
-  async removeFile(fileName: string, fileType: string) {
+  async removeFile(fileName: string, fileExtension: string) {
     return this.http.delete(
-      'https://granted.photos:8080/'+fileName+"?fileType="+fileType
+      'https://granted.photos:8080/'+fileName+"?fileExtension="+fileExtension
     );
   }
 
