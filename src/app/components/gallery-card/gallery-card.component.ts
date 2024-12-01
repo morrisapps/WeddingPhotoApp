@@ -58,13 +58,21 @@ import { MatGridListModule } from '@angular/material/grid-list';
     <section>
       <mat-card #matCard>
         <div id="galleryContainer" #galleryContainer class="gallery-container">
-          <!-- <video width="320" height="240" controls preload="metadata">
-            <source src="https://granted.photos/videos/test.mp4#t=10.1" type="video/mp4">
-          Your browser does not support the video tag.
-          </video> -->
           <div [hidden]="!imgLoaded">
-            <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
+            <!-- Determine if Image or Video -->
+            @if (this.galleryInformation.fileType.includes("image") == true) {
+              <img [hidden]="!imgLoaded" #gallery class="listing-gallery" id="gallery" src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
               [name]="[galleryInformation.id]" (load)="onLoad()">
+            }
+            @else if (this.galleryInformation.fileType.includes("video") == true) {
+              <video #gallery class="listing-gallery" id="gallery" controls preload="metadata" (loadeddata)="onLoad()"
+                      poster="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg">
+                <source src="https://granted.photos/photos/full/{{galleryInformation.id}}{{galleryInformation.fileExtension}}"
+                        (type)='this.galleryInformation.fileExtension'>
+                        Your browser does not support the video tag.
+              </video>
+            }
+
             <!-- If cookie is present, then this user is either the author or admin and show delete button -->
             @if (getLocalStorage().getItem(this.galleryInformation.id) == "true" || getLocalStorage().getItem("adminDelete") == "true") {
               <button mat-fab class="remove-button" (click)="remove()" style="width: 50px; height: 50px; background-color: red">

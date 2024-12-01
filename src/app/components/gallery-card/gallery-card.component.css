@@ -29,7 +29,7 @@ section.listing a::after {
   position: relative;
 }
 
-.gallery-container img {
+.gallery-container img, video {
   display: block;
   max-width:100%;
   min-width:100%;
