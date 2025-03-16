@@ -19,6 +19,8 @@ import { FileuploadService } from '../../services/fileupload/fileupload.service'
 import { DialogComponent } from "../dialog/dialog.component";
 import imageCompression from "browser-image-compression";
 import { DomSanitizer } from "@angular/platform-browser";
+import { Buffer } from 'buffer';
+import { HttpEvent, HttpEventType, HttpResponse } from "@angular/common/http";
 
 @Component({
   selector: 'app-upload',
@@ -54,7 +56,7 @@ export class UploadComponent {
   showFileInput: boolean = true;
 
   uploadDisabled: boolean = true;
-  uploadButtonDisabled: boolean = true;
+  uploadSectionDisabled: boolean = true;
 
   // Defaulted radiobutton to Full
   radioButtonValue: string = "Full";
@@ -63,9 +65,10 @@ export class UploadComponent {
   files?: File[];
   date = new Date();
 
-  uploaded = 0
+  currentFileName = ""
   progress = 0
-  lastProgressUpdateTime = 0
+  totalProgress = 0
+  currentFileProgress = 0
 
   Promises = []
 
@@ -114,9 +117,9 @@ export class UploadComponent {
 
     // Set upload button disabled
     if (this.files.length >= 1 && (localStorage.getItem('User'))) {
-      this.uploadButtonDisabled = false
+      this.uploadSectionDisabled = false
     } else {
-      this.uploadButtonDisabled = true
+      this.uploadSectionDisabled = true
     }
   }
 
@@ -125,118 +128,68 @@ export class UploadComponent {
     // Check if uploading is disabled
     this.DBService.checkIfStopDB().then(async (result) => {
       if (!result) {
-        this.uploaded = 0
         this.showSpinner = true
         this.showCheck = false
         this.showFileInput = false
+        // Start update progress
+        this.progress = 0.1
+        this.totalProgress = 0
+        this.currentFileProgress = 0
+        new Promise(async (resolve,reject)=>{
+          for await (const file of this.files!) {
+            await new Promise(async (resolve,reject)=>{
+              const fileExtensionlastIndex = file.name.lastIndexOf(".");
+              const fileName = Date.now().toString()+file.name.slice(0, fileExtensionlastIndex);
+              const fileExtension = file.name.slice(fileExtensionlastIndex);
 
-        new Promise((resolve,reject)=>{
-          Array.from(this.files!).map(file => {
-
-            const fileExtensionlastIndex = file.name.lastIndexOf(".");
-            const fileName = Date.now().toString()+file.name.slice(0, fileExtensionlastIndex);
-            const fileExtension = file.name.slice(fileExtensionlastIndex);
-
-            const reader = new FileReader();
-            // Read the Blob as DataURL using the FileReader API
-            reader.onloadend = async () => {
               try {
-                // Get full res photo as base 64
-                const MEDIA_BASE_64 = reader.result as string
-
+                this.UpdateProgress(fileName+fileExtension, 0, true)
+                // timeout of 1 second to show the progress bar longer
+                setTimeout(async () => {
                 // Save picture using express multer (fileupload service)
-                if (file) {
-                  this.UpdateProgress(3);
-                  // Upload file
-                  (await this._uploadService.uploadFiles(MEDIA_BASE_64, fileName+fileExtension as string, file.type))
-                  .subscribe({
+                  if (file) {
+                    // Upload file
+                    (await (this._uploadService.uploadFile(file, fileName, fileExtension, file.type)))
+                    .subscribe({
+                      next: (progress: any) => {
+                        console.log("Uploading Progress: "+progress)
+                        this.UpdateProgress(fileName+fileExtension, progress);
+                      },
+                      error: (err: any) => {
+                        if (err.error && err.error.message) {
+                          console.log(err.error.message)
+                          this.handleUploadError('Could not upload the file! ' + err.error.message)
 
-                    next: (res) => {
-                      this.UpdateProgress(3);
-
-                      // Create image object to get height and width from thumbnail
-                      let image = new Image();
-                      // Triggers onload event handler
-                      image.src = "https://granted.photos/photos/thumbs/"+fileName+".jpg"
-
-                      // Process images
-                      image.onload = () => {
-                        // Post to json server
-                        this.DBService.post(fileName, fileExtension, file.type, image.width, image.height).then(async () => {
-                          this.UpdateProgress(2);
-                          // Set localStorage with photo name to flag that this user posted this picture.
-                          // Triggers delete button in gallery
-                          localStorage.setItem(fileName, "true");
-                          if (this.uploaded == (this.files!.length * 8)){
-                            resolve(true)
-                          }
-                        })
-                      };
-                    },
-
-                    error: (res) => {
-                      this._dialog.open(DialogComponent, {
-                        data: {
-                          title: "Error",
-                          message: "An issue occured when uploading this picture.<br>Please try again.",
-                          button1: "Okay",
-                          button1Color: "#fd7543",
-                          button1TextColor: "White"
+                        } else {
+                          console.log(err)
+                          this.handleUploadError('Could not upload the file! ' + err)
                         }
-                      })
-                      this.uploadButtonDisabled = true
-                      this.fileForm.nativeElement.reset()
-                      this.progress = 0
-                      this.showSpinner = false
-                      this.showCheck = false
-                      this.showFileInput = true
-                    }
-
-                  });
-                }
+                      },
+                      complete: () => {
+                        // Set localStorage with photo name to flag that this user posted this picture.
+                        // Triggers delete button in gallery
+                        localStorage.setItem(fileName, "true");
+                        console.log("complete");
+                        // End promise in loop and signal for next file to be processed
+                        resolve(true)
+                      }
+                    })
+                  }
+                }, 1000)
               } catch(error) {
-                console.log("Error posting image: "+error)
+                console.log("Error occured: "+error)
+                this.handleUploadError("An issue occured when uploading this picture.<br>Please try again.")
               }
-            };
-
-            // Determine if uploading should use compression or not based on radioButtonValue
-            if (this.radioButtonValue == "Full") {
-              // Gather photo file as blob for reader
-              var blob = file.slice(0, file.size, file.type);
-              // Begin upload through reader
-              reader.readAsDataURL(blob);
-            } else {
-              // Compress file
-              imageCompression(file, {
-                maxSizeMB: 1
-              })
-              .then(function (compressedFile) {
-                // Gather photo file as blob for reader
-                var blob = compressedFile.slice(0, compressedFile.size, file.type);
-                // Begin upload through reader
-                reader.readAsDataURL(blob);
-              })
-              .catch(function (error) {
-                console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
-                // Attempt using un-compressed file
-                var blob = file.slice(0, file.size, file.type);
-                // Begin upload through reader
-                reader.readAsDataURL(blob);
-              });
-            }
-          })
-        }).then(() => {
-          new Promise((resolve, reject) => {
-            // Final progress update
-            this.progress = 100
-
-            // a resolved promise after .6 second to show the progress longer
-            setTimeout(() => {
+            })
+            .then(() => {
+              if (this.files![this.files!.length - 1] === file){
+                console.log("last")
                 resolve(true)
-            }, 600)
-          }).then(() => {
+              }
+            })
+          }
+        }).then(() => {
             // Upload fully finished
-
             // Posted picture to DB, stop spinner and show snackbar
             this.showSpinner = false,
             this._snackBar.open("Photo(s) uploaded to gallery!", "", {
@@ -244,59 +197,46 @@ export class UploadComponent {
               panelClass: 'upload-snackbar'
             });
 
-            this.uploadButtonDisabled = true
+            this.uploadSectionDisabled = true
             this.fileForm.nativeElement.reset()
             this.progress = 0
 
             this.showCheck = true
-          })
         })
       }
     })
   }
 
-  async getMediaDimensions(file: File) {
-    // if ((file.type.match("image/")?.toString()) == "image/") {
-    //   return new Promise((resolve, reject) => {
-    //     // Create image object to get width and height
-    //     var img = new Image();
-    //     img.onload = () => {
-    //       // Post to json server
-    //       this.DBService.post(fileName, img.width, img.height).then(async () => {
-    //         this.UpdateProgress(2);
-    //         // Set localStorage with photo name to flag that this user posted this picture.
-    //         // Triggers delete button in gallery
-    //         localStorage.setItem(fileName, "true");
-    //         if (this.uploaded == (this.files!.length * 8)){
-    //           resolve(true)
-    //         }
-    //       })
-    //     };
-    //     console.log(fileName);
-    //     img.src = MEDIA_BASE_64;
-    //   })
-    // } else if ((file.type.match("video/")?.toString()) == "video/") {
-
-    // }
+  handleUploadError(message: string) {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: "Error",
+        message: message,
+        button1: "Okay",
+        button1Color: "#fd7543",
+        button1TextColor: "White"
+      }
+    })
+    this.uploadSectionDisabled = true
+    this.fileForm.nativeElement.reset()
+    this.progress = 0
+    this.showSpinner = false
+    this.showCheck = false
+    this.showFileInput = true
   }
 
-  UpdateProgress(weight: number) {
-    // Total weight is all the weight totaled that is passed in and should be divided by.
-    let totalWeight = 8
+  UpdateProgress(FileName: string, Weight: number, NewFile = false) {
+    this.currentFileName = FileName
 
-    this.uploaded += weight
 
-    // Update progress, only if new progress is higher and has been 500 ms since last update
-    // Must wait 500 ms, or the CSS transition of the progress bar will flicker back and forth
+    if (NewFile && this.files) {
+      this.totalProgress += this.currentFileProgress / this.files?.length
+    }
+
+    this.currentFileProgress = Weight * 100
     if (this.files) {
-      let newProgress = (this.uploaded / totalWeight) / this.files?.length * 100
-      if (newProgress > this.progress){
-        let currentTime = new Date().getTime()
-        if (currentTime - 500 > this.lastProgressUpdateTime) {
-          this.lastProgressUpdateTime = currentTime
-          this.progress = newProgress
-        }
-      }
+      this.progress = this.currentFileProgress / this.files?.length
+      this.progress += this.totalProgress
     }
   }
 
@@ -309,11 +249,11 @@ export class UploadComponent {
       // Makes upload card not disabled
       this.uploadDisabled = false
       if (this.files!.length >= 1) {
-        this.uploadButtonDisabled = false
+        this.uploadSectionDisabled = false
       }
     } else {
       this.uploadDisabled = true
-      this.uploadButtonDisabled = true
+      this.uploadSectionDisabled = true
     }
   }
 

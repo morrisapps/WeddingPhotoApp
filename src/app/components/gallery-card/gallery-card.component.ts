@@ -65,9 +65,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
               [name]="[galleryInformation.id]" (load)="onLoad()">
             }
             @else if (this.galleryInformation.fileType.includes("video") == true) {
-              <video #gallery class="listing-gallery" id="gallery" controls preload="metadata" (loadeddata)="onLoad()"
-                      poster="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg">
-                <source src="https://granted.photos/photos/full/{{galleryInformation.id}}{{galleryInformation.fileExtension}}"
+              <!-- Poster img is used to determine if the poster has loaded before displaying the video element -->
+              <img hidden #poster src="https://granted.photos/photos/thumbs/{{galleryInformation.id}}.jpg"
+              [name]="[galleryInformation.id]" (load)="onLoad()">
+              <video #gallery class="listing-gallery" id="gallery" controls preload="none">
+                <source src="https://granted.photos/photos/full/{{galleryInformation.id}}-compressed.mp4"
                         (type)='this.galleryInformation.fileExtension'>
                         Your browser does not support the video tag.
               </video>
@@ -205,6 +207,8 @@ export class GalleryCardComponent {
 
   @ViewChild('matCard', { read: ElementRef }) matCard!:ElementRef;
   @ViewChild('galleryContainer', { read: ElementRef }) galleryContainer!:ElementRef;
+  @ViewChild('gallery', { read: ElementRef }) gallery!:ElementRef;
+  @ViewChild('poster', { read: ElementRef }) poster!:ElementRef;
   @ViewChild('likeIcon', { read: ElementRef }) likeIcon!:ElementRef;
   @ViewChild('commentsDiv', { read: ElementRef }) commentsDiv!:ElementRef;
 
@@ -227,6 +231,12 @@ export class GalleryCardComponent {
   onLoad() {
     // Set gallery container's height to auto so that it sizes to image
     this.galleryContainer.nativeElement?.style.setProperty('height', "auto")
+
+    // Determine if file is video
+    if (this.galleryInformation.fileType.includes("video") == true) {
+      // Set video poster now that image has been loaded
+      this.gallery.nativeElement.poster = this.poster.nativeElement.src
+    }
 
     this.imgLoaded = true
 
@@ -569,7 +579,7 @@ export class GalleryCardComponent {
             // Remove picture from JSON server
             this.DBService.remove(this.galleryInformation.id).then(async () => {
               // Remove picture and thumbnail
-              (await this._uploadService.removeFile(this.galleryInformation.id, this.galleryInformation.fileExtension))
+              (await this._uploadService.removeFile(this.galleryInformation.id, this.galleryInformation.fileExtension, this.galleryInformation.fileType))
               .subscribe(async (res: any) => {
                 // Refresh gallery
                 this._router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{

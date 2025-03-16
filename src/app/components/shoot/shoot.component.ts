@@ -186,87 +186,70 @@ export class ShootComponent {
         this.hidden = true
         this.showSpinner = true
 
-        // Read the Blob as DataURL using the FileReader API
-        const reader = new FileReader();
-
-        reader.onloadend = async () => {
-            // Get full file base 64
-            const MEDIA_BASE_64 = reader.result as string
-
-            // Save file using express multer (fileupload service)
-            // Upload file
-            (await this._uploadService.uploadFiles(MEDIA_BASE_64, fileName+fileExtension as string, file.type))
-            .subscribe({
-              next: (res) => {
-                this.photoImg.nativeElement.onload = () => {
-                  // Post to json server
-                  this.DBService.post(fileName, fileExtension, file.type, this.photoImg.nativeElement.width, this.photoImg.nativeElement.height).then(async () => {
-                    // Posted file to DB, stop spinner and show snackbar, remove from data service
-
-                    // Set localStorage with photo name to flag that this user posted this file.
-                    // Triggers delete button in gallery
-                    localStorage.setItem(fileName, "true");
-
-                    this.showSpinner = false
-                    // Open snackbar with random success message
-                    const successMessages = [
-                      "Groovy Shot! 📸",
-                      "Hey man, nice shot! 🤛😎",
-                      "Psychedelic! ☮️✌️",
-                      "Vibing photo! 🎨",
-                      "🔭 Far out shot!! 👀",
-                      "🌻 Flower power photo! 💐",
-                      "Peace and Love 🫶☮️",
-                      "☮️🌈 Hippy shot! 🌈☮️",
-                      "Rad shooting! ✌️👍",
-                      "Right on, man! 👍😎",
-                      "🪩🕺💃",
-                      "Oh, behave!",
-                      "Fab",
-                      "Gnarly",
-                      "Groovy Baby!"
-                    ]
-                    this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
-
-                    this.hidden = true
-                    this.showCheck = true
-                  })
-                }
-                this.photoImg.nativeElement.src = "https://granted.photos/photos/full/"+fileName+fileExtension
-              },
-              error: (res) => {
-                this._dialog.open(DialogComponent, {
-                  data: {
-                    title: "Error",
-                    message: "An issue occured when uploading this picture.<br>Please try again.",
-                    button1: "Okay",
-                    button1Color: "#fd7543",
-                    button1TextColor: "White"
-                  }
-                })
-                this.showSpinner = false
-                this.showCheck = false
-                this.hidden = false
-              }
-            })
-        }
-
         // Compress file
         imageCompression(file, {
           maxSizeMB: 1
         })
-        .then(function (compressedFile) {
-          // Gather photo file as blob for reader
-          var blob = compressedFile.slice(0, compressedFile.size, 'image/jpg');
-          reader.readAsDataURL(blob);
+        .then(async (compressedFile) => {
+          // upload compressed file
+          await this.upload(compressedFile, fileName, fileExtension, file.type)
         })
-        .catch(function (error) {
+        .catch((error) => {
+          // fallback, upload full file
           console.log("Failed to compress: "+error+"\nUsing uncompressed file.");
-          // Attempt using un-compressed file
-          var blob = file.slice(0, file.size, 'image/jpg');
-          reader.readAsDataURL(blob);
+          this.upload(file, fileName, fileExtension, file.type)
         });
+      }
+    })
+  }
 
+  async upload(file: File, fileName: string, fileExtension: string, fileType: string) {
+    // Save file using express multer (fileupload service)
+    // Upload file
+    (await this._uploadService.uploadFile(file, fileName, fileExtension, fileType))
+    .subscribe({
+      next: (res) => {
+        // Set localStorage with photo name to flag that this user posted this file.
+        // Triggers delete button in gallery
+        localStorage.setItem(fileName, "true");
+
+        this.showSpinner = false
+        // Open snackbar with random success message
+        const successMessages = [
+          "Groovy Shot! 📸",
+          "Hey man, nice shot! 🤛😎",
+          "Psychedelic! ☮️✌️",
+          "Vibing photo! 🎨",
+          "🔭 Far out shot!! 👀",
+          "🌻 Flower power photo! 💐",
+          "Peace and Love 🫶☮️",
+          "☮️🌈 Hippy shot! 🌈☮️",
+          "Rad shooting! ✌️👍",
+          "Right on, man! 👍😎",
+          "🪩🕺💃",
+          "Oh, behave!",
+          "Fab",
+          "Gnarly",
+          "Groovy Baby!"
+        ]
+        this.openSnackBar(successMessages[Math.floor(Math.random()*successMessages.length)])
+
+        this.hidden = true
+        this.showCheck = true
+      },
+      error: (res) => {
+        this._dialog.open(DialogComponent, {
+          data: {
+            title: "Error",
+            message: "An issue occured when uploading this picture.<br>Please try again.",
+            button1: "Okay",
+            button1Color: "#fd7543",
+            button1TextColor: "White"
+          }
+        })
+        this.showSpinner = false
+        this.showCheck = false
+        this.hidden = false
       }
     })
   }
